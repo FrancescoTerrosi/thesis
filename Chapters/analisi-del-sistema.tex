@@ -1,15 +1,21 @@
 \chapter{Analisi del Sistema}
 
-In questa sezione spieghiamo il tipo di analisi condotta, elenchiamo i tool utilizzati e le scelte/assunzioni fatte.\newline
+
+\section{Cosa stiamo facendo? Quali sono le misure?}
 
 \begin{itemize}
-	\item CARLA - cos'e`, cosa fa, pregi e difetti
-	\item reti neurali utilizzate
-	\item Quali sono i dati che cerchiamo
-	\item Come vengono condotti gli esperimenti e ricavati i dati
+	
+	\item Vedere come cambia l'interazione fra monitor e rete neurale quando questa continua ad imparare
+	\item Quanti e quali sono gli alert generati dal monitor
+	\item Perche` siamo interessati a questo? (paper Strigini-Popov + RAND study, Koopmann ecc)
+	
 \end{itemize}
 
+
 \section{Strumenti utilizzati}
+
+In questa sezione spieghiamo il tipo di analisi condotta, elenchiamo i tool utilizzati e le scelte/assunzioni fatte.\newline
+
 
 \begin{itemize}
 	\item CARLA
@@ -18,9 +24,19 @@ In questa sezione spieghiamo il tipo di analisi condotta, elenchiamo i tool util
 	\item Point Cloud Library per filtrare i dati
 \end{itemize}
 
+\section{Descrizione della metodologia}
+
+\begin{itemize}
+	
+	\item Come vengono effettuati gli esperimenti (scenari? durata fissa? ad oltranza? fino ad un fallimento? \dots)
+	\item Misure scelte - estrapolazione misure
+	
+\end{itemize}
+
 \section{Architettura del software (estrapolazione dati, interazione rete-monitor)}
 
 \begin{itemize}
+	
 	
 	\item Interazione rete-monitor
 	\item Safety Monitor - obstacle detection
@@ -29,12 +45,3 @@ In questa sezione spieghiamo il tipo di analisi condotta, elenchiamo i tool util
 	
 \end{itemize}
 
-\section{Descrizione della metodologia}
-
-\begin{itemize}
-
-	\item Scelta delle metriche (come e perche`)
-	\item Come le estraiamo?
-	\item Come vengono effettuati gli esperimenti (durata fissa? ad oltranza? fino ad un fallimento? \dots)
-
-\end{itemize}
