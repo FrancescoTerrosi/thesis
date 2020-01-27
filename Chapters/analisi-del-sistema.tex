@@ -1,21 +1,26 @@
-\chapter{Analisi del Sistema}
+\chapter{System Analysis Method}
 
-
-\section{Cosa stiamo facendo? Quali sono le misure?}
+The goal of this work is to develop and to assess the feasability of an experimental method that allows to study the interaction between the AI controller and the Safety Monitor, with particulare attention to these aspectes:
 
 \begin{itemize}
-	
-	\item Vedere come cambia l'interazione fra monitor e rete neurale quando questa continua ad imparare
-	\item Quanti e quali sono gli alert generati dal monitor
-	\item Perche` siamo interessati a questo? (paper Strigini-Popov + RAND study, Koopmann ecc)
-	
+	\item How much and in what way the benefits given from the use of a safety-monitor can vary the more the neural network learns
+	\item How much vary the effectiveness of the same monitor when applied to two different networks
+	\item What features of the monitor determines an improvement (or worsening) to the safety of the system
+	\item What aspects of the neural network training have an impact on the monitor usefulness
 \end{itemize}
 
+Safety-Monitors are developed in order to detect failures undetected by the network, therefore it is desiderable that the failures covered by the monitor don't overlap with the failures detected by the network. If this will be almost certainly true when the network is in the early stage of training, the lack of scientific results in this topic raises some concerns, while in the industry the long-time usefulness of the safety monitor is not even questioned.\newline
+The problem when it comes to neural network is that, since they learn in a way that humans can loosely control, we can't predict what will be the most likely safety-hazard scenarios, nor we can efficiently test them. [assessing ultra-high dependability]
 
-\section{Strumenti utilizzati}
+The reasoning behind this study is that it can not be guaranteed the long-time usefulness of the safety-monitor [assessing asymmetric systems EQ. 11].\newline
 
-In questa sezione spieghiamo il tipo di analisi condotta, elenchiamo i tool utilizzati e le scelte/assunzioni fatte.\newline
+coverage dei casi coperti dal monitor come cambia
 
+\section{Tools and softwares}
+
+\subsection{Carla Simulator}
+
+In order to have a realistic environment, with accurate physics simulation and data sensors, the open-source simulator Carla was used. This simulator was developed with the purpose of offering an environment where AI agents can be trained to drive.\newline
 
 \begin{itemize}
 	\item CARLA
@@ -24,24 +29,28 @@ In questa sezione spieghiamo il tipo di analisi condotta, elenchiamo i tool util
 	\item Point Cloud Library per filtrare i dati
 \end{itemize}
 
-\section{Descrizione della metodologia}
-
-\begin{itemize}
-	
-	\item Come vengono effettuati gli esperimenti (scenari? durata fissa? ad oltranza? fino ad un fallimento? \dots)
-	\item Misure scelte - estrapolazione misure
-	
-\end{itemize}
-
 \section{Architettura del software (estrapolazione dati, interazione rete-monitor)}
 
 \begin{itemize}
 	
-	
 	\item Interazione rete-monitor
-	\item Safety Monitor - obstacle detection
+	\item Safety Monitor Implementation - obstacle detection
 	\item Come vengono raccolti i dati
 	\item Come vengono preprocessati
 	
 \end{itemize}
 
+\section{Experiments methodology}
+
+The study consists of several experiments in which we observe how the coverage of the safety-monitor (i.e. the probability of raising an alert if there really is a safety-hazard) vary with respect to a neural network in different stages of training.\newline
+The first step to perform the analysis is to define what are the metrics of interest and how these can be measured. This task is harder than it seems because it's unknown \textsl{a priori} what the probability distribution function of the hazardous scenarios will be. This means that we don't know whether the probability of observing a failure depends on the \textsl{running time} of the experiment (e.g. the more the agent drives, the more likely a failure will happen) or if it depends on other factors.\newline
+For this reason we decided to measure the length of an experiment in terms of number of failures: given the same initial scenario, two agents (one communicating with the monitor, the other relying solely on the AI) are let driving until n failures happen. We then observe the elapsed time between the start of the experiment and the moment the n^{th} failure happened.\newline
+(Other metrics: velocita` a cui andava la macchina), (direzione da cui veniva l'altro veicolo se incidente)
+---> per capire le situazioni in cui sbaglia di piu`
+
+	\begin{itemize}
+		
+		\item Come vengono effettuati gli esperimenti (scenari? durata fissa? ad oltranza? fino ad un fallimento? \dots)
+		\item Misure scelte - estrapolazione misure
+		
+	\end{itemize}
