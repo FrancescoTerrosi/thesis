@@ -44,7 +44,20 @@ In order to have a realistic environment, with accurate physics simulation and d
 
 The study consists of several experiments in which we observe how the coverage of the safety-monitor (i.e. the probability of raising an alert if there really is a safety-hazard) vary with respect to a neural network in different stages of training.\newline
 The first step to perform the analysis is to define what are the metrics of interest and how these can be measured. This task is harder than it seems because it's unknown \textsl{a priori} what the probability distribution function of the hazardous scenarios will be. This means that we don't know whether the probability of observing a failure depends on the \textsl{running time} of the experiment (e.g. the more the agent drives, the more likely a failure will happen) or if it depends on other factors.\newline
-For this reason we decided to measure the length of an experiment in terms of number of failures: given the same initial scenario, two agents (one communicating with the monitor, the other relying solely on the AI) are let driving until n failures happen. We then observe the elapsed time between the start of the experiment and the moment the n^{th} failure happened.\newline
+For this reason we decided to measure the length of an experiment in terms of number of failures: given the same initial scenario, two agents (one communicating with the monitor, the other relying solely on the AI) are let driving until n failures happen. We then observe the elapsed time between the start of the experiment and the moment the $n_{th}$ failure happened.\newline
+The time to (the $n_{th}$) failure provides useful informations on the \textsl{efficacy} of the monitor. However, this metric itself can't be used alone to assess the potential safety gain given by safety checking the actions of the neural networks. \newline *****************************\newline TO REVIEW: \newline *************************\newline
+This is why, for each failure, different data were recorded such as:
+\begin{itemize}
+	\item Whether or not the monitor raised an alarm
+	\item The change in speed of the car after the alarm was raised
+	\item If a collision with a vehicle V occured, the speed and the direction of V
+\end{itemize}
+
+\begin{itemize}
+	\item Falsi positivi falsi negativi?
+\end{itemize}
+
+In this way it's possible to measure more efficiently the overlapping between the set of safety hazards covered by the AI and the one covered by the Monitor,
 (Other metrics: velocita` a cui andava la macchina), (direzione da cui veniva l'altro veicolo se incidente)
 ---> per capire le situazioni in cui sbaglia di piu`
 
