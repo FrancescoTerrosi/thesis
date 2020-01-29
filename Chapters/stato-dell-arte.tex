@@ -1,6 +1,11 @@
-\chapter{Stato dell'arte - o introduzione?}
+\chapter{Automotive - State of art}
+
+
+** TODO **
+
 
 \section{Introduzione alle self-driving cars qui?}
+
 
 Automotive technology has been one of the hottest topic of the decade.\newline 
 With the continuously growing hardware and software technologies, completely autonomous vehicles don't seem to be unfeasible anymore: multiple sensors can retrieve high quality data from the surrounding environment and new Artificial Intelligence techniques (i.e. neural networks) are capable of working with this data in a manner that outclasses classical statistical models. However, the use of AI to drive cars, requires more focus on safety and the way to assess it.\newline
@@ -33,94 +38,18 @@ Autonomous vehicles can be classified in five levels of autonomy:
 	\end{itemize}
 \end{itemize}
 
-
-
-************    Fare esempi positivi sui risultati raggiunti oggi?\newline
-
-With today technologies, Level 4 vehicles are not too far from being seen on public roads (\cite{Waymo}, \cite{Uber}) and the scientific community is working hard to make Level 5 cars real.\newline\newline
-
-*****************************\newline\newline
-
-FARE QUA DISCORSO SU SCOPO DELLO STUDIO? RETE-NEURALE -> MONITOR?
-\newline\newline
-*****************************\newline\newline
-In this study we are interested at assessing Level 5 cars' safety
-
-**************************
-
-DA TRADURRE
-**************************
+******************
 
 \section{Self-driving cars architecture}
 
-Le macchine a guida autonoma rientrano nella categoria dei sistemi informatici cyber-fisici critici. Anche se gia` di per se` assimilabili nella categoria dei sistemi di sistemi (dal momento che vi sono piu` constituent systems che interagiscono fra loro), l'obiettivo della comunita` scientifica e` quello di riuscire ad ottenere un sistema di sistemi risultante dall'interconnessione di piu` veicoli autonomi: ognuno di questi sistemi avra` un obiettivo differente (i.e. diverse destinazioni da raggiungere) ma per ottenerlo e` assolutamente necessaria una cooperazione fra essi. Come diretta conseguenza, e` indispensabile che il sistema di controllo del veicolo sappia non solo obbedire al codice della strada ma anche essere in grado di riconoscere le situazioni di potenziale pericolo.\newline
-Un veicolo autonomo dev'essere in gradio di "osservare" l'ambiente circostante, questo e` reso possibile grazie ai sensori installati su di essa.\newline\newline Tipicamente vengono utilizzati:
-\begin{itemize}
-	\item Telecamere
-		\begin{itemize}
-			\item[$\rightarrow$] Necessarie per catturare immagini dell'ambiente
-		\end{itemize}
-	\item Radar, Lidar, Sonar
-		\begin{itemize}
-			\item[$\rightarrow$] Utilizzati per creare una mappa dell'ambiente in cui naviga il veicolo e per percepire gli ostacoli
-		\end{itemize}
-	\item GPS, sensori inerziali, odometria
-		\begin{itemize}
-			\item[$\rightarrow$] Indispensabili per pianificare il percorso da seguire e conoscere la posizione del veicolo nell'ambiente operativo
-		\end{itemize}
-\end{itemize}
-
-\newpage
-
-L'architettura software di un veicolo e` composta da piu` moduli interagenti, dove l'errore di uno di questi potrebbe risultare in una minaccia per la safety del sistema.\newline\newline
-Possiamo semplificare il modello architetturale come composto da tre moduli separati:
-
-
-\begin{itemize}
-	\item Environment Mapping
-	\begin{itemize}
-		\item[$-$] La componente che riceve i dati direttamente dai sensori e si occupa di filtrarli (e.g. per ridurne il rumore e scartare valori poco significativi) ed aggregarli per riconoscere il perimetro dell'area circostante ed eventuali ostacoli
-	\end{itemize}
-	\item Motion control
-	\begin{itemize}
-		\item[$-$] Questo modulo riceve in input i dati dopo che questi sono stati elaborati dal sistema di \textsl{data processing}. Dopo averli osservati, il \textsl{motion planner} decide in che direzione debba proseguire il veicolo; questo comando viene quindi inviato al \textsl{controller}, composto da un modulo di controllo longitudinale (accelerazione) e uno di controllo laterale (sterzo del veicolo), il quale va effettivamente a interagire con gli attuatori del sistema
-	\end{itemize}
-	\item System Supervisor
-	\begin{itemize}
-		\item[$-$] Un supervisore, o monitor, e` il sistema che si occupa di rilevare guasti o fallimenti sia hardware che software. Dal punto di vista hardware, i controlli effettuati sono principalmente sui guasti a componenti hardware e sugli output del \textsl{controller} (ad esempio che appartengano al dominio del sistema). Il monitor software invece si occupa di rilevare inconsistenze fra gli output dei due moduli precedenti. Questo e` di fondamentale importanza in quanto permette di controllare che l'output del \textsl{controller} non porti il sistema in una situazione di pericolo, o peggio: ad un fallimento catastrofico che coinvolgerebbe anche vite umane
-	\end{itemize}
-\end{itemize}
-
-
-===================================================================
-
-IMMAGINE ARCHITETTURA SISTEMA DI CONTROLLO
-[SETTIMANA 1 - LEZIONE 3]
-
-===================================================================
-\newline\newline
-
-Se classicamente venivano implementati in software modelli statistici noti per mappare l'ambiente (e.g. Kalman filter) e modelli fisici o di teoria del controllo per manovrare il veicolo (e.g. PID controller), grazie al progresso nel campo del \textsl{machine learning} avuto negli ultimi anni si e` iniziato a utilizzare reti neurali addestrate alla guida \cite{1} \cite{2}.\newline
-Le reti neurali hanno dimostrato di sapere reagire meglio a situazioni sconosciute rispetto ai meccanismi classici, tuttavia richiedono tanti piu` dati quanto piu` e` complesso il compito da eseguire.\newline
-Questi modelli computazionali inoltre soffrono del cosiddetto \textsl{black box problem}: e` molto difficile riuscire perche` la rete abbia associato l'output \textsl{y} all'input \textsl{x}. Nonostante siano stati proposti alcuni framework \cite{3} per aiutare a comprendere i meccanismi che regolano le decisioni di un'intelligenza artificiale sotto specifiche assunzioni, non si e` ancora trovata una soluzione universale al problema.\newline
-
+Descrizione semplificata dell'architettura hardware (sensori) e software (AI controller, safety checker)
 
 \section{Safety nell'Automotive}
 
 -  Intro e standard
 
-For automotive systems, safety becomes a fundamental requirement to guarantee a minimum level of risk.\newline
-
-
 \subsection{Driving Neural Networks}
 
- - Perche` le neural network sono un problema per la safety | citazioni paperz
+ - Perche` le neural network sono un problema per la safety e perche` e` difficile validarla per questi sistemi| citazioni paperz (RAND study, koopmann, high-dependability systems\dots)
 
-\subsection{Neural network - monitor problem}
-
-Spiegare qui qual e` il problema che vogliamo risolvere
-
---> dalla letteratura sappiamo che nell'interazione fra 2 software la reliability growth di uno non implica una reliability growth di tutto il sistema. (Paper: Assessing Asymmetric Fault-Tolerant Software )
-
-\subsection{Scopo dello studio?}
 

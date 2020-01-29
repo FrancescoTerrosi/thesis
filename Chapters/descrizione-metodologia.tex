@@ -1,0 +1,112 @@
+\chapter{System Analysis Method}
+
+\section{Introduction}
+
+Safety-Monitors are developed in order to check whether the output of the controller would put the system in hazard given the sensors data, therefore it is desiderable that the hazards covered by the monitor don't overlap with the ones detected by the network. If this will almost certainly hold when the network is in the early stage of training, the lack of literature on the effectiveness of these monitors brought us to develop a methodology to study the monitor's behaviour with respect to learning neural networks as our contribution.\newline
+
+The goal of this work is to develop and to assess the feasability of an experimental method that allows to study the interaction between the AI controller of a self-driving car and the Safety Monitor, with particular attention to these aspectes:
+
+\begin{itemize}
+	\item How much and in what way the benefits given from the use of a safety-monitor varies, the more the neural network learns
+	\item Changes in the safety gain provided by the same monitor when applied to two different networks
+	\item What features of the monitor determines an improvement (or worsening) to the safety of the system
+	\item What aspects of the neural network training have an impact on the monitor usefulness
+\end{itemize}
+
+From now on the AI controller will be referred as the \textsl{Primary Component} (or \textsl{Primary}), the \textsl{Safety-Monitor} (\textsl{Monitor}) will be the component meant to read the Primary's output and the sensor data, to correct potential misbehaviours that could bring the system in a catastrophic state. If not differently specified, we will refer to the failures of the Primary Component simply as \textsl{failures} and to the enviroment's state, represented as the data gathered by the sensors, as a \textsl{demand}.\newline
+A Safety Monitor has basically four possible behaviours:
+
+\begin{itemize}
+	\item True Negative
+	\begin{itemize}
+		\item No failure and no alarm raised
+	\end{itemize}
+	\item True Positive
+	\begin{itemize}
+		\item Failure in the Primary correctly detected by the Monitor
+	\end{itemize}
+	\item False Negative
+	\begin{itemize}
+		\item Failure in the Primary not detected by the Monitor
+	\end{itemize}
+	\item False Positive
+	\begin{itemize}
+		\item No failure but Monitor raises alarm
+	\end{itemize}
+\end{itemize}
+
+Ideally a Safety Monitor must not only produce just true negatives and true positives. Moreover, for practical use, the hazards detected by the monitor must not overlap with the hazards the neural network is trained to handle (and therefore not hazardous for the system itself).\newline
+
+============\newline
+Mentre in realta` ci dobbiamo accontentare di partial checker ? (grafico e discorso pag. 3)\newline
+============\newline
+
+The reasoning behind this study stems from these considerations: we don't know how the coverage of the Monitor will change when applied to different networks or different learning stages of a network. Moreover, it's not sure whether these checkers will be useful at an advanced state of learning, if not detrimental to the system's safety.\newline
+Ideally we can plot the hazards covered by the whole system as those covered by the Primary, and those covered by the Checker as in the next figure:
+
+======================= \newline
+Grafico overlapping safety \newline
+======================= \newline
+
+As the network learns, we expect the area covered by the Primary to grow. With a relatively simple Monitor, in relatively simple scenarios, there will potentially be no overlapping between the hazard areas covered by the two. In this phase, the safety gain provided by the use of a (correctly implemented) safety checker will be remarkable, since the Primary is still learning to handle "easy" demands. As pointed in the previous sections, our main goal is to observe and study the variation of the dependability provided by the monitor when the network is trained to handle "hard" demands, since there are no guarantees on the Monitor's performance in the long period.\newline
+As noted in \cite{striginiPopov} the probability of a failure for a \textsl{system} composed by a \textsl{Primary Component} and a \textsl{Safety-Monitor} 
+
+\begin{equation}
+	P_{fp} (1 - Coverage_{\sigma}) - covariance_{Q} (\theta (X), C_{\sigma} (\sigma , X))
+\end{equation}
+
+where:
+
+\begin{itemize}
+	\item $P_{fp} (1 - Coverage_{\sigma})$ is the probability of a failure in the Primary Component ($P_{fp}$) that is \textbf{not detected} by the Safety Monitor (the term $1 - Coverage_{\sigma}$ is exactly the probability of having a false negative/positive)
+	\item $covariance_{Q} (\theta (X), C_{\sigma}, X)$ measures the correlation between:
+	\begin{itemize}
+		\item[$\theta (X)$ -] The expected probability that the Primary will fail when processing demand $X$
+		\item[$C_{\sigma} (\sigma, X)$ -] is the term identifying the \textsl{Coverage} of the Monitor, with respect to the specific demand $X$
+	\end{itemize}
+\end{itemize}
+
+NEGLI SCENARI SEMPLICI OVERLAPPANO MA SE CAMBIAMO LE CARTE IN TAVOLA? eheHEHEHEHEHE
+
+QUESTE SONO LE DOMANDE DELLA TESI: COSA SUCCEDE SE OVERLAPPANO QUANDO OVERLAPPANO?S
+
+
+
++++ GRAFICO Su "COMPORTAMENTO CORRETTO" ? +++++\newline
+It has been proved that Neural Networks can respond to very hard demands in ways that outclasses mankind, when trained properly. From a safety point of view, the learning phase can be seen as in figure 1:\newline
+
+==============================\newline
+
+Potenzialmente grafico che va a minimizzare l'area di failures del sistema\newline
+
+==============================\newline
+
+Proseguire con coverage dei casi coperti dal monitor come cambia
+
+\section{Experiments methodology}
+
+The study consists of several experiments in which we observe how the coverage of the safety-monitor (i.e. the probability of raising an alert if there really is a safety-hazard) vary with respect to a neural network in different stages of training.\newline
+The first step to perform the analysis is to define what are the metrics of interest and how these can be measured. This task is harder than it seems because it's unknown \textsl{a priori} what the probability distribution function of the hazardous scenarios will be. This means that we don't know whether the probability of observing a failure depends on the \textsl{running time} of the experiment (e.g. the more the agent drives, the more likely a failure will happen) or if it depends on other factors.\newline
+For this reason we decided to measure the length of an experiment in terms of number of failures: given the same initial scenario, two agents (one communicating with the monitor, the other relying solely on the AI) are let driving until n failures happen. We then observe the elapsed time between the start of the experiment and the moment the $n_{th}$ failure happened.\newline
+The time to (the $n_{th}$) failure provides useful informations on the \textsl{efficacy} of the monitor. However, this metric itself can't be used alone to assess the potential safety gain provided by safety checking the actions of the neural networks.\newline
+
+*****************************\newline 
+TO REVIEW: 
+\newline *************************\newline
+This is why, for each failure, different data were recorded such as:
+\begin{itemize}
+	\item Whether or not the monitor raised an alarm
+	\item The change in speed of the car after the alarm was raised
+	\item If a collision with a vehicle V occured, the speed and the direction of V
+\end{itemize}
+
+In this way it's possible to measure more efficiently the overlapping between the set of safety hazards covered by the AI and the one covered by the Monitor,
+(Other metrics: velocita` a cui andava la macchina), (direzione da cui veniva l'altro veicolo se incidente)
+---> per capire le situazioni in cui sbaglia di piu`
+
+	\begin{itemize}
+		
+		\item Come vengono effettuati gli esperimenti (scenari? durata fissa? ad oltranza? fino ad un fallimento? \dots)
+		\item Misure scelte - estrapolazione misure
+		
+	\end{itemize}
