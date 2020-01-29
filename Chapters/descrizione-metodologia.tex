@@ -49,7 +49,7 @@ Grafico overlapping safety \newline
 ======================= \newline
 
 As the network learns, we expect the area covered by the Primary to grow. With a relatively simple Monitor, in relatively simple scenarios, there will potentially be no overlapping between the hazard areas covered by the two. In this phase, the safety gain provided by the use of a (correctly implemented) safety checker will be remarkable, since the Primary is still learning to handle "easy" demands. As pointed in the previous sections, our main goal is to observe and study the variation of the dependability provided by the monitor when the network is trained to handle "hard" demands, since there are no guarantees on the Monitor's performance in the long period.\newline
-As noted in \cite{striginiPopov} the probability of a failure for a \textsl{system} composed by a \textsl{Primary Component} and a \textsl{Safety-Monitor} 
+As noted in \cite{striginiPopov} the probability of a failure for a \textsl{system} composed by a \textsl{Primary Component} and a \textsl{Safety-Monitor} on a random demand X is:
 
 \begin{equation}
 	P_{fp} (1 - Coverage_{\sigma}) - covariance_{Q} (\theta (X), C_{\sigma} (\sigma , X))
@@ -59,12 +59,28 @@ where:
 
 \begin{itemize}
 	\item $P_{fp} (1 - Coverage_{\sigma})$ is the probability of a failure in the Primary Component ($P_{fp}$) that is \textbf{not detected} by the Safety Monitor (the term $1 - Coverage_{\sigma}$ is exactly the probability of having a false negative/positive)
-	\item $covariance_{Q} (\theta (X), C_{\sigma}, X)$ measures the correlation between:
+	\item $covariance_{Q} (\theta (X), C_{\sigma}, X)$ given a demand profile $Q = <x, y>$ (i.e. the pair <demand, output), measures the correlation between:
 	\begin{itemize}
 		\item[$\theta (X)$ -] The expected probability that the Primary will fail when processing demand $X$
-		\item[$C_{\sigma} (\sigma, X)$ -] is the term identifying the \textsl{Coverage} of the Monitor, with respect to the specific demand $X$
+		\item[$C_{\sigma} (\sigma, X)$ -] the term identifying the \textsl{Coverage Factor} of the \textbf{Monitor}, on the specific demand $X$
 	\end{itemize}
 \end{itemize}
+
+*********************\newline
+IN PROGRESS\newline
+*********************\newline
+
+This formula highlights the deep connection between the safety levels of the Controller and the Monitor, when it comes to the global safety of the system. It is clear from the equation that the probability of observing a failure in the system is also depending on the specific demand $X$.\newline 
+
+***************\newline
+
+TO REVIEW:\newline
+
+***************\newline
+
+The formula points the fact that to have the probability of observing a failure in the system depends from \textsl{all the possible demands} in the \textsl{demand space} (i.e. the set of all)
+Now recall that a demand is a pair $<x, y>$ where x is some sort of representation of the environment, and y the output of the Primary Component (the neural network).\newline
+This puts the basis for our study in assessing what (set of inputs)makes some demands harder than others for the network and the monitor and 
 
 NEGLI SCENARI SEMPLICI OVERLAPPANO MA SE CAMBIAMO LE CARTE IN TAVOLA? eheHEHEHEHEHE
 
