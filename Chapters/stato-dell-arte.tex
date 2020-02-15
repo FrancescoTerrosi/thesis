@@ -1,46 +1,8 @@
 \chapter{Automotive - State of art}
 
-
-** TODO **
-
-
-\section{Introduzione alle self-driving cars qui?}
-
-
-Automotive technology has been one of the hottest topic of the decade.\newline 
-With the continuously growing hardware and software technologies, completely autonomous vehicles don't seem to be unfeasible anymore: multiple sensors can retrieve high quality data from the surrounding environment and new Artificial Intelligence techniques (i.e. neural networks) are capable of working with this data in a manner that outclasses classical statistical models. However, the use of AI to drive cars, requires more focus on safety and the way to assess it.\newline
-Autonomous vehicles can be classified in five levels of autonomy:
-
-\begin{itemize}
-	\item[Level 0 -] No Automation
-	\begin{itemize}
-		\item[$\rightarrow$] The human driver performs all the tasks, such as steering, accelerating, braking\dots Cars with \textsl{forward collision warning systems} and \textsl{lane keep assist} fall in this category
-	\end{itemize}
-	\item[Level 1 -] Driver Assistance
-	\begin{itemize}
-		\item[$\rightarrow$] The vehicle assists the human driver in relatively simple tasks (e.g. adaptive cruise control)
-	\end{itemize}
-	\item[Level 2 -] Partial Automation
-	\begin{itemize}
-		\item[$\rightarrow$] At this level the vehicle is capable of performing more complex tasks (e.g. \textsl{Parking assistance, Tesla's Autopilot}) but the driver still must be able to correct unexpected behaviours of the car.
-	\end{itemize}
-	\item[Level 3 -] Conditional Automation
-	\begin{itemize}
-		\item[$\rightarrow$ ] Level three automation means that the vehicle is now in full control under specific conditions (e.g. riding on a highway). However the human driver still must be able to intervene when requested by the system to do so
-	\end{itemize}
-	\item[Level 4 -] High Automation
-	\begin{itemize}
-		\item[$\rightarrow$] At this level the vehicle can drive completely autonomously, \textsl{without} any kind of human interaction. However, they are subjected to specific conditions and assumptions that, when not fulfilled, may result in unexpected behaviours (or catastrophic failures!)
-	\end{itemize}
-	\item[Level 5 -] Complete Automation
-	\begin{itemize}
-		\item[$\rightarrow$] True driverless cars. Human intervention is not needed at all and the car can operate in every condition and environment.
-	\end{itemize}
-\end{itemize}
-
-******************
-
 \section{Self-driving cars architecture}
+
+??????
 
 Descrizione semplificata dell'architettura hardware (sensori) e software (AI controller, safety checker)
 
@@ -48,8 +10,48 @@ Descrizione semplificata dell'architettura hardware (sensori) e software (AI con
 
 -  Intro e standard
 
-\subsection{Driving Neural Networks}
+- Perche` le neural network sono un problema per la safety e perche` e` difficile validarla per questi sistemi| citazioni paperz (RAND study, koopmann, high-dependability systems\dots)
 
- - Perche` le neural network sono un problema per la safety e perche` e` difficile validarla per questi sistemi| citazioni paperz (RAND study, koopmann, high-dependability systems\dots)
+
+
+\subsection{Controller - Checker Problem}
+
+======================= \newline
+Grafico overlapping safety \newline
+======================= \newline
+
+As the network learns, we expect the area covered by the Primary to grow. With a relatively simple Monitor, in relatively simple scenarios, there will potentially be no overlapping between the hazard areas covered by the two. In this phase, the safety gain provided by the use of a (correctly implemented) safety checker will be remarkable, since the Primary is still learning to handle "easy" demands. As pointed in the previous sections, our main goal is to observe and study the variation of the dependability provided by the monitor when the network is trained to handle "hard" demands, since there are no guarantees on the Monitor's performance in the long period.\newline
+As noted in \cite{striginiPopov} the probability of a failure for a \textsl{system} composed by a \textsl{Primary Component} and a \textsl{Safety-Monitor} on a random demand X is:
+
+\begin{equation}
+P_{fp} (1 - Coverage_{\sigma}) - covariance_{Q} (\theta (X), C_{\sigma} (\sigma , X))
+\end{equation}
+
+where:
+
+\begin{itemize}
+	\item $P_{fp} (1 - Coverage_{\sigma})$ is the probability of a failure in the Primary Component ($P_{fp}$) that is \textbf{not detected} by the Safety Monitor (the term $1 - Coverage_{\sigma}$ is exactly the probability of having a false negative/positive)
+	\item $covariance_{Q} (\theta (X), C_{\sigma}, X)$ given a demand profile $Q = <x, y>$ (i.e. the pair <demand, output), measures the correlation between:
+	\begin{itemize}
+		\item[$\theta (X)$ -] The expected probability that the Primary will fail when processing demand $X$
+		\item[$C_{\sigma} (\sigma, X)$ -] the term identifying the \textsl{Coverage Factor} of the \textbf{Monitor}, on the specific demand $X$
+	\end{itemize}
+\end{itemize}
+
+This formula highlights the deep connection between the safety levels of the Controller and the Monitor, when it comes to the global safety of the system. It is clear from the equation that the probability of observing a failure in the system is also depending on the specific demand $X$, that's 
+.\newline
+
+***************\newline
+
+TO REVIEW:\newline
+
+***************\newline
+
+The formula points the fact that to have the probability of observing a failure in the system depends not only on \textsl{all the possible demands} in the \textsl{demand space} but also on how the controller and the monitor react to them.\newline
+This ideas, and the complete lack of literature or studies on the topic, put the basis for our study:
+
+\begin{itemize}
+	\item To prove the feasibility of a methodology to assess the safety level of systems composed by a \textsl{Primary Controller} and a \textsl{Safety Checker}
+\end{itemize}
 
 
