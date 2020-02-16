@@ -15,45 +15,42 @@ The main aspects we are interested in are:
 	\item Possible behaviours of the neural network having an impact on the monitor usefulness
 \end{itemize}
 
-At the system level, we want to minimize the probability of a safety-failure (e.g. a crash). As long as the network is trained properly, we expect that $P_{n_{i}}(failure) \geq P_{n_{i+j}}(failure)$ where $n_{i}$ represents a neural network trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of fault tolerance if the network is improved.\newline
-After the definition of $n$ scenarios in which the system must be tested, the safety of the controller was measured in the following way:
+At the system level, we want to minimize the probability of a safety-failure (e.g. a crash). As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of fault tolerance if the network is improved.\newline
+After the definition of $n$ safety cases, $C_{i}$ is tested in all the scenarios and the execution is recorded. Each scenario is then repeated identically but increasing the level of difficulty (e.g. by increasing the number of vehicles in the street or changing the weather) and then combining each variation. The following measures are computed for each difficulty:
 
 \begin{itemize}
-	\item $TTF_{i,j}$ = Running time of a controller at epoch $i$ in the $j_{th}$ scenario 
+	\item $TTF_{i,j} = t$ Running time of a controller at epoch $i$ in the $j_{th}$ scenario 
 	\item $MTTF_{Controller_{i}} = \frac{1}{n} \sum_{k = 0}^{n} TTF_{i,k}$
 \end{itemize}
 
+The controller is then trained again and re-tested in the same scenarios. 
+
 Since we are working in a simulated environment, the time to failure was computed using simulations steps, without loss of generality.\newline 
 
-One of the main problem realated to assessing AVs' safety is the execution time. As said before, the $f_{i} = P(crash)_{at\_gen\_i}$ increases monotonically over time but, the increasing factor should be lower the more the network is trained. This property could result in very long simulations, but it also gives a useful hint for checking whether the system's safety is improving or not.\newline
-Given a network $N$ in 2 generations $g_{1}, \quad g_{2}$ with $g_{2} > g_{1}$ meaning that generation $g_2$ had been trained more time, we can write:\newline\newline
+-------------------------------------------------------------------        FATTO CHE PROB INCIDENTE SOMMI A 1. COME LO ESPRIMO?\newline
 
-
+One of the main problem realated to assessing AVs' safety is the execution time. The probability of a failure increases monotonically over time, but the increasing factor should be lower the more the network is trained, so variation on the hardness of scenarios must be designed accurately. This property could result in very long simulations, but it also gives a useful hint for checking whether the system's safety is improving or not. \newline\newline
 Once trained neural networks become essentially black boxes and even a small variation on the training parameters could result in totally different behaviours during test phase, therefore it can not be assumed that the same software (the monitor) will provide the same level of safety.\newline
-A safety monitor uses statistical models to model the environment around the car collecting data from the sensors. These data are used to predict the next state of the system and eventually put it in a safe state.\newline
-A monitor's prediction can be one of the following:
+The monitor must be tested in the same scenarios in which the controller was tested and should not intervene during the simulation, but at the rigth time needed to prevent the failure event if the controller failed the scenario. The simulations previously recorded are now repeated with the monitor activated and the following measures are extracted:
 
 \begin{itemize}
-	\item True Negative
+	\item True Positive Rate
 	\begin{itemize}
-		\item Correct behaviour, no failure and no alarm raised
+		\item Rate of successful failure avoidance where the controller failed.
 	\end{itemize}
-	\item True Positive
+	\item False Positive Rate
 	\begin{itemize}
-		\item Failure in the Controller correctly detected and corrected by the Monitor
+		\item Rate of the events in which there's no failure but Monitor raises alarm. It is important that the fault-tolerance mechanism is not activated or the simulation will be compromised
 	\end{itemize}
-	\item False Negative
+	\item False Negative Rate
 	\begin{itemize}
-		\item Failure of the Controller not detected by the Monitor
-	\end{itemize}
-	\item False Positive
-	\begin{itemize}
-		\item No failure but Monitor raises alarm
+		\item Rate of failures in the controller not detected by the monitor
 	\end{itemize}
 \end{itemize}
 
 Of course we desire the monitor's detections to be the most accurate possible. For this reason \textsl{Sensitivity}\footnote{True Positive rate: the proportion of safety measures applied by the monitor when actually needed} and False Negative rate were chosen as measures of interest.\newline
 While in most of the cases a false positive will result in a state of degraded service, since a self-driving car is a safety-critical system performing in a dynamic environment, a false positive could put the system in an unsafe state (imagine performing an emergency brake for no reason on the highway), so False positive rate was taken into account as well.\newline
+However, these measures themselves aren't sufficient to detect changes in the interaction between the two CSs, so it's useful to record data such as the vehicle's speed and the controller's throttling/steering and to combine them with data recorded from the monitor to detect possible tendencies across the behaviours.
 
 *****************************\newline 
 TO REVIEW: 
