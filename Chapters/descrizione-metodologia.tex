@@ -3,23 +3,24 @@
 In this chapter is presented a method to study the safety level of an autonomous car over time, observing the emergence resulting from the interactions of a neural network controller and a safety monitor in a simulated environment.\newline
 A neural network was trained, tested and trained again several times with and without the safety monitor, to collect data about the emergence of these components.
 
-\section{Measures of interest}
+\section{Experimental Environment and Measures}
 
 The goal of this work is to develop and to assess the feasability of an experimental method for the safety assessment of an autonomous vehicle. Due to the system being composed by two constituent systems: the Controller and the Checker, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.\newline
 The main aspects we are interested in are:
 
 \begin{itemize}
 	\item How the coverage of the system changes when the same monitor is applied to different stages of a network
-	\item Changes in the safety gain provided by the same monitor when applied to two different networks
+	\item Changes in the safety gain provided by the same monitor when applied to different networks
 	\item What features of the monitor determine an improvement (or worsening) to the safety of the system
 	\item Possible behaviours of the neural network having an impact on the monitor usefulness
 \end{itemize}
 
-At the system level, we want to minimize the probability of a safety-failure (e.g. a crash). As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of fault tolerance if the network is improved.\newline
-After the definition of $n$ safety cases, $C_{i}$ is tested in all the scenarios and the execution is recorded. Each scenario is then repeated identically but increasing the level of difficulty (e.g. by increasing the number of vehicles in the street or changing the weather) and then combining each variation. The following measures are computed for each difficulty:
+At the system level, we are interested in the probability of a safety-failure (e.g. a crash) and how to minimize it, or in the safety of the system as a result of the training of a neural network, the Controller and a fault tolerance mechanism, the Monitor. As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of fault tolerance if the same network is trained again for $t$ epochs.\newline
+The analysis must start with the definition of $n_{h=0\dots}$ safety cases, where $n$ is the effective number of cases and $h$ is difficulty of the initial conditions. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system and then increasing the difficulty(e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under different points of view:
 
 \begin{itemize}
-	\item $TTF_{i,j} = t$ Running time of a controller at epoch $i$ in the $j_{th}$ scenario 
+	\item $TTF_{i,j_{h}}$ as the time in which the controller fails at epoch $i$ in the ${j_{h}}^{th}$ scenario
+	\item $MTTF_{i,h}$, mean time to failure when the system performs in different level of difficulty 
 	\item $MTTF_{Controller_{i}} = \frac{1}{n} \sum_{k = 0}^{n} TTF_{i,k}$
 \end{itemize}
 
@@ -50,22 +51,13 @@ The monitor must be tested in the same scenarios in which the controller was tes
 
 Of course we desire the monitor's detections to be the most accurate possible. For this reason \textsl{Sensitivity}\footnote{True Positive rate: the proportion of safety measures applied by the monitor when actually needed} and False Negative rate were chosen as measures of interest.\newline
 While in most of the cases a false positive will result in a state of degraded service, since a self-driving car is a safety-critical system performing in a dynamic environment, a false positive could put the system in an unsafe state (imagine performing an emergency brake for no reason on the highway), so False positive rate was taken into account as well.\newline
-However, these measures themselves aren't sufficient to detect changes in the interaction between the two CSs, so it's useful to record data such as the vehicle's speed and the controller's throttling/steering and to combine them with data recorded from the monitor to detect possible tendencies across the behaviours.
+However, these measures themselves aren't sufficient to detect changes in the interaction between the two CSs, so it's useful to record data such as the vehicle's speed and the controller's throttling/steering and to combine them with data recorded from the monitor to detect possible correlations between the behaviours.
+These values must be recomputed not only when the Monitor is improved (either by implementing a more sophisticated detection method or by improving the quality of sensors) but also when the network is trained because/due to...
+=============================================================================================
+GIUSTIFICARE QUI IL DISCORSO FAMOSO O RIMANDARE A CAPITOLO PRECEDENTE SU LETTERATURA?
+==============================================================================================
 
-*****************************\newline 
-TO REVIEW: 
-\newline *************************\newline
-This is why, for each failure, different data were recorded such as:
-\begin{itemize}
-	\item Whether or not the monitor raised an alarm
-	\item The change in speed of the car after the alarm was raised
-	\item If a collision with a vehicle V occured, the speed and the direction of V
-\end{itemize}
-
-In this way it's possible to measure more efficiently the overlapping between the set of safety hazards covered by the AI and the one covered by the Monitor,
-(Other metrics: velocita` a cui andava la macchina), (direzione da cui veniva l'altro veicolo se incidente)
----> per capire le situazioni in cui sbaglia di piu`
-
+When all the data are collected for each scenario
 
 \section{Experiments methodology}
 
