@@ -3,7 +3,7 @@
 In this chapter is presented a method to study the safety level of an autonomous car over time, observing the emergence resulting from the interactions of a neural network controller and a safety monitor in a simulated environment.\newline
 A neural network was trained, tested and trained again several times with and without the safety monitor, to collect data about the emergence of these components.
 
-\section{Experimental Environment and Measures}
+\section{Experiments Preparation and Measures}
 
 The goal of this work is to develop and to assess the feasability of an experimental method for the safety assessment of an autonomous vehicle. Due to the system being composed by two constituent systems: the Controller and the Checker, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.\newline
 The main aspects we are interested in are:
@@ -16,11 +16,11 @@ The main aspects we are interested in are:
 \end{itemize}
 
 At the system level, we are interested in the probability of a safety-failure (e.g. a crash) and how to minimize it, or in the safety of the system as a result of the training of a neural network, the Controller and a fault tolerance mechanism, the Monitor. As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of fault tolerance if the same network is trained again for $t$ epochs.\newline
-The analysis must start with the definition of $n_{h=0\dots}$ safety cases, where $n$ is the effective number of cases and $h$ is difficulty of the initial conditions. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system and then increasing the difficulty(e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under different points of view:
+The analysis must start with the definition of $n_{h=0\dots}$ safety cases, where $n$ is the effective number of cases and $h$ is the difficulty of the initial conditions. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system ($h=0$) and then increasing the difficulty (e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under different points of view:
 
 \begin{itemize}
 	\item $TTF_{i,j_{h}}$ as the time in which the controller fails at epoch $i$ in the ${j_{h}}^{th}$ scenario
-	\item $MTTF_{i,h}$, mean time to failure when the system performs in different level of difficulty 
+	\item $MTTF_{i,h}$, mean time to failure when the system performs at level of difficulty $h$
 	\item $MTTF_{Controller_{i}} = \frac{1}{n} \sum_{k = 0}^{n} TTF_{i,k}$
 \end{itemize}
 
@@ -57,19 +57,47 @@ These values must be recomputed not only when the Monitor is improved (either by
 GIUSTIFICARE QUI IL DISCORSO FAMOSO O RIMANDARE A CAPITOLO PRECEDENTE SU LETTERATURA?
 ==============================================================================================
 
-When all the data are collected for each scenario
+After collecting the data we need, performances can be easily compared to assure that the use of the same monitor with 2 different networks (or the same network in 2 different epochs) doesn't become detrimental with more expert Controllers.
 
-\section{Experiments methodology}
+\section{Experimental methodology}
 
 In this section we propose and describe the methodology developed in this work.\newline
 
 The study consists of several experiments in a simulated realistic environment, in which we observe how the coverage of the safety-monitor (i.e. the probability of raising an alert if there really is a safety-hazard) varies with respect to a neural network \textsl{in different stages of training}.\newline
-The first step to perform the analysis is to define what are the metrics of interest.
+The definition of the $n_{0}$ safety cases are the first step to perform the analysis. Each scenario should be different in terms of initial conditions for the System, but the environment should be identical. For example, given that in a situation of regular traffic the amount of cars is at most $m$, all the $n_{0}$ scenarios should spawn $m$ cars, but the initial state of the system should be different (e.g. by changing the starting point). Now, after defining $h$ hardenings of the, $n_{1\dots h}$ variations of the scenarios are generate (note that here $n$ is fixed). It is important that everything else but the variation specifically designed is identical. For such reason each stage $j_{k, k\neq 0}$ all the parameters of the simulation should be identical to those in the stage $j_{0}$, such as \textsl{seeds} used in pseudo number generators and in general all the parameters not changed by the $k_{th}$ variation.\newline
+The design and definition of the safety cases and the levels of difficulty are subjected to a lot of factors, and it is impossible to cover all the situations that may happen in a real environment. By repeating the same safety cases in worse conditions, we have a better idea of the system's ability to handle unattended situations than creating a specific safety case for the bad condition itself because in such way it's possible to study possible correlations between failures and environmental conditions.\newline
+\newpage
 
-	\begin{itemize}
-		
-		\item Come vengono effettuati gli esperimenti (scenari? durata fissa? ad oltranza? fino ad un fallimento? \dots)
-		
-	\end{itemize}
+\subsection{Safety Assessment}
 
-The efficacy of the constituent systems was studied separately at first. Since the goal of a vehicle is to go from point A to point B without crashing or hitting a pedestrian, the controller was tested at first, recording the the actions performed 
+After the definition of the scenarios, the constituent systems are tested separately to get statistics about the interactions between the two, these data are then compared to those in which the Controller and the Monitor cooperate to fullfill the assigned task.\newline
+The testing phase is organized in the following steps:
+
+\begin{itemize}
+	\item[1] Controller testing phase
+	\item[2] Monitor testing phase
+	\item[3] Data Analysis
+	\item ======================================================
+	\item[?] System testing phase
+	\item[?] Data Analysis
+\end{itemize}
+
+In phase $1$, the controller is tested alone in the $n_{h}$ scenarios. In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
+Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.
+\newline
+========================================================================================
+Credo che questa cosa sia importante. Visto che lavoriamo nell'assunzione (almeno noi) che la macchina si schianti, merita dire di trovare i parametri che rendano "abbastanza" difficile?   ----> si ricollega anche al fatto di uno goal?
+
+========================================================================================
+\newline
+
+It is important that in this step, the \textsl{exact} behaviour is recorded for repeatability, as a sort of black box. This is because a neural networking tested in two execution of the \textsl{same} scenario with the \textls{same} initial condition could take slightly different decisions that would change the rest of the environmental conditions.\newline\newline
+
+=============================================
+
+DISEGNINI PRIMA FASE HEHE
+
+=============================================
+
+In the second step the positives/negatives rates of the Monitor are studied. Our goal is to measure the coverage factor of this component with respect to the failures of the Controller.\newline
+The previously recorded executions are repetead in all the $x_{y}, \: x=1\dots n, \: y=0\dots h$ scenarios, attaching the Monitor to the system. For each scenario, the alerts raised by the Monitor are recorded but the fault-tolerance mechanism is not activated until the instant of time $t$ needed to prevent the failure event. The choice of $t$ is a sensitive issue for the accuracy of the measuresements. If the Monitor is activated too late, the failure will not be prevented and it's not possible to record just the alert raised (if any), since the efficacy of the safety procedure is an indicator of the Monitor's performance. At the same time, if the Monitor is activated too early, a premature alert from the monitor will change the conditions in which the failure occurred. In this case the system may avoid the failure event, but it's impossible to say if the system was "good enough" to avoid the failure or if an early stopping of the car prevented it.
