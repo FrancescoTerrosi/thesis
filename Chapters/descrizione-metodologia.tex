@@ -83,8 +83,9 @@ The testing phase is organized in the following steps:
 \end{itemize}
 
 In step $1$, the controller is tested alone in the $n_{h}$ scenarios. In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
-Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.
-\newline
+Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.\newline
+One of the most critical parameter when designing the scenarios in which the controller will be tested, is the definition of alting criteria: we don't know how long the car must drive before eventually crashing. However this problem is still unsolved and it's let to the user to define \textsl{reasonable} criteria to stop the execution of a scenario. However, we think that whenever a collision is detected the scenario should be considered concluded.
+
 ========================================================================================
 Credo che questa cosa sia importante. Visto che lavoriamo nell'assunzione (almeno noi) che la macchina si schianti, merita dire di trovare i parametri che rendano "abbastanza" difficile?   ----> si ricollega anche al fatto di uno goal?
 
@@ -116,3 +117,5 @@ Given a Controller $C_{i}$ and a Monitor $M$, we calculate the followings:
 \end{equation}
 
 As pointed before, any alert raised before time $z$ are recorded as False Positives. This allows to effectively count the number of false alarms in a given scenario, which can then be easily aggregated with the results from all the simulations to compute a good estimate of the False Positive Rate.\newline
+With a good simulator it's possible to check in every frame if a crash happened and, possibly, with what the car collided. With this information, the time $t$ in which there was a crash can be easily extracted. Assuming a \textsl{proper choice} of $z$, allowing the Monitor to intervene in the time interval $t-z$ allows us to check whether the Monitor correctly detected the hazard or not.\newline
+These values calculated over the sets of the $n$ scenario, for all the $h$ difficulties, is useful to understand once again what kind of situations could put the system at risk, looking at the interaction between these two components.
