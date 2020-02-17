@@ -16,12 +16,12 @@ The main aspects we are interested in are:
 \end{itemize}
 
 At the system level, we are interested in the probability of a safety-failure (e.g. a crash) and how to minimize it, or in the safety of the system as a result of the training of a neural network, the Controller and a fault tolerance mechanism, the Monitor. As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of fault tolerance if the same network is trained again for $t$ epochs.\newline
-The analysis must start with the definition of $n_{h=0\dots}$ safety cases, where $n$ is the effective number of cases and $h$ is the difficulty of the initial conditions. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system ($h=0$) and then increasing the difficulty (e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under different points of view:
+The analysis must start with the definition of $n_{l=0\dots h}$ safety cases, where $n$ is the effective number of cases and $l$ is the difficulty of the initial conditions. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system ($h=0$) and then increasing the difficulty (e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under different points of view:
 
 \begin{itemize}
-	\item $TTF_{i,j_{h}}$ as the time in which the controller fails at epoch $i$ in the ${j_{h}}^{th}$ scenario
-	\item $MTTF_{i,h}$, mean time to failure when the system performs at level of difficulty $h$
-	\item $MTTF_{Controller_{i}} = \frac{1}{n} \sum_{k = 0}^{n} TTF_{i,k}$
+	\item $TTF_{i,j_{l}}$ as the time in which the controller at stage $i$ fails in the ${j_{l}}^{th}$ scenario
+	\item $MTTF_{i,l}$, mean time to failure when the system performs at level of difficulty $l$
+	\item $MTTF_{Controller_{i}} = \frac{1}{n} \sum_{k = 0}^{n} MTTF_{i,k}$
 \end{itemize}
 
 The controller is then trained again and re-tested in the same scenarios. 
@@ -35,15 +35,15 @@ Once trained neural networks become essentially black boxes and even a small var
 The monitor must be tested in the same scenarios in which the controller was tested and should not intervene during the simulation, but at the rigth time needed to prevent the failure event if the controller failed the scenario. The simulations previously recorded are now repeated with the monitor activated and the following measures are extracted:
 
 \begin{itemize}
-	\item True Positive Rate
+	\item True Positive Rate (or \textsl{Sensitivity)})
 	\begin{itemize}
-		\item Rate of successful failure avoidance where the controller failed.
+		\item Rate of successful detections where the controller failed.
 	\end{itemize}
-	\item False Positive Rate
+	\item False Positive Rate (or \textsl{Fall-out})
 	\begin{itemize}
 		\item Rate of the events in which there's no failure but Monitor raises alarm. It is important that the fault-tolerance mechanism is not activated or the simulation will be compromised
 	\end{itemize}
-	\item False Negative Rate
+	\item False Negative Rate (or \textsl{Miss Rate})
 	\begin{itemize}
 		\item Rate of failures in the controller not detected by the monitor
 	\end{itemize}
@@ -82,7 +82,7 @@ The testing phase is organized in the following steps:
 	\item[?] Data Analysis
 \end{itemize}
 
-In phase $1$, the controller is tested alone in the $n_{h}$ scenarios. In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
+In step $1$, the controller is tested alone in the $n_{h}$ scenarios. In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
 Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.
 \newline
 ========================================================================================
@@ -100,4 +100,19 @@ DISEGNINI PRIMA FASE HEHE
 =============================================
 
 In the second step the positives/negatives rates of the Monitor are studied. Our goal is to measure the coverage factor of this component with respect to the failures of the Controller.\newline
-The previously recorded executions are repetead in all the $x_{y}, \: x=1\dots n, \: y=0\dots h$ scenarios, attaching the Monitor to the system. For each scenario, the alerts raised by the Monitor are recorded but the fault-tolerance mechanism is not activated until the instant of time $t$ needed to prevent the failure event. The choice of $t$ is a sensitive issue for the accuracy of the measuresements. If the Monitor is activated too late, the failure will not be prevented and it's not possible to record just the alert raised (if any), since the efficacy of the safety procedure is an indicator of the Monitor's performance. At the same time, if the Monitor is activated too early, a premature alert from the monitor will change the conditions in which the failure occurred. In this case the system may avoid the failure event, but it's impossible to say if the system was "good enough" to avoid the failure or if an early stopping of the car prevented it.
+The \textsl{executions} of the simulations previously recorded are repetead in all the $j_{l}; \: j=1\dots n, \: l=0\dots h$ scenarios, attaching the Monitor to the system. For each scenario, the alerts raised by the Monitor are recorded but the fault-tolerance mechanism is not activated until the instant of time $z$ needed to prevent the failure event. The choice of $z$ is a sensitive issue for the accuracy of the measuresements: if the Monitor is activated too late, the failure will not be prevented and it's not possible to record just the alert raised (if any), since the efficacy of the safety procedure is an indicator of the Monitor's performance. At the same time, if the Monitor is activated too early, a premature alert will change the conditions in which the failure occurred. In this case the system may avoid the failure event, but it's impossible to say if the system was "good enough" to avoid it or if an early stopping of the car caused by a safty brake prevented it.
+
+Using this approach, if the simulation environment and the hardware are powerful enough, it's possible to have a better understanding on which cases are easily handled by the Controller and not by the monitor, and vice versa.
+Given a Controller $C_{i}$ and a Monitor $M$, we calculate the followings:
+
+\begin{equation}
+	FPR = \frac{FP}{FP+TN}
+\end{equation}
+\begin{equation}
+	TPR = \frac{TP}{TP+FN}
+\end{equation}
+\begin{equation}
+	FNR = \frac{FN}{FN+TP} = 1 - TPR
+\end{equation}
+
+As pointed before, any alert raised before time $z$ are recorded as False Positives. This allows to effectively count the number of false alarms in a given scenario, which can then be easily aggregated with the results from all the simulations to compute a good estimate of the False Positive Rate.\newline
