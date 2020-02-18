@@ -1,18 +1,36 @@
 \chapter{Automotive - State of art}
 
+Self driving cars are one of the hottest topics of the decade. Artificial Intelligences specifically trained to drive with machine learning techniques demonstrated that it's possible for a computer to drive cars. However, a failure in these kind of systems may have very serious consequences that could result in people being injuried, or killed. At the same time, it is a problem to certify the ultra-high dependability requirements of these systems. In this chapter, today's problems regarding the safety issues related to self driving cars are reviewed, for that it was decided to conduct this study.
+
 \section{Safety in the Automotive}
 
--  Intro e standard
+The level of autonomy of a car ranges from 0 to 5. Level 0 means no autonomy: a human driver just drives the car, level 5 means that there's no need of human intervention at all and the car is not only capable of driving safely on the road, but it must be able to avoid catastrophic failures that may seriously harm (or kill) people.
+The more autonomous the car is, the higher the dependability requirements are for it to be put on public roads.
+It is well known that demonstrating a system's dependability is not an easy task for itself, it gets even harder with ultra-high dependability systems such as these are. In addition to the problem itself, demonstrating autonomous cars' dependability has two more problems to deal with: how to safely and effectively test the system and the need for neural networks to achieve the task.\newline 
+Lots of studies demonstrated that it's unthinkable to just test cars on the roads. One of these, that we will refer as the RAND Study, answers the question of how many miles of driving would it take to demonstrate autonomous vehicles' reliability using classical statistical inference, saying that if autonomous cars fatality rate was 20\% lower than humans', it would take more than 500 years with \textsl{"a fleet of 100 autonomous vehicles being test-driven 24 hours a day, 365 days a year at an average speed of 25 miles per hour"}. It's just impossible to demonstrate cars' dependability by observing them driving and hope they won't fail. Not just for the quantitative results of the impossibility such as the RAND study, but also because failures and crash are (should be) very rare failures events, therefore it could take too much time for one of these events to happen, or it may not happen at all during tests.\newline\newline
+
+
+This gives an idea of how hard it is to concretely demonstrate safety for autonomous cars. 
+\newline
+
+
+
+
 
 - Perche` le neural network sono un problema per la safety e perche` e` difficile validarla per questi sistemi| citazioni paperz (RAND study, koopmann, high-dependability systems\dots)
 
 
+\section{neural network che guidano}
 
-\subsection{Controller - Checker Problem}
 
-======================= \newline
-Grafico overlapping safety \newline
-======================= \newline
+\section{Controller - Checker Problem}
+
+==============================================================================================
+
+Qui descriverei il nostro problema. Per adesso ho solo copincollato quello che avevo scritto in precedenza, userei questa sezione per giustificare cosa facciamo
+
+=================================================================================================
+
 
 As the network learns, we expect the area covered by the Primary to grow. With a relatively simple Monitor, in relatively simple scenarios, there will potentially be no overlapping between the hazard areas covered by the two. In this phase, the safety gain provided by the use of a (correctly implemented) safety checker will be remarkable, since the Primary is still learning to handle "easy" demands. As pointed in the previous sections, our main goal is to observe and study the variation of the dependability provided by the monitor when the network is trained to handle "hard" demands, since there are no guarantees on the Monitor's performance in the long period.\newline
 As noted in \cite{striginiPopov} the probability of a failure for a \textsl{system} composed by a \textsl{Primary Component} and a \textsl{Safety-Monitor} on a random demand X is:
@@ -42,10 +60,5 @@ TO REVIEW:\newline
 ***************\newline
 
 The formula points the fact that to have the probability of observing a failure in the system depends not only on \textsl{all the possible demands} in the \textsl{demand space} but also on how the controller and the monitor react to them.\newline
-This ideas, and the complete lack of literature or studies on the topic, put the basis for our study:
-
-\begin{itemize}
-	\item To prove the feasibility of a methodology to assess the safety level of systems composed by a \textsl{Primary Controller} and a \textsl{Safety Checker}
-\end{itemize}
 
 
