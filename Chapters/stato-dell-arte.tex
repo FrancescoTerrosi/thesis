@@ -5,15 +5,8 @@ Self driving cars are one of the hottest topics of the decade. Artificial Intell
 \section{Autonomous Cars as CPS}
 
 In order for a car to be able to drive by itself, suitable hardware and software are required. This makes autonomous cars cyber physical computer systems, and the possible catastrophic consequences that a failure in/of these systems can cause, make them fall under the set of critical systems.\newline
-An autonomous vehicle's architecture can be seen, simplifying the \textsl{"engineering"} aspects, as in the next figure:
 
-====================================================================================
-
-FIGURINA
-
-====================================================================================
-
-To sense and map the surrounding environment, the system collects data from multiple sensors. Some of these sensors and how they are used are listed here:
+To sense and map the surrounding environment, the system collects data from multiple sensors. Some of the most important sensors and their purpose are listed here:
 
 \begin{itemize}
 	\item GPS
@@ -34,7 +27,15 @@ To sense and map the surrounding environment, the system collects data from mult
 	\end{itemize}
 \end{itemize}
 
+Outputs from these sensors are combined and given to the car's control system.
+An abstraction of the software architecture is shown in this figure:\newline\newline
 
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/av-architecture.png}
+\end{figure}
+
+Data from sensors are inputs of the control system, here simplified as compose by two constituent systems: one in charge of collecting data directly from the sensors, process them in order to build an \textsl{occupancy grid}\footnote{A matrix mapping the environment, the cells $a_{i,j}$ are flagged with 0 if there's no object at coordinates $i,j$, 1 if occupied.} to map the surrounding area and to create a physical model of the environment in order to follow the correct route to the destination without crashing. The Controller (usually composed of a Velocity Controller\footnote{Controller in charge of adjusting the vehicle's speed} and a Steering Controller\footnote{Controller that determines the steering angle} uses these data to adjust the values on the actuator controlling the movements of the car: throttle, brake and steer.\newline
+Due to the criticity of their task, it's mandatory to have a System Supervisor, a System in charge of detecting possible hardware failures or wrong\footnote{With \textsl{"wrong"} is intended not only outputs out of the domain space but also outputs that would cause the system to fail (e.g. causing a crash)} outputs from the Control System and, if needed, activate a corrective routine.
 
 
 \section{Safety in the Automotive}
