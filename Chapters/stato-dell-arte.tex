@@ -4,10 +4,38 @@ Self driving cars are one of the hottest topics of the decade. Artificial Intell
 
 \section{Autonomous Cars as CPS}
 
+In order for a car to be able to drive by itself, suitable hardware and software are required. This makes autonomous cars cyber physical computer systems, and the possible catastrophic consequences that a failure in/of these systems can cause, make them fall under the set of critical systems.\newline
+An autonomous vehicle's architecture can be seen, simplifying the \textsl{"engineering"} aspects, as in the next figure:
+
+====================================================================================
+
+FIGURINA
+
+====================================================================================
+
+To sense and map the surrounding environment, the system collects data from multiple sensors. Some of these sensors and how they are used are listed here:
+
 \begin{itemize}
-	\item Parlare di macchine autonome e come queste sono CPS
-	\item Architettura alto livello: controller - monitor
+	\item GPS
+	\begin{itemize}
+		\item[$\rightarrow$] High precision GPS sensors are used to estimate the exact position on the vehicle in the world
+	\end{itemize}
+	\item Odometry \& IMU sensors
+	\begin{itemize}
+		\item[$\rightarrow$] These sensors are worth for detecting changes in the position of the car and of the objects in the environment over time
+	\end{itemize}
+	\item Cameras
+	\begin{itemize}
+		\item[$\rightarrow$] Cameras are literally the \textsl{eyes} of the system. Images captured are usually processed with image recognition software
+	\end{itemize}
+	\item Lidars \& Radars
+	\begin{itemize}
+		\item[$\rightarrow$] Lidars can be seen as the evolution of conventional radars. Data combined from these sensors serve the purpose of mapping the environment and detect obstacles and objects around the car
+	\end{itemize}
 \end{itemize}
+
+
+
 
 \section{Safety in the Automotive}
 
@@ -19,7 +47,7 @@ Lots of studies demonstrated that it's unthinkable to just test cars on the road
 Validating these requirements is a hard task already. Things are made harder by the fact that these cars are driven by neural networks.\newline
 In these years there is a huge interest in the \textsl{machine learning} sector, and this has made that a lot of progress was done in the research. It's also thanks to these progresses that autonomous cars now seem like something we can achieve, since these AIs gave surprising results with their skills and big names such as \textsl{Uber} and \textsl{Tesla} are putting more and more efforts in AI research.
 
-If neural networks gave promising results on one hand, and they seem the only way to achieve goals such as autonomous cars, thanks to their ability to handle situations which they were not specifically programmed to handle, on the other hand the lack of official regulations and certifications of these kinds of software raised some concerns, especially after dramatic events such as the death of a woman in Arizona\cite{arizuber}, and consciousness is growing on the topic, asking for more regulations on companies developing advanced AIs\cite{elonmusk}
+If neural networks gave promising results on one hand, and they seem the only way to achieve goals such as autonomous cars, thanks to their ability to handle situations which they were not specifically programmed to handle, on the other hand the lack of official regulations and certifications of these kinds of software raised some concerns, especially after dramatic events such as the death of a woman in Arizona\cite{arizuber}, and consciousness is growing on the topic, asking for more regulations on companies developing advanced AIs\cite{elonmusk}.
 
 
 

@@ -90,13 +90,11 @@ The testing phase is organized in the following steps:
 \subsection{Controller Testing}
 
 
-In step $1$, the controller is tested alone in the $(h+1)\cdot n$ scenarios. The controller was test with the idea of collecting21
+In step $1$, the controller is tested alone in the $(h+1)\cdot n$ scenarios. This testing phase was developed with the idea of comparing the results of 2 different neural networks (or again, the same neural network but in different stages of training) in mind.
 
-
-
-In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
+In order to have a more complete picture of the networks' behaviour, in addition to the TTFs as defined above additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? \newline
 Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.\newline
-One of the most critical parameter when designing the scenarios in which the controller will be tested, is the definition of alting criteria: we don't know how long the car must drive before eventually crashing. However this problem is still unsolved and it's let to the user to define \textsl{reasonable} criteria to stop the execution of a scenario. However, we think that whenever a collision is detected the scenario should be considered concluded.
+One of the most critical parameters when designing the scenarios in which the controller will be tested, is the definition of alting criteria: we don't know how long the car must drive before eventually crashing. However this problem is still unsolved and it's let to the user to define \textsl{reasonable} criteria to stop an execution. However, we think that whenever a collision is detected the scenario should be considered concluded.
 
 ========================================================================================
 Credo che questa cosa sia importante. Visto che lavoriamo nell'assunzione (almeno noi) che la macchina si schianti, merita dire di trovare i parametri che rendano "abbastanza" difficile?   ----> si ricollega anche al fatto di uno goal?
@@ -104,7 +102,11 @@ Credo che questa cosa sia importante. Visto che lavoriamo nell'assunzione (almen
 ========================================================================================
 \newline
 
-It is important that in this step, the \textsl{exact} behaviour is recorded for repeatability, as a sort of black box. This is because a neural networking tested in two execution of the \textsl{same} scenario with the \textls{same} initial condition could take slightly different decisions that would change the rest of the environmental conditions.\newline\newline
+It is important that in this step, the \textsl{exact} behaviour is recorded for repeatability, as a sort of black box. This is because a neural network tested in two executions of the \textsl{same} scenario with the \textls{same} initial condition could take slightly different decisions that would change the rest of the environmental conditions.\newline
+
+In
+
+
 
 =============================================
 
