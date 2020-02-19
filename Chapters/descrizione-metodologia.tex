@@ -87,7 +87,14 @@ The testing phase is organized in the following steps:
 	\item[?] Data Analysis
 \end{itemize}
 
-In step $1$, the controller is tested alone in the $(h+1)\cdot n$ scenarios. In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
+\subsection{Controller Testing}
+
+
+In step $1$, the controller is tested alone in the $(h+1)\cdot n$ scenarios. The controller was test with the idea of collecting21
+
+
+
+In addition to the TTFs as defined above, additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? The data collected are then aggregated to assess the controller's behaviour.\newline
 Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.\newline
 One of the most critical parameter when designing the scenarios in which the controller will be tested, is the definition of alting criteria: we don't know how long the car must drive before eventually crashing. However this problem is still unsolved and it's let to the user to define \textsl{reasonable} criteria to stop the execution of a scenario. However, we think that whenever a collision is detected the scenario should be considered concluded.
 

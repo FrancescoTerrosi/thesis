@@ -2,16 +2,24 @@
 
 Self driving cars are one of the hottest topics of the decade. Artificial Intelligences specifically trained to drive with machine learning techniques demonstrated that it's possible for a computer to drive cars. However, a failure in these kind of systems may have very serious consequences that could result in people being injuried, or killed. At the same time, it is a problem to certify the ultra-high dependability requirements of these systems. In this chapter, today's problems regarding the safety issues related to self driving cars are reviewed, for that it was decided to conduct this study.
 
+\section{Autonomous Cars as CPS}
+
+\begin{itemize}
+	\item Parlare di macchine autonome e come queste sono CPS
+	\item Architettura alto livello: controller - monitor
+\end{itemize}
+
 \section{Safety in the Automotive}
 
 The level of autonomy of a car ranges from 0 to 5. Level 0 means no autonomy: a human driver just drives the car, level 5 means that there's no need of human intervention at all and the car is not only capable of driving safely on the road, but it must be able to avoid catastrophic failures that may seriously harm (or kill) people.
 The more autonomous the car is, the higher the dependability requirements are for it to be put on public roads.
 It is well known that demonstrating a system's dependability is not an easy task for itself, it gets even harder with ultra-high dependability systems such as these are. In addition to the problem itself, demonstrating autonomous cars' dependability has two more problems to deal with: how to safely and effectively test the system and the need for neural networks to achieve the task.\newline 
-Lots of studies demonstrated that it's unthinkable to just test cars on the roads. One of these, that we will refer as the RAND Study, answers the question of how many miles of driving would it take to demonstrate autonomous vehicles' reliability using classical statistical inference, saying that if autonomous cars fatality rate was 20\% lower than humans', it would take more than 500 years with \textsl{"a fleet of 100 autonomous vehicles being test-driven 24 hours a day, 365 days a year at an average speed of 25 miles per hour"}. It's just impossible to demonstrate cars' dependability by observing them driving and hope they won't fail. Not just for the quantitative results of the impossibility such as the RAND study, but also because failures and crash are (should be) very rare failures events, therefore it could take too much time for one of these events to happen, or it may not happen at all during tests.\newline\newline
+Lots of studies demonstrated that it's unthinkable to just test cars on the roads. One of these, that we will refer as the RAND Study, answers the question of how many miles of driving would it take to demonstrate autonomous vehicles' reliability using classical statistical inference, saying that if autonomous cars fatality rate was 20\% lower than humans', it would take more than 500 years with \textsl{"a fleet of 100 autonomous vehicles being test-driven 24 hours a day, 365 days a year at an average speed of 25 miles per hour"}. It's just impossible to demonstrate cars' dependability by observing them driving and hope they won't fail. Not just for the quantitative results of the impossibility such as the RAND study, but also because failures and crash are (should be) very rare failure events, therefore it could take too much time for one of them to happen, or it may not happen at all during tests.\newline\newline
 
+Validating these requirements is a hard task already. Things are made harder by the fact that these cars are driven by neural networks.\newline
+In these years there is a huge interest in the \textsl{machine learning} sector, and this has made that a lot of progress was done in the research. It's also thanks to these progresses that autonomous cars now seem like something we can achieve, since these AIs gave surprising results with their skills and big names such as \textsl{Uber} and \textsl{Tesla} are putting more and more efforts in AI research.
 
-This gives an idea of how hard it is to concretely demonstrate safety for autonomous cars. 
-\newline
+If neural networks gave promising results on one hand, and they seem the only way to achieve goals such as autonomous cars, thanks to their ability to handle situations which they were not specifically programmed to handle, on the other hand the lack of official regulations and certifications of these kinds of software raised some concerns, especially after dramatic events such as the death of a woman in Arizona\cite{arizuber}, and consciousness is growing on the topic, asking for more regulations on companies developing advanced AIs\cite{elonmusk}
 
 
 
