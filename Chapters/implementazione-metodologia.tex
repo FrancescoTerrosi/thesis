@@ -38,37 +38,36 @@ The 4 sensors available in CARLA 0.8 were used during the experiments. These can
 \end{itemize}
 
 The three cameras were used during the training phase of the network. Three \textsl{"scene final"} cameras are attached to the car to actually \textsl{see} the environment (one on the front and 1 per side). These cameras, combined with the \textsl{"depth map"} camera allows not only the car to see, but also to perceive distances from objects in the scenario.
-The \textsl{"semantic segmentation"} provides image classification features by querying the server for ground-truth values. This is with no doubt a semplification of a real system, where the most powerful image-classification softwares are essentially other neural networks. At the same time a misclassification can be considered as an error of the control system: the safety monitor, combining data from all the available sensors, will not "correct" the misclassification but it must react fast and safely to avoid the potential consequences of it.
+The \textsl{"semantic segmentation"} provides image classification features by querying the server for ground-truth values. This is with no doubt a semplification of a real system, where the most powerful image-classification softwares are essentially other neural networks. At the same time a misclassification can be considered as an error of the control system: the safety monitor, combining data from all the available sensors, will not "correct" the misclassification but it must react fast and safely to avoid the potential consequences of it.\newline
 
-+++====    quindi pensiamo che non importi poi molto?
++++====    quindi pensiamo che non importi poi molto?\newline
 
 A ray-cast based Lidar is the only other sensor available for this version of CARLA. Parameters of this sensor can be easily tuned to simulate real lidars such as the \textsl{Velodyne LiDAR} or to simulate faults such as low data quality, noisy data or data loss\dots
-The most important editable parameters are:
+
+In the simulations, due to the high hw resources requirements to simulate a real lidar, a slightly modified version of the \textsl{Velodyne64 LiDAR} is implemented with the following parameters:
 
 \begin{itemize}
-	\item Channels
+	\item Channels = 64
 	\begin{itemize}
 		\item The number of laser beams used by the system. These lasers are distributed over the vertical axis. The more the lasers are, the more accurate will be the scannings
 	\end{itemize}
-	\item Range
+	\item Range = 75m
 	\begin{itemize}
 		\item Lasers' range in meters
 	\end{itemize}
-	\item Rotation Frequency
+	\item Rotation Frequency = 15 Hz
 	\begin{itemize}
 		\item This parameters define the rotation frequency (in Hz) of the scanning beams.
 	\end{itemize}
-	\item Points Per Second
+	\item Points Per Second = 1.000.000
 	\begin{itemize}
 		\item The actual number of points generated each frame by the sensor
 	\end{itemize}
-	\item Vertical FOV limits
+	\item Vertical FOV bounds (height = 24m, low = -2m. Distances are relative to the position of the sensor)
 	\begin{itemize}
 		\item Maximum and minimum height of the scannings
 	\end{itemize}
-	
 \end{itemize}
-
 
 \begin{itemize}
 	\item CARLA
