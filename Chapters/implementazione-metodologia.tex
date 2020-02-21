@@ -69,12 +69,24 @@ In the simulations, due to the high hw resources requirements to simulate a real
 	\end{itemize}
 \end{itemize}
 
+The simulator provides Python APIs not only to modify sensors, but also to have a great control on what is being simulated, such as seeds definition for the spawning points and the behaviours of pedestrians and vehicles, and on the state of \textsl{"actors"} in the scene such as their position, their speed\dots. All these data are directly provided by the simulator with ground-truth values. These kind of measurements can be simulation-related, such as the simulation time-step, or the FPSs. Actors-related measurements include for example vehicles' speed, intensity of collisions (if any) and the 3D acceleration vector.
+
+\subsection{Self-Driving Network}
+
+The next step was to have an algorithm to train a neural network to drive in CARLA. The software needed to have the following charachteristics:
+
 \begin{itemize}
-	\item CARLA
-	\item Nervana Systems - coach (Intel)
-	\item Reti neurali su git
-	\item Monitor
+	\item[1] Training code must be available
+	\item[2] No known/critical issues in the codebase
+	\item[3] Provide an environment for interfacing the network with CARLA
 \end{itemize}
+
+After analyzing all the machine-learning related projects for CARLA, our choice was the reinforcement-learning framework \textsl{Coach}.\cite{coach}
+
+\subsection{Safety-Monitor Implementation}
+
+PCL
+Implementazione (struttura client-server, object """detection""")
 
 
 \section{Method Implementation}
