@@ -49,22 +49,35 @@ The more autonomous the car is, the higher the dependability requirements are fo
 It is well known that demonstrating a system's dependability is not an easy task for itself, it gets even harder with ultra-high dependability systems such as these are. In adition to the problem itself, demonstrating autonomous cars' dependability has two more problems to deal with: how to safely and effectively test the system and the need for neural networks to achieve the task.
 
 Lots of studies demonstrated that it's unthinkable to just test cars on the roads. One of these, that we will refer to as the RAND Study, answers the question of how many mils of driving would it take to demonstrate autonomous vehicles' reliability using classical statistical inference, saying that if autonomous cars fatality rate was 20\% lower than humans', it would take more than 500 years with \textsl{"a fleet of 100 autonomous vehicles being test-driven 24 hours a day, 365 days a year at an average speed of 25 miles per hour"}.\cite{randstudy}\newline
-
 The validation of ultra-high dependability requirements for safety-critical systems is a well known problem in safety literature and has not been introduced by the advent of autonomous cars. In fact, the RAND study is nothing but a specific case of the problem considered in a work published in 1993 by Littlewood \& Strigini, in which the same concepts (with a deeper level of detail) are discussed.\cite{littlewoodStrigini}\newline
-
-The main problem with the RAND study approach is that future failures frequency can not be predicted just using the observed one. Not just for the quantitative results of the impossibility of it, but also because of this approach can not work: an observed frequency failure of 0 would lead to optimistic (and possibly harmful) predictions. Luckily, this problem is surmountable, as shown in \textsl{this}\cite{zhaoStrigini} work by Zhao et al.\newline\newline
+The main problem with the RAND study approach is that future failures frequency can not be predicted just using the observed one. Not just for the quantitative results of the impossibility of it, but also because of this approach can not work: an observed frequency failure of 0 would lead to optimistic (and possibly harmful) predictions. Luckily, this problem is surmountable, as shown in \textsl{this}\cite{zhaoStrigini} work by Zhao et al.\newline
 
 Validating the dependability requirements of an autonomous car seems a hard task already. Things are made even harder by the fact that these cars are driven by neural networks.\newline
 In these years there is a huge interest in the \textsl{machine learning} sector, and this has made that a lot of progress was done in the research. It's also thanks to these progresses that autonomous cars now seem like something we can achieve, since these AIs gave surprising results with their skills and big names such as \textsl{Uber} and \textsl{Tesla} are putting more and more efforts in AI research.
-
 This new wave of AI research is deeply changing the way we interact with computer systems, and surprising results were achieved with neural networks.\newline
-These tools have proven to outclass \textsl{"classic"} software solutions (intended as non-neural network) in a lot of tasks, ranging from \textsl{Object Detection}\cite{retinaNet} to \textsl{Gaming}\cite{alphaGo} problems, performing even better than humans.\cite{alphaGoBeatsMan}\newline
-
+These tools have proven to outclass \textsl{"classic"} software solutions (intended as non-neural network) in a lot of tasks, ranging from \textsl{Object Detection}\cite{retinaNet} to \textsl{Gaming}\cite{alphaGo} problems, performing even better than humans.\cite{alphaGoBeatsMan}
 The complexity of the environment in which the system performs and the need of quick decision-making procedures and fast responses to events that \textsl{cannot} be planned with \textsl{"classic"} software, make neural networks the perfect tool to achieve the task of a car being able to drive by itself, thanks to their ability to handle multiple situations that were not explicitly written in the software. However, this raises serious issues about the safety of the whole system for many reasons.\newline
 
 If neural networks gave promising results on one hand, and they seem the only way to achieve goals such as autonomous cars, on the other hand it has been shown many times how weird a network's prediction can get when \textsl{minimally} perturbating the inputs\cite{stupidnn} and how high the confidence interval can be.\cite{foolnn} The lack of official regulations and certifications of these kinds of software, as well as the need to truly understand neural networks, is raising concerns on how dependable these systems can be and consciousness is now growing on the topic, asking for more regulations on companies developing advanced AIs.\cite{elonmusk}\newline
 
 \section{Controller - Checker Problem}
+
+
+The interaction between the Control System and the System Supervisor is at the core of the car's movements. The Control System, or \textsl{Primary Component}, is the software performing the main computations of the system, required to drive the car. In a context like this, it's mandatory to have fault-tolerance mechanisms such as the System Supervisor, to avoid catastrophic failures. This kind of architecture is a must for these systems, due to the extremely high dependability requirements they have, in order to try to cover all the possible failures that may happen. The state space of such systems may be sketched in this way:
+\newpage
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/state-space.png}
+	\caption{Sketch of the system's safe states}
+\end{figure}
+
+We consider \textsl{safe states} all the states in which the Controller produces an output that would not result in a crash. For example: the car is riding when suddenly an obstacle appears. If the controller correctly detects the obstacles it should apply a safety-measure to avoid a transition in an \textsl{alert state} (e.g. a safety-brake). If the controller doesn't see the obstacles \textsl{or} if it detects the obstacle but keeps throttling, there is a transition from a \textsl{safe-state} to an \textsl{alert-state}, in which the fault-tolerance components turn in. The System Supervisor's duty is now to launch a corrective-routine that will put the system in a fail-safe state (e.g. by applying the safety-brake not done by the controller). An error of the Supervisor will inevitably cause the system to fail, as a result of the failure of both the component, leading in a failure state (the crash happened). If we model the failures of the system in such way, the level of safety of the system is the union between the failure area covered by the Controller and the one covered by the Supervisor
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/safety-area.png}
+	\caption{Visualization of safety areas}
+\end{figure}
+
 
 ==============================================================================================
 
