@@ -1,21 +1,28 @@
 \chapter{System Analysis Method}
 
-In this chapter is presented a method to study the safety level of an autonomous car over time, observing the emergence resulting from the interactions of a neural network controller and a safety monitor in a simulated environment.\newline
-A neural network was trained, tested and trained again several times with and without the safety monitor, to collect data about the emergence of these components.
-
-\section{Experiments Preparation and Measures}
-
-The goal of this work is to develop and to assess the feasability of an experimental method for the safety assessment of an autonomous vehicle. Due to the system being composed by two constituent systems: the Controller and the Checker, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.\newline
-
-The proposed framework is designed with particular attention on studying the emergence resulting from the interaction of these two consitutent systems. The main aspects we are interested in are:
+The goal of this study is to develop a first experimental methodology intended to observe emergence-related aspects coming from the interaction of a Control System and a System Supervisor.\newline
+The software architecture of an AV was simplified in two main components:
 
 \begin{itemize}
-	\item How the coverage of the system changes when the same monitor is applied to different stages of a network
-	\item Changes in the safety gain provided by the same monitor when applied to different networks
-	\item What features of the monitor determine an improvement (or worsening) to the safety of the system
-	\item What impacts the use of a safety monitor has on the training of a neural network
-	\item Possible behaviours of the neural network having an impact on the monitor usefulness
+	\item A \textsl{Controller}: a Neural Network trained with \textsl{reinforcement learning} algorithms to drive the car, reading ground-truth values from cameras
+	\item A rudimental \textsl{Safety Monitor} that checks whether the car is going too fast towards an object, using LiDAR sensor data
 \end{itemize}
+
+This work focuses on exploring the topic from a different point of view and to assess its feasibility in an experimental, simulated environment. Due to the system being composed by two constituent systems: the Controller and the Monitor, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.
+
+In this chapter is presented and discussed a method to study the safety level of an autonomous car over time, observing the emergence resulting from the interactions of a neural network controller and a safety monitor in a simulated environment.
+
+The proposed framework is designed with particular attention on studying the emergence resulting from the interaction of these two consitutent systems.
+
+The main aspects we are interested in this first stage are:\newline
+
+\begin{itemize}
+	\item How the effectiveness of a monitor changes when the neural network is trained
+	\item Effects of training strategies on the effectiveness of a safety monitor
+\end{itemize}
+
+
+\section{Experiments Preparation and Measures}
 
 At the system level, we are interested in the probability of a safety-failure (e.g. a crash) and how to minimize it, or in the safety of the system as a result of the training of a neural network, the Controller and a fault tolerance mechanism, the Monitor. As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of safety if the same network is trained again for $t$ epochs.\newline
 The analysis must start with the definition of $n_{l=0\dots h}$ safety cases, where $n$ is the effective number of cases and $h$ is used to describe the \textsl{"level of difficulty"} of the simulated environment. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system ($h=0$) and then increasing the difficulty (e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under diverse points of view:
