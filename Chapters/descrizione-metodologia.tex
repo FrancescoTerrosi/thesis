@@ -32,7 +32,19 @@ A neural network will likely give good results after "enough" epochs. The harder
 
 where $checkpoint_{1}$ helds the network's weights at epoch 100, $checkpoint_{2}$ at epoch 200 and so on.\newline
 
-Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as the car procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high (e.g. a pedestrian suddenly cross the street). If and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasonement applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it.
+Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as the car procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high (e.g. a pedestrian suddenly cross the street). If and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it.\newline
+If the controller fails in the way just described, it's the Monitor's duty to run a safety-routine in order to prevent the imminent failure.
+
+In the case of a failure of the Controller, the Monitor not only needs to detect whether it failed or not, but it also must run a safety-routine.
+
+
+
+
+
+
+
+
+
 
 
 \section{Experiments Preparation and Measures}
