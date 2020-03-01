@@ -32,18 +32,29 @@ A neural network will likely give good results after "enough" epochs. The harder
 
 where $checkpoint_{1}$ helds the network's weights at epoch 100, $checkpoint_{2}$ at epoch 200 and so on.\newline
 
-Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as the car procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high (e.g. a pedestrian suddenly cross the street). If and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it.\newline
-If the controller fails in the way just described, it's the Monitor's duty to run a safety-routine in order to prevent the imminent failure.
+Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as the car procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high (e.g. a pedestrian suddenly cross the street) if and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it:
 
-In the case of a failure of the Controller, the Monitor not only needs to detect whether it failed or not, but it also must run a safety-routine.
+\begin{itemize}
+	\item If the Controller takes \textsl{any} action that would result in a crash, it's considered failed
+	\item If an hazardous event happens, i.e. a situation in which the probability of observing a crash is higher than usual, the Controller is considered failed if and only if its actions will not avoid the imminent failure
+\end{itemize}
 
+In this sense, at this stage of knowledge, we don't distinguish between changes in the environment that raises the probability of a crash (e.g. a pedestrian crossing the street) and hazardous actions take by the Controller (e.g. a sudden steer towards a wall).
 
+If the controller fails in the way just described, it's the Monitor's duty to run a safety-routine in order to prevent the imminent failure.\newline
 
+In the case of a failure of the Controller, the Monitor not only needs to detect whether it failed or not, but it also must run a safety-routine to prevent a failure of the whole system. In this first phase of analysis, we consider the action taken by the Monitor to be always safe. This means that:
 
+\begin{itemize}
+	\item If the Monitor executes \textbf{all} the steps in the safety-routine, the system will be in a safe-state.
+	\item A failure of the Safety Monitor may be one of the following:
+	\begin{itemize}
+		\item[1)] The obstacle is not detected
+		\item[2)] The obstacle is detected but the routine fails to terminate its execution (i.e. the detection was too late)
+	\end{itemize}
+\end{itemize}
 
-
-
-
+We consider the system failed if and only if both the Controller and the Safety-Monitor failed, as described above, leading to a crash.
 
 
 
