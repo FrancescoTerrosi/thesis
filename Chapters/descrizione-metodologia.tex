@@ -1,8 +1,8 @@
 \chapter{System Analysis Method}
 
-\section{Introduction and Terminology}
+\section{Introduction}
 
-The goal of this study is to develop a first experimental methodology intended to observe emergence-related aspects coming from the interaction of a Control System and a System Supervisor.\newline
+The goal of this study is to develop a first experimental methodology intended to observe emergence-related aspects coming from the interaction of a Control System and a System Supervisor, analyzing the system in a \textsl{simulated} environment.\newline
 The software architecture of an AV was simplified in two main components:
 
 \begin{itemize}
@@ -56,14 +56,19 @@ In the case of a failure of the Controller, the Monitor not only needs to detect
 
 We consider the system failed if and only if both the Controller and the Safety-Monitor failed, as described above, leading to a crash.
 
-
-\section{Experiments Preliminaries}
-
 At the system level, we are interested in observing the probability of having a failure (crash) and how to minimize it. At the same time we want to observe how the effectiveness of the Safety Monitor changes when the Controller is trained over time.
 
-The first prerequisite is to have $c$ checkpoints of the Controller to be tested. This is useful not only for checking that the network is improving during the training, but also to have a better understanding on how useful is the Monitor when the Controller becomes more and more expert. This is mandatory for the experimental activity as different checkpoints of the same network are tested under the same condition, to observe how the behaviour of the Controller changes in the first stages of the training.
+In order to achieve this, $c$ checkpoints are saved for later testing and comparison. This is useful not only for checking that the network is improving during the training, but also to have a better understanding on how useful is the Monitor when the Controller becomes more and more expert. This is mandatory for the experimental activity as different checkpoints of the same network are tested under the same condition, to observe how the behaviour of the Controller changes in the first stages of the training.
 
-The Safety Monitor can be designed following the needs of the global development. In this work, we considered a simple Safety Monitor in charge of \textsl{detecting} hazardous events, and \textsl{preventing} the failure to happen. We assume that the Monitor is developed following all the standards and good practices for software development, as we are not directly interested in bugs in the software.
+The Safety Monitor can be designed following the needs of the global development process. In this work, we considered a simple Safety Monitor in charge of \textsl{detecting} hazardous events, and \textsl{preventing} the failure to happen. This component reads data from the LiDAR sensor and, if the car is going too fast towards an obstacle, brake before crashing.
+
+
+\section{Experiments Introduction and Preliminaries}
+
+The first prerequisite is to have $c$ checkpoints of the Controller to be tested. 
+
+
+
 
 
 
