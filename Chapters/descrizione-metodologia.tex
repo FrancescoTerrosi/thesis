@@ -23,7 +23,7 @@ The main aspects we are interested in this first stage of exploration are:
 	\item Effects of training strategies on the effectiveness of a safety monitor
 \end{itemize}
 
-One of the most appealing feature of neural networks is that they can be \textsl{trained} on data sets to improve their performance. One stage of training is done by collecting data over \textsl{n} steps and updating the weights of the prediction function. The weights of the function after $i$ training stages represents the \textsl{state} of the network at \textbf{epoch i}.\newline
+One of the most appealing features of neural networks is that they can be \textsl{trained} on data sets to improve their performance. One stage of training is done by collecting data over \textsl{n} steps and updating the weights of the prediction function. The weights of the function after $i$ training stages represents the \textsl{state} of the network at \textbf{epoch i}.\newline
 A neural network will likely give good results after "enough" epochs. The harder the task, the more epochs are needed. Driving a car is a quite hard task and it's inimmaginable to save the weights of each epoch. Therefore, given a neural network N, we define a \textbf{checkpoint} as a generic epoch of N. Say we trained N for 500 epochs. If we save the weights of the prediction function every 100 epochs, we will end up with 5 checkpoints:
 
 \begin{center}
@@ -60,18 +60,72 @@ At the system level, we are interested in observing the probability of having a 
 
 In order to achieve this, $c$ checkpoints are saved for later testing and comparison. This is useful not only for checking that the network is improving during the training, but also to have a better understanding on how useful is the Monitor when the Controller becomes more and more expert. This is mandatory for the experimental activity as different checkpoints of the same network are tested under the same condition, to observe how the behaviour of the Controller changes in the first stages of the training.
 
-The Safety Monitor can be designed following the needs of the global development process. In this work, we considered a simple Safety Monitor in charge of \textsl{detecting} hazardous events, and \textsl{preventing} the failure to happen. This component reads data from the LiDAR sensor and, if the car is going too fast towards an obstacle, brake before crashing.
+The need for multiple checkpoints is mandatory not only to test that the network is improving, but also to observe how the monitor's effectiveness change over time. Moreover, if many checkpoints of the same network are tested under the same scenarios, it is possible to extract interesting measures, as we'll see in the next section.
+
+Before the analysis can start, $n_{h}$ scenarios must be defined. A \textsl{Scenario} is a set of initial conditions (e.g. the spawn point of the car, seeds used in random number generators$\dots$) in which the car is intended to be tested. The pedix $h$ represents the difficulty level for the specific case. The purpose of this is that we are interested in testing the car under the same initial condition but for one factor, in order to have a better understanding on what makes the system fail more often. The $h$ variations should be developed with growing difficulty and at the same time they must be realistic. Given a Scenario $S$, examples of variations may be: to increase the number of cars in the scenario, or to simulate adversal weather conditions. A combination of these 2 variations should result in a \textsl{harder} variation of the scenario\footnote{It is important to notice that what we think to be "harder", may in reality be easier to handle for the car.}.
+
+We hope that the results collected here will help in the process of understanding what makes a situation \textsl{"harder"} than others for such systems.
+
+\section{Experimental Method}
+
+The approach used for this exploratory work is divided in 3 phases:
+
+\begin{itemize}
+	\item Phase 1: Given $c$ checkpoints of a neural network and $n_{h}$ scenarios, the Controller and the Safety Monitor are tested
+	\item Phase 2: The network is retrained from the last checkpoint recorded, using different strategies to improve its performances. The new networks obtained and the (same) Safety Monitor are then retested in all the $n_{h}$ scenarios
+	\item Phase 3: Data Analysis and Comparison
+\end{itemize}
 
 
-\section{Experiments Introduction and Preliminaries}
+In the first phase we are interested in assessing the goodness of the neural network and of the Monitor. This is done in 2 different steps. 
 
-The first prerequisite is to have $c$ checkpoints of the Controller to be tested. 
+In the first step, the $c$ checkpoints of the Controller are tested in all the scenarios. In this step we are mostly interested in observing how the \textsl{Reliability} of the Controller changes with respect to these checkpoints.
+
+One of the main problems when testing a neural network is that of \textsl{repeatability}. It is very unlikely that the \textbf{same} neural network, under the \textbf{same} initial conditions, will behave in the same manner in multiple runs. Due to this property of networks, it may happen that the failure mode observed in one of the runs of the scenario $s_{i}$ will never happen again, or the time needed to make it happen again may be very long.
+How the scenarios and their variations are created is fundamental to observe specific failures, however it's impossible to think to \textsl{all} the possible failure situations that may happen, for this reason we think that the scenario-variation approach may help in solving this issue, creating harder operational situations in which the factors that lead to a crash may be studied.
+
+The repeatibility issue was solved by creating a \textsl{black box} for each run of the scenarios developed for testing. This approach is used to keep a trace of the Controller's actions, so that the specific run may be studied more fully to understand what made tha Controller fail. These data can be then used to better study what hazardous situations are covered by the Controller at a specific checkpoint $j$, and if these situations are still covered when the network is tested at the checkpoint $j+x$.\newline
+
+
+\subsection{Controller Testing}
+
+IL CONTROLLER E` TESTATO IN ISOLAMENTO SENZA MONITOR PERCHE`:
+
+1) NON INTRUSIVITA` --> IL MONITOR INTRUDE (FRENA)
+2) NOI VOGLIAMO VEDERE SE FRENA IN TEMPO NON SOLO SE FA DETECTION ---> NON POSSO TENERLO DISATTIVATO E GUARDARE GLI ALERT ---> PERCHE` NON SO COSA SIA UN FALSO POSITIVO E COSA NO
+
+The Controller is tested in each Scenario for each difficulty level. Recording the action taken by the Controller for \textsl{each} frame (as well as other measures such as the vehicle's speed in that frame) make it possible to have a great control over the data, as a single run may be repeated many times to gather additional data if needed.
 
 
 
 
+When measuring the reliability function $R(t)$ of a system, one of the main measure of interest is its Mean Time To Failure, because it is easy to compute in simulated environments, and it's the starting point to derive other metrics.
+In the Automotive Sector however, data are usually computed with respect to the travelled distance, i.e. Mean Distance to Failure, rate of crashes per kilometers, and so on.
+With our approach, if the simulated environment and the hardware running the simulations are powerful enough to run the simulations at a fixed time-step, it's very easy to switch the point of view on the data.
 
+As long as the neural network is trained properly, we expect the following disequation to hold: $R_{i}(t)\: < \: R_{j}(t)$, where $i$ and $j$ are 2 checkpoints, with $i\: <\: j$. This can be easily verified using the approach defined above to collect the data.
 
+When the controller has been tested for each difficulty, in all the scenarios at least the followings must be computed:
+
+\begin{itemize}
+	\item $MDBF_{i,j} = \frac{\#\: of\: faults}{meters\: travelled}$
+	\begin{itemize}
+		\item[-] Mean Distance Between Failure for the $i^{th}$ checkpoint, at the $j^{th}$ level of difficulty
+	\end{itemize}
+	\item $MTBF_{i,j}\: =\: \frac{\#\: of\: faults}{operational\: time}$
+		\begin{itemize}
+		\item[-] Mean Time Between Failure for the $i^{th}$ checkpoint, at the $j^{th}$ level of difficulty
+	\end{itemize}
+	\item $FR_{i,j}\: =\: \frac{1}{MTBF_{i,j}}$
+	\begin{itemize}
+		\item Failure Rate of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty
+	\end{itemize}
+	\item $R_{i,j}(t)\: =\: 1 - e^{\frac{FR_{i,j}}{den}\cdot t}$
+	\begin{itemize}
+		\item Reliability Function of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty, i.e. the probability that the system is not failed at time $t$
+	\end{itemize}
+	
+\end{itemize}
 
 
 
