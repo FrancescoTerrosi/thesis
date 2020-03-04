@@ -143,18 +143,30 @@ As the Controller learns, we expect the \textsl{Reliability Function} and the \t
 
 Once the Controller's runs are recorded as described previously, the Monitor testing can start.
 
-The main goal of this phase is not only to assess the Monitor's performance when the Controller is trained: our interest is in observing evidences about which situations are \textsl{"hard"} for the Monitor, and which for the Controller. As the network becomes more expert, it may happen that its behaviour becomes such that the Monitor is no more able to detect the imminent failures, because the Controller is now good enough to cover all the failures previously covered by the Monitor, and the new hazards are such that the Monitor is not able to detect them.
+The goal of this phase is not only to see how good the Safety Monitor is in preventing crashes, we are also interested in observing evidences about which situations are \textsl{"hard"} for the Monitor, and which for the Controller. 
+
+As the network becomes more expert, it may happen that its behaviour evolves in a way such that the Monitor is no more able to detect imminent failures, because the Controller is now good enough to cover all the failures previously covered by the Monitor, and the hazards caused by its novel behaviour are such that the Monitor is not able to detect them.
 
 However, the opposite is also a concrete possibility. For example, in the first epochs the Controller may drive in a "crazy" manner, e.g. with a lot of sudden, high-angle steerings and riding at high speed. The Monitor will obviously have more problems in predicting what the next state will be due to the unpredictability of the Controller's behaviour. The more the network learns, the more it will (hopefully) ride smoothly, making it easier for the Monitor to detect possible, imminent crashes.
 
 The main problem that should be addressed here is that the Monitor effectiveness may decrease, while the network is learning, resulting in a useless component that may even be detrimental to the system's \textsl{performability}: the Controller may become good enough to be able to cover all the hazardous events covered by the Monitor at an earlier checkpoint. This may not change the whole safety of the system, if we consider the actions taken by the Monitor as inconditionally safe, but it would result in lesser smooth rides, due to the safety-brakes applied by the Safety Monitor.
 
-The Monitor is tested as follows: the black boxes create during the Controller testing phase are used to \textsl{repeat} the runs. The initial conditions must be \textsl{identical} as well and should be saved as part of the black box in the previous stage. The runs of the Controller previously recorded are now repeated, attaching the Monitor to the System and recording the alarm raised and if it is able to prevent the crash that occurred.
+The Monitor is tested as follows: the black boxes create during the Controller testing phase are used to \textsl{repeat} the runs. The initial conditions must be \textsl{identical} as well and should be saved as part of the black box in the previous stage. The runs of the Controller previously recorded are now repeated, attaching the Monitor to the System and recording the alarm raised during the run and if it was able to prevent the crash that originally occurred.
 
-In this stage of the analysis, the major concern was that of \textsl{non-intrusiveness}. For the reasons pointed above, we can not think about rerunning the simulations just by attaching the Safety Monitor and watch how it goes. The Safety Monitor, by definition, \textsl{overwrites} the Controller's action if an alert is raised, changing the next part of the run. This is theoretically not a problem, if one can distinguish between false and true positives. However, we can not know in advance what a false positive will be without creating a software capable of sensing an mapping the environment. But this is a Safety Monitor itself and, as every prediction tool, it will have false positives, therefore this approach can not solve the problem.
+In this stage of the analysis, the major concern was that of \textsl{non-intrusiveness}. For the reasons pointed above, we can not think about rerunning the simulations just by attaching the Safety Monitor and watch how it goes. The Safety Monitor, by definition, \textsl{overwrites} the Controller's action if an alert is raised, changing the next part of the run. This is theoretically not a problem, if one can distinguish between false and true positives. However, we can not know in advance what a false positive will be without creating a software capable of sensing an mapping the environment. But this is a Safety Monitor itself and, as every tool of this kind, it will have false positives even if extremely low, therefore this approach can not solve the problem.
 
-The idea 
+The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes possible to observe its true coverage. 
 
+Recall that what we call a \textsl{"failure"} of the Controller is a transition from a \textsl{safe state}: a state in which the Controller can handle what's happening in the environment without crashing, to an \textsl{alert state}: a condition in which without a Safety Monitor, the System would inevitably go to a failure state.
+As said before, the main measures of interest for these tools are usually their goodness in terms of prediction, which can be observed by computing the following measures:
+
+\begin{itemize}
+	\item True Positive Rate
+		\item[-] 
+	\item False Negatives Rate
+	\item False Positives Rate
+	
+\end{itemize}
 
 Prima Fase:
 
