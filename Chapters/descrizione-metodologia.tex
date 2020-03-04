@@ -89,12 +89,9 @@ The repeatibility issue was solved by creating a \textsl{black box} for each run
 
 \subsection{Controller Testing}
 
-IL CONTROLLER E` TESTATO IN ISOLAMENTO SENZA MONITOR PERCHE`:
+The Controller is tested in isolation in each scenario, for each difficulty level, until a crash occurs. The situation in which no failure is recorded is still a possibility (even if the difficulty level somehow mitigates this issue). A reasonable alting criteria is out of the scope of this work and is still a problem in the academic community, however, as noted in the previous section, this problem may be solved.\cite{zhaoStrigini}
 
-1) NON INTRUSIVITA` --> IL MONITOR INTRUDE (FRENA)
-2) NOI VOGLIAMO VEDERE SE FRENA IN TEMPO NON SOLO SE FA DETECTION ---> NON POSSO TENERLO DISATTIVATO E GUARDARE GLI ALERT ---> PERCHE` NON SO COSA SIA UN FALSO POSITIVO E COSA NO
-
-The Controller is tested in isolation in each scenario, for each difficulty level. The reasoning behind this choice comes from some of the problems issued during the method development phase.
+The reasoning behind the choice of isolating the in order to test it Controller, comes from some of the problems issued during the method development phase.
 The main problems are the \textsl{repeatibility} and \textsl{non-intrusiveness}. As pointed before, the \textsl{repeatibility} issue for the neural network is solved by creating a \textsl{black box} containing informations about the car's state in each frame. At the same time we can not think about testing the whole system at once (Controller \textsl{and} Monitor) because a safety-brake executed by the monitor will most likely change the environmental conditions for the rest of the simulation and we would not be able to compute measures about the goodness of the Controller itself. Testing the Controller in isolation helps to solve these issues and it's preparatory to the second phase.
 
 Recording the actions taken by the Controller for \textsl{each} frame (as well as other measures such as the vehicle's speed in that frame) make it possible to have a great control over the data, as a single run may be repeated many times to gather additional data if needed.
@@ -120,12 +117,14 @@ When the controller has been tested for each difficulty, in all the scenarios at
 	\begin{itemize}
 		\item Failure Rate of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty
 	\end{itemize}
-	\item $R_{i,j}(t)\: =\: 1 - e^{\frac{FR_{i,j}}{den}\cdot t}$
+	\item $R_{i,j}(t)\: =\: 1 - e^{-FR_{i,j}\cdot t}$
 	\begin{itemize}
-		\item Reliability Function of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty, i.e. the probability that the system is not failed at time $t$
+		\item Reliability Function of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty, i.e. the probability that the Controller $C_{i}$ is not failed at time $t$ when operating at difficult $j$
 	\end{itemize}
 	
 \end{itemize}
+
+\newpage
 
 If the Simulator used for testing permits it, other data should be recorded too, in order to enhance the comprehension of the Controller's behaviour, such as:
 
@@ -135,14 +134,26 @@ If the Simulator used for testing permits it, other data should be recorded too,
 	\item Environmental conditions at time $t-x$, if a crash occurred at time $t$
 \end{itemize}
 
-These data are fundamental to distinguish between \textsl{"safe"} and \textsl{"catastrophic"} failures. For example, if a fence is hit at a speed of less than 10km/h, it may be flagged as a less serious crash than hitting a pedestrian at the same speed.
+These data are fundamental to distinguish between \textsl{"safe"} and \textsl{"catastrophic"} failures. For example, if a fence is hit at a speed, let's say, less than 10km/h, it may be flagged as a less serious crash than hitting a pedestrian at the same speed.
 
 As the Controller learns, we expect the \textsl{Reliability Function} and the \textsl{MTBF/MDBF} to increase. If the \textsl{black box} makes use of enhanced data (such as the ones listed above), it is also possible to observe changes in the car's behaviour with respect to the scenario and the difficulty level. For example: if we define a difficulty $k$ by doubling the number of cars in the scenarios, it may happen that it is observed an increasement on the amount of collisions against other obstacles. If that's so, the simulations should be studied more deeply to enforce the training strategy in a certain direction, as this may mean that the Controller is going to crash on walls while trying to avoid other vehicles.
 
 
-\subsection{Controller Testing}
+\subsection{Monitor Testing}
 
-The experimental acitivity is divided in two phases: in the first phase
+Once the Controller's runs are recorded as described previously, the Monitor testing can start.
+
+The main goal of this phase is not only to assess the Monitor's performance when the Controller is trained: our interest is in observing evidences about which situations are \textsl{"hard"} for the Monitor, and which for the Controller. As the network becomes more expert, it may happen that its behaviour becomes such that the Monitor is no more able to detect the imminent failures, because the Controller is now good enough to cover all the failures previously covered by the Monitor, and the new hazards are such that the Monitor is not able to detect them.
+
+However, the opposite is also a concrete possibility. For example, in the first epochs the Controller may drive in a "crazy" manner, e.g. with a lot of sudden, high-angle steerings and riding at high speed. The Monitor will obviously have more problems in predicting what the next state will be due to the unpredictability of the Controller's behaviour. The more the network learns, the more it will (hopefully) ride smoothly, making it easier for the Monitor to detect possible, imminent crashes.
+
+The main problem that should be addressed here is that the Monitor effectiveness may decrease, while the network is learning, resulting in a useless component that may even be detrimental to the system's \textsl{performability}: the Controller may become good enough to be able to cover all the hazardous events covered by the Monitor at an earlier checkpoint. This may not change the whole safety of the system, if we consider the actions taken by the Monitor as inconditionally safe, but it would result in lesser smooth rides, due to the safety-brakes applied by the Safety Monitor.
+
+The Monitor is tested as follows: the black boxes create during the Controller testing phase are used to \textsl{repeat} the runs. The initial conditions must be \textsl{identical} as well and should be saved as part of the black box in the previous stage. The runs of the Controller previously recorded are now repeated, attaching the Monitor to the System and recording the alarm raised and if it is able to prevent the crash that occurred.
+
+In this stage of the analysis, the major concern was that of \textsl{non-intrusiveness}. For the reasons pointed above, we can not think about rerunning the simulations just by attaching the Safety Monitor and watch how it goes. The Safety Monitor, by definition, \textsl{overwrites} the Controller's action if an alert is raised, changing the next part of the run. This is theoretically not a problem, if one can distinguish between false and true positives. However, we can not know in advance what a false positive will be without creating a software capable of sensing an mapping the environment. But this is a Safety Monitor itself and, as every prediction tool, it will have false positives, therefore this approach can not solve the problem.
+
+The idea 
 
 
 Prima Fase:
@@ -165,31 +176,7 @@ Strategie di training:
 
 - rimisurazione
 
-
-
-
-
-
-\section{Experiments Preparation and Measures}
-
-At the system level, we are interested in the probability of a safety-failure (e.g. a crash) and how to minimize it, or in the safety of the system as a result of the training of a neural network, the Controller and a fault tolerance mechanism, the Monitor. As long as the network is trained properly, we expect that $P_{C_{i}}(failure) \geq P_{C_{i+t}}(failure)$ where $C_{i}$ represents a neural network controller trained for $i$ epochs. At the same time we want our safety monitor to provide at least the same level of safety if the same network is trained again for $t$ epochs.\newline
-The analysis must start with the definition of $n_{l=0\dots h}$ safety cases, where $n$ is the effective number of cases and $h$ is used to describe the \textsl{"level of difficulty"} of the simulated environment. $C_{i}$ is tested in all the scenarios, starting with conditions somehow \textsl{"favorable"} to the system ($h=0$) and then increasing the difficulty (e.g. increasing the traffic in the scenario and/or simulating a bad weather). This method allows to observe the \textsl{Time To Failure} of the Controller under diverse points of view:
-
-
-MISURE PER ORA MESSE QUI, DA RIGUARDARE
-
-
-\begin{itemize}
-	\item $TTF_{i,j_{l}}$ as the time in which the controller at stage $i$ fails in the ${j_{l}}^{th}$ scenario
-	\item $MTTF_{i,l}$, mean time to failure when the system performs at level of difficulty $l$
-	\item $MTTF_{Controller_{i}} = \frac{1}{n} \sum_{k = 0}^{n} MTTF_{i,k}$
-\end{itemize}
-
-The controller is then trained again and re-tested in the same scenarios.
-
-Since we are working in a simulated environment, the time to failure was computed using simulation steps, without loss of generality.\newline 
-
--------------------------------------------------------------------        FATTO CHE PROB INCIDENTE SOMMI A 1. COME LO ESPRIMO?\newline
+\section{BOZZA VECCHIA}
 
 One of the main problem realated to assessing AVs' safety is the execution time. The probability of a failure increases monotonically over time, but the increasing factor should be lower the more the network is trained, so variation on the hardness of scenarios must be designed accurately. This property could result in very long simulations, but it also gives a useful hint for checking whether the system's safety is improving or not. \newline\newline
 Once trained neural networks become essentially black boxes and even a small variation on the training parameters could result in totally different behaviours during test phase, therefore it can not be assumed that the same software (the monitor) will provide the same level of safety.\newline
