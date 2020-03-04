@@ -1,6 +1,6 @@
 \chapter{System Analysis Method}
 
-\section{Introduction}
+\section{Introduction and Preliminaries}
 
 The goal of this study is to develop a first experimental methodology intended to observe emergence-related aspects coming from the interaction of a Control System and a System Supervisor, analyzing the system in a \textsl{simulated} environment.\newline
 The software architecture of an AV was simplified in two main components:
@@ -62,7 +62,7 @@ In order to achieve this, $c$ checkpoints are saved for later testing and compar
 
 The need for multiple checkpoints is mandatory not only to test that the network is improving, but also to observe how the monitor's effectiveness change over time. Moreover, if many checkpoints of the same network are tested under the same scenarios, it is possible to extract interesting measures, as we'll see in the next section.
 
-Before the analysis can start, $n_{h}$ scenarios must be defined. A \textsl{Scenario} is a set of initial conditions (e.g. the spawn point of the car, seeds used in random number generators$\dots$) in which the car is intended to be tested. The pedix $h$ represents the difficulty level for the specific case. The purpose of this is that we are interested in testing the car under the same initial condition but for one factor, in order to have a better understanding on what makes the system fail more often. The $h$ variations should be developed with growing difficulty and at the same time they must be realistic. Given a Scenario $S$, examples of variations may be: to increase the number of cars in the scenario, or to simulate adversal weather conditions. A combination of these 2 variations should result in a \textsl{harder} variation of the scenario\footnote{It is important to notice that what we think to be "harder", may in reality be easier to handle for the car.}.
+Before the analysis can start, $n_{h}$ scenarios must be defined. A \textsl{Scenario} is a set of initial conditions (e.g. the spawn point of the car, seeds used in random number generators$\dots$) in which the car is intended to be tested. The pedix $h$ represents the difficulty level for the specific case. The purpose of this is that we are interested in testing the car under the same initial condition but for one factor, in order to have a better understanding on what makes the system fail more often. The $h$ variations should be developed with growing difficulty and at the same time they must be realistic. Given a Scenario $S$, examples of variations may be: to increase the number of cars in the scenario, or to simulate adversal weather conditions. A combination of these 2 variations should result in a \textsl{harder} variation of the scenario\footnote{It is important to point that what we think to be "harder", may in reality be easier to handle for the car.}. It's important to keep in mind that these scenarios, once defined, should not be changed as they will be used for testing all the checkpoints. A change in the settings of a scenario (except for variations) should be considered as a new one.
 
 We hope that the results collected here will help in the process of understanding what makes a situation \textsl{"harder"} than others for such systems.
 
@@ -94,10 +94,10 @@ IL CONTROLLER E` TESTATO IN ISOLAMENTO SENZA MONITOR PERCHE`:
 1) NON INTRUSIVITA` --> IL MONITOR INTRUDE (FRENA)
 2) NOI VOGLIAMO VEDERE SE FRENA IN TEMPO NON SOLO SE FA DETECTION ---> NON POSSO TENERLO DISATTIVATO E GUARDARE GLI ALERT ---> PERCHE` NON SO COSA SIA UN FALSO POSITIVO E COSA NO
 
-The Controller is tested in each Scenario for each difficulty level. Recording the action taken by the Controller for \textsl{each} frame (as well as other measures such as the vehicle's speed in that frame) make it possible to have a great control over the data, as a single run may be repeated many times to gather additional data if needed.
+The Controller is tested in isolation in each scenario, for each difficulty level. The reasoning behind this choice comes from some of the problems issued during the method development phase.
+The main problems are the \textsl{repeatibility} and \textsl{non-intrusiveness}. As pointed before, the \textsl{repeatibility} issue for the neural network is solved by creating a \textsl{black box} containing informations about the car's state in each frame. At the same time we can not think about testing the whole system at once (Controller \textsl{and} Monitor) because a safety-brake executed by the monitor will most likely change the environmental conditions for the rest of the simulation and we would not be able to compute measures about the goodness of the Controller itself. Testing the Controller in isolation helps to solve these issues and it's preparatory to the second phase.
 
-
-
+Recording the actions taken by the Controller for \textsl{each} frame (as well as other measures such as the vehicle's speed in that frame) make it possible to have a great control over the data, as a single run may be repeated many times to gather additional data if needed.
 
 When measuring the reliability function $R(t)$ of a system, one of the main measure of interest is its Mean Time To Failure, because it is easy to compute in simulated environments, and it's the starting point to derive other metrics.
 In the Automotive Sector however, data are usually computed with respect to the travelled distance, i.e. Mean Distance to Failure, rate of crashes per kilometers, and so on.
@@ -127,7 +127,20 @@ When the controller has been tested for each difficulty, in all the scenarios at
 	
 \end{itemize}
 
+If the Simulator used for testing permits it, other data should be recorded too, in order to enhance the comprehension of the Controller's behaviour, such as:
 
+\begin{itemize}
+	\item The car's instantaneous speed and acceleration vector at each frame
+	\item With \textsl{what} the car crashed (e.g. a vehicle, a pedestrian, a generic obstacle$\dots$)
+	\item Environmental conditions at time $t-x$, if a crash occurred at time $t$
+\end{itemize}
+
+These data are fundamental to distinguish between \textsl{"safe"} and \textsl{"catastrophic"} failures. For example, if a fence is hit at a speed of less than 10km/h, it may be flagged as a less serious crash than hitting a pedestrian at the same speed.
+
+As the Controller learns, we expect the \textsl{Reliability Function} and the \textsl{MTBF/MDBF} to increase. If the \textsl{black box} makes use of enhanced data (such as the ones listed above), it is also possible to observe changes in the car's behaviour with respect to the scenario and the difficulty level. For example: if we define a difficulty $k$ by doubling the number of cars in the scenarios, it may happen that it is observed an increasement on the amount of collisions against other obstacles. If that's so, the simulations should be studied more deeply to enforce the training strategy in a certain direction, as this may mean that the Controller is going to crash on walls while trying to avoid other vehicles.
+
+
+\subsection{Controller Testing}
 
 The experimental acitivity is divided in two phases: in the first phase
 
