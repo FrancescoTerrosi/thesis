@@ -6,8 +6,8 @@ The goal of this study is to develop a first experimental methodology intended t
 The software architecture of an AV was simplified in two main components:
 
 \begin{itemize}
-	\item A \textsl{Controller}: a Neural Network trained with \textsl{reinforcement learning} algorithms to drive the car, reading ground-truth values from cameras
-	\item A \textsl{Safety Monitor} that checks whether the car is going too fast towards an object, processing data received from a LiDAR sensor, and if that's so, apply an emergency-brake
+	\item A \textsl{Controller}: a Neural Network trained with \textsl{reinforcement learning} algorithms to drive the car
+	\item A \textsl{Safety Monitor}, a submodule of the System Supervisor, that checks whether the car is going too fast towards an object, processing data received from a LiDAR sensor, and if that's so, apply an emergency-brake
 \end{itemize}
 
 This work focuses on exploring the topic from a different point of view and to assess its feasibility in an experimental, simulated environment. Due to the system being composed by two constituent systems: the Controller and the Monitor, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.
@@ -24,22 +24,22 @@ The main aspects we are interested in this first stage of exploration are:
 \end{itemize}
 
 One of the most appealing features of neural networks is that they can be \textsl{trained} on data sets to improve their performance. One stage of training is done by collecting data over \textsl{n} steps and updating the weights of the prediction function. The weights of the function after $i$ training stages represents the \textsl{state} of the network at \textbf{epoch i}.\newline
-A neural network will likely give good results after "enough" epochs. The harder the task, the more epochs are needed. Driving a car is a quite hard task and it's inimmaginable to save the weights of each epoch. Therefore, given a neural network N, we define a \textbf{checkpoint} as a generic epoch of N. Say we trained N for 500 epochs. If we save the weights of the prediction function every 100 epochs, we will end up with 5 checkpoints:
+A neural network will likely give good results after "enough" epochs. The harder the task, the more epochs are needed. Driving a car is a quite hard task and it's inimmaginable to save the weights of each epoch. Therefore, given a neural network N, we define a \textbf{checkpoint} as a generic epoch of N. Say we trained N for 1000 epochs. If we save the weights of the prediction function every 100 epochs, we will end up with 10 checkpoints:
 
 \begin{center}
-	$checkpoint_{1}\: <\: checkpoint_{2}\: <\: \dots \:<\: checkpoint_{5}$,
+	$checkpoint_{1}\: <\: checkpoint_{2}\: <\: \dots \:<\: checkpoint_{10}$
 \end{center}
 
-where $checkpoint_{1}$ helds the network's weights at epoch 100, $checkpoint_{2}$ at epoch 200 and so on.\newline
+where $checkpoint_{1}$ contains the network's weights at epoch 100, $checkpoint_{2}$ at epoch 200 and so on.\newline
 
-Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as the car procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high (e.g. a pedestrian suddenly cross the street) if and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it:
+Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as it procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high, like a pedestrian suddenly crossing the road, if and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it:
 
 \begin{itemize}
 	\item If the Controller takes \textsl{any} action that would result in a crash, it's considered failed
-	\item If an hazardous event happens, i.e. a situation in which the probability of observing a crash is higher than usual, the Controller is considered failed if and only if its actions will not avoid the imminent failure
+	\item If a hazardous event happens, i.e. a situation in which the probability of observing a crash is higher than usual, the Controller is considered failed if and only if its actions will not avoid the imminent failure
 \end{itemize}
 
-In this sense, at this stage of knowledge, we don't distinguish between changes in the environment that raises the probability of a crash (e.g. a pedestrian crossing the street) and hazardous actions take by the Controller (e.g. a sudden steer towards a wall).
+In this sense, at this stage of the work, we don't distinguish between changes in the environment that raises the probability of a crash (e.g. a pedestrian crossing the street) and hazardous actions take by the Controller (e.g. a sudden steer towards a wall).
 
 If the controller fails in the way just described, it's the Monitor's duty to run a safety-routine in order to prevent the imminent failure.\newline
 
@@ -96,12 +96,6 @@ The main problems are the \textsl{repeatibility} and \textsl{non-intrusiveness}.
 
 Recording the actions taken by the Controller for \textsl{each} frame (as well as other measures such as the vehicle's speed in that frame) make it possible to have a great control over the data, as a single run may be repeated many times to gather additional data if needed.
 
-When measuring the reliability function $R(t)$ of a system, one of the main measure of interest is its Mean Time To Failure, because it is easy to compute in simulated environments, and it's the starting point to derive other metrics.
-In the Automotive Sector however, data are usually computed with respect to the travelled distance, i.e. Mean Distance to Failure, rate of crashes per kilometers, and so on.
-With our approach, if the simulated environment and the hardware running the simulations are powerful enough to run the simulations at a fixed time-step, it's very easy to switch the point of view on the data.
-
-As long as the neural network is trained properly, we expect the following disequation to hold: $R_{i}(t)\: < \: R_{j}(t)$, where $i$ and $j$ are 2 checkpoints, with $i\: <\: j$. This can be easily verified using the approach defined above to collect the data.
-
 When the controller has been tested for each difficulty, in all the scenarios at least the followings must be computed:
 
 \begin{itemize}
@@ -117,12 +111,23 @@ When the controller has been tested for each difficulty, in all the scenarios at
 	\begin{itemize}
 		\item Failure Rate of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty
 	\end{itemize}
-	\item $R_{i,j}(t)\: =\: 1 - e^{-FR_{i,j}\cdot t}$
+	\item $R_{i,j}(t)\: =\: e^{-FR_{i,j}\cdot t}$
 	\begin{itemize}
 		\item Reliability Function of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty, i.e. the probability that the Controller $C_{i}$ is not failed at time $t$ when operating at difficult $j$
 	\end{itemize}
 	
 \end{itemize}
+
+When measuring the reliability function $R(t)$ of a system, one of the main measure of interest is its Mean Time To Failure, because it is easy to compute in simulated environments, and it's used to compute the rate $\lambda$ of the exponential function.
+In the Automotive Sector however, data are usually computed with respect to the travelled distance, i.e. Mean Distance to Failure, rate of crashes per kilometers, and so on.
+With our approach, if the simulated environment and the hardware running the simulations are powerful enough to run the simulations at a fixed time-step, it's very easy to switch the point of view on the data.
+
+As long as the neural network is trained properly, we expect the following disequation to hold: $R_{i}(t)\: \leq \: R_{j}(t)$, where $i$ and $j$ are 2 checkpoints, with $i\: <\: j$. This can be easily verified using the approach defined above to collect the data.
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/geogebra-export.png}
+	\caption{The Reliability measures the probability the at time $t$ the system is still operating. We expect that more expert drivers (i.e. more trained networks) are capable of longer runs than little trained networks}
+\end{figure}
 
 \newpage
 
@@ -158,14 +163,44 @@ In this stage of the analysis, the major concern was that of \textsl{non-intrusi
 The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes possible to observe its true coverage. 
 
 Recall that what we call a \textsl{"failure"} of the Controller is a transition from a \textsl{safe state}: a state in which the Controller can handle what's happening in the environment without crashing, to an \textsl{alert state}: a condition in which without a Safety Monitor, the System would inevitably go to a failure state.
-As said before, the main measures of interest for these tools are usually their goodness in terms of prediction, which can be observed by computing the following measures:
+For this component, we want to measure its ability to distinguish between safe states and alert states. To do so, we defined positives and negatives predictions in this way:
+
+\begin{itemize}
+	\item True Positive
+	\begin{itemize}
+		\item[-] The system went in an alert state due to a Controller's failure, correctly detected and prevented by the monitor
+	\end{itemize}
+	\item True Negative
+	\begin{itemize}
+		\item[-] The system is in a safe state and the Monitor doesn't raise any alarm
+	\end{itemize}
+	\item False Positive
+	\begin{itemize}
+		\item[-] The system is in a safe state, but the Monitor raises an alarm
+	\end{itemize}
+	\item False Negative
+	\begin{itemize}
+		\item[-] The system is in an alert state and the Monitor doesn't detect the hazard
+	\end{itemize}
+\end{itemize}
+
+These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not possible at all, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives, since some times, this kind of situations may be seen only when a human operator analyse the specific run.
+
+Fortunately this can be omitted since a true negative does not change the behaviour of the system, therefore it was not considered during the Controller re-training phase.\newline
 
 \begin{itemize}
 	\item True Positive Rate
-		\item[-] 
+	\begin{itemize}
+		\item[-] Rate di pericoli scampati
+	\end{itemize}
 	\item False Negatives Rate
+	\begin{itemize}
+		\item[-] Rate di pericoli non scampati
+	\end{itemize}
 	\item False Positives Rate
-	
+	\begin{itemize}
+		\item[-] Rate di errori
+	\end{itemize}
 \end{itemize}
 
 Prima Fase:
@@ -187,104 +222,3 @@ Strategie di training:
 - monitor + reward
 
 - rimisurazione
-
-\section{BOZZA VECCHIA}
-
-One of the main problem realated to assessing AVs' safety is the execution time. The probability of a failure increases monotonically over time, but the increasing factor should be lower the more the network is trained, so variation on the hardness of scenarios must be designed accurately. This property could result in very long simulations, but it also gives a useful hint for checking whether the system's safety is improving or not. \newline\newline
-Once trained neural networks become essentially black boxes and even a small variation on the training parameters could result in totally different behaviours during test phase, therefore it can not be assumed that the same software (the monitor) will provide the same level of safety.\newline
-The monitor must be tested in the same scenarios in which the controller was tested and should not intervene during the simulation, but at the rigth time needed to prevent the failure event if the controller failed the scenario. The simulations previously recorded are now repeated with the monitor activated and the following measures are extracted:
-
-\begin{itemize}
-	\item True Positive Rate (or \textsl{Sensitivity)})
-	\begin{itemize}
-		\item Rate of successful detections where the controller failed.
-	\end{itemize}
-	\item False Positive Rate (or \textsl{Fall-out})
-	\begin{itemize}
-		\item Rate of the events in which there's no failure but Monitor raises alarm. It is important that the fault-tolerance mechanism is not activated or the simulation will be compromised
-	\end{itemize}
-	\item False Negative Rate (or \textsl{Miss Rate})
-	\begin{itemize}
-		\item Rate of failures in the controller not detected by the monitor
-	\end{itemize}
-\end{itemize}
-
-Of course we desire the monitor's detections to be the most accurate possible. For this reason \textsl{Sensitivity}\footnote{True Positive rate: the proportion of safety measures applied by the monitor when actually needed} and False Negative rate were chosen as measures of interest.\newline
-While in most of the cases a false positive will result in a state of degraded service, since a self-driving car is a safety-critical system performing in a dynamic environment, a false positive could put the system in an unsafe state (imagine performing an emergency brake for no reason on the highway), so False positive rate was taken into account as well.\newline
-However, these measures themselves aren't sufficient to detect changes in the interaction between the two CSs, so it's useful to record data such as the vehicle's speed and the controller's throttling/steering and to combine them with data recorded from the monitor to detect possible correlations between the behaviours.
-These values must be recomputed not only when the Monitor is improved (either by implementing a more sophisticated detection method or by improving the quality of sensors) but also when the network is trained because/due to...
-=============================================================================================
-GIUSTIFICARE QUI IL DISCORSO FAMOSO O RIMANDARE A CAPITOLO PRECEDENTE SU LETTERATURA?
-==============================================================================================
-
-After collecting the data we need, performances can be easily compared to assure that the use of the same monitor with 2 different networks (or the same network in 2 different epochs) doesn't become detrimental with more expert Controllers.
-
-\section{Experimental methodology}
-
-In this section we propose and describe the methodology developed in this work.\newline
-
-The study consists of several experiments in a simulated realistic environment, in which we observe how the coverage of the safety-monitor (i.e. the probability of raising an alert if there really is a safety-hazard) varies with respect to a neural network \textsl{in different stages of training}.\newline
-The definition of the $n_{0}$ safety cases are the first step to perform the analysis. Each scenario should be different in terms of initial conditions for the System, but the environment should be identical. For example, given that in a situation of regular traffic the amount of cars is at most $m$, all the $n_{0}$ scenarios should spawn $m$ cars, but the initial state of the system should change (e.g. by changing the starting point). Now, after defining $h$ hardenings of the, $n_{1\dots h}$ variations of the scenarios are generate (note that here $n$ is fixed). It is important that everything else but the variation specifically designed is identical. For such reason each stage $j_{k\neq 0}$ all the parameters of the simulation should be identical to those in the stage $j_{0}$, such as \textsl{seeds} used in pseudo number generators and in general all the parameters not changed by the $k_{th}$ variation.\newline
-The design and definition of the safety cases and the levels of difficulty are subjected to a lot of factors, and it is impossible to cover all the situations that may happen in a real environment. By repeating the same safety cases in worse conditions, we have a better idea of the system's ability to handle unattended situations than creating a specific safety case for the bad condition itself because in such way it's possible to study possible correlations between failures and environmental conditions.\newline\newline
-\newpage
-
-
-After the definition of the scenarios, the constituent systems are tested separately to get statistics about the interactions between the two, these data are then compared to those in which the Controller and the Monitor cooperate to fullfill the assigned task.\newline
-The testing phase is organized in the following steps:
-
-\begin{itemize}
-	\item[1] Controller testing phase
-	\item[2] Monitor testing phase
-	\item[3] Data Analysis
-	\item ======================================================
-	\item[?] System testing phase
-	\item[?] Data Analysis
-\end{itemize}
-
-\subsection{Controller Testing}
-
-
-In step $1$, the controller is tested alone in the $(h+1)\cdot n$ scenarios. This testing phase was developed with the idea of comparing the results of 2 different neural networks (or again, the same neural network but in different stages of training) in mind.
-
-In order to have a more complete picture of the networks' behaviour, in addition to the TTFs as defined above additional data are collected. This data are used to enrich the understanding of the mistakes in the control system. Examples of this data are the vehicle's speed, the controller's action (throttling, steering or braking), if there was a crash: was it with another vehicle? With a pedestrian? \newline
-Since the design and especially the testing of a safety-critical system is a circular process and can not end after an acceptance test phase, informations collected in this first step can be used to guide the hardening factors in novel experiment suites.\newline
-One of the most critical parameters when designing the scenarios in which the controller will be tested, is the definition of alting criteria: we don't know how long the car must drive before eventually crashing. However this problem is still unsolved and it's let to the user to define \textsl{reasonable} criteria to stop an execution. However, we think that whenever a collision is detected the scenario should be considered concluded.
-
-========================================================================================
-Credo che questa cosa sia importante. Visto che lavoriamo nell'assunzione (almeno noi) che la macchina si schianti, merita dire di trovare i parametri che rendano "abbastanza" difficile?   ----> si ricollega anche al fatto di uno goal?
-
-========================================================================================
-\newline
-
-It is important that in this step, the \textsl{exact} behaviour is recorded for repeatability, as a sort of black box. This is because a neural network tested in two executions of the \textsl{same} scenario with the \textls{same} initial condition could take slightly different decisions that would change the rest of the environmental conditions.\newline
-
-In
-
-
-
-=============================================
-
-DISEGNINI PRIMA FASE
-
-=============================================
-
-In the second step the positives/negatives rates of the Monitor are studied. Our goal is to measure the coverage factor of this component with respect to the failures of the Controller.\newline
-The \textsl{executions} of the simulations previously recorded are repetead in all the $j_{l}; \: j=1\dots n, \: l=0\dots h$ scenarios, attaching the Monitor to the system. For each scenario, the alerts raised by the Monitor are recorded but the fault-tolerance mechanism is not activated until the instant of time $z$ needed to prevent the failure event. The choice of $z$ is a sensitive issue for the accuracy of the measuresements: if the Monitor is activated too late, the failure will not be prevented and it's not possible to record just the alert raised (if any), since the efficacy of the safety procedure is an indicator of the Monitor's performance. At the same time, if the Monitor is activated too early, a premature alert will change the conditions in which the failure occurred. In this case the system may avoid the failure event, but it's impossible to say if the system was "good enough" to avoid it or if an early stopping of the car caused by a safty brake prevented it.
-
-Using this approach, if the simulation environment and the hardware are powerful enough, it's possible to have a better understanding on which cases are easily handled by the Controller and not by the monitor, and vice versa.
-Given a Controller $C_{i}$ and a Monitor $M$, we calculate the followings:
-
-\begin{equation}
-	FPR = \frac{FP}{FP+TN}
-\end{equation}
-\begin{equation}
-	TPR = \frac{TP}{TP+FN}
-\end{equation}
-\begin{equation}
-	FNR = \frac{FN}{FN+TP} = 1 - TPR
-\end{equation}
-
-As pointed before, any alert raised before time $z$ are recorded as False Positives. This allows to effectively count the number of false alarms in a given scenario, which can then be easily aggregated with the results from all the simulations to compute a good estimate of the False Positive Rate.\newline
-With a good simulator it's possible to check in every frame if a crash happened and, possibly, with what the car collided. With this information, the time $t$ in which there was a crash can be easily extracted. Assuming a \textsl{proper choice} of $z$, allowing the Monitor to intervene in the time interval $t-z$ allows us to check whether the Monitor correctly detected the hazard or not.\newline
-These values calculated over the sets of the $n$ scenario, for all the $h$ difficulties, are useful to understand once again what kind of situations could put the system at risk, looking at the interactions between these two components. Specifically, with this approach the coverage of the 2 constituent systems is studied in two different steps but with in the same environment(s), therefore is easier to look at similarities between failures of the controller (crashes) and failures of the Monitor (false negatives), if any.\newline\newline
-It is reasonable to think about different difficulty levels $0\dots h'$ for the Safety Monitor as well. A value of $h' = 0$ may be considered as using the Monitor as it is intended to be mounted on the system. Defining $n'$ as $(h+1)\cdot n$, the number of scenarios in which the Controller was tested autonomously, the monitor is tested under $h'$ operating conditions, creating $(h' + 1) \cdot n'$. Examples of perturbations on the monitor may include downgrading of the sensors' quality or noise injection in the data collected.\newline\newline
