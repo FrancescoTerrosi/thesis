@@ -71,9 +71,9 @@ We hope that the results collected here will help in the process of understandin
 The approach used for this exploratory work is divided in 3 phases:
 
 \begin{itemize}
-	\item Phase 1: Given $c$ checkpoints of a neural network and $n_{h}$ scenarios, the Controller and the Safety Monitor are tested
-	\item Phase 2: The network is retrained from the last checkpoint recorded, using different strategies to improve its performances. The new networks obtained and the (same) Safety Monitor are then retested in all the $n_{h}$ scenarios
-	\item Phase 3: Data Analysis and Comparison
+	\item Phase 1: Given $c$ checkpoints of a neural network and $n_{h}$ scenarios, the Controller is tested in all the scenarios and its runs are recorded
+	\item Phase 2: The Monitor is tested by \textsl{repeating} the runs recorded in phase 1, attaching the Safety Monitor to the system
+	\item Phase 3: The network is retrained from the last checkpoint recorded, using different strategies to improve its performances. The new networks obtained and the (same) Safety Monitor are then retested in all the $n_{h}$ scenarios
 \end{itemize}
 
 
@@ -125,8 +125,8 @@ With our approach, if the simulated environment and the hardware running the sim
 As long as the neural network is trained properly, we expect the following disequation to hold: $R_{i}(t)\: \leq \: R_{j}(t)$, where $i$ and $j$ are 2 checkpoints, with $i\: <\: j$. This can be easily verified using the approach defined above to collect the data.
 
 \begin{figure}[h!]
-	\includegraphics[width=\textwidth]{img/geogebra-export.png}
-	\caption{The Reliability measures the probability the at time $t$ the system is still operating. We expect that more expert drivers (i.e. more trained networks) are capable of longer runs than little trained networks}
+	\includegraphics[width=\textwidth]{img/reliability-curve.png}
+	\caption{The Reliability function measures the probability that at time $t$ the system is still operating. We expect that more expert drivers (i.e. more trained networks) are capable of longer runs than little trained networks}
 \end{figure}
 
 \newpage
@@ -141,7 +141,9 @@ If the Simulator used for testing permits it, other data should be recorded too,
 
 These data are fundamental to distinguish between \textsl{"safe"} and \textsl{"catastrophic"} failures. For example, if a fence is hit at a speed, let's say, less than 10km/h, it may be flagged as a less serious crash than hitting a pedestrian at the same speed.
 
-As the Controller learns, we expect the \textsl{Reliability Function} and the \textsl{MTBF/MDBF} to increase. If the \textsl{black box} makes use of enhanced data (such as the ones listed above), it is also possible to observe changes in the car's behaviour with respect to the scenario and the difficulty level. For example: if we define a difficulty $k$ by doubling the number of cars in the scenarios, it may happen that it is observed an increasement on the amount of collisions against other obstacles. If that's so, the simulations should be studied more deeply to enforce the training strategy in a certain direction, as this may mean that the Controller is going to crash on walls while trying to avoid other vehicles.
+As the Controller learns, we expect the \textsl{Reliability Function} and the \textsl{MTBF/MDBF} to increase, since a trained driver should in principle cause less crashes than a non-expert one, therefore increasing the value of the MTBF and possibly the y values of $R(t)$.
+
+If the \textsl{black box} makes use of enhanced data (such as the ones listed above), it is also possible to observe changes in the car's behaviour with respect to the scenario and the difficulty level. For example: if we define a difficulty $k$ by doubling the number of cars in the scenarios, it may happen that it is observed an increasement on the amount of collisions against other obstacles. If that's so, the simulations should be studied more deeply to enforce the training strategy in a certain direction, as this may mean that the Controller is going to crash on walls while trying to avoid other vehicles.
 
 
 \subsection{Monitor Testing}
@@ -160,65 +162,118 @@ The Monitor is tested as follows: the black boxes create during the Controller t
 
 In this stage of the analysis, the major concern was that of \textsl{non-intrusiveness}. For the reasons pointed above, we can not think about rerunning the simulations just by attaching the Safety Monitor and watch how it goes. The Safety Monitor, by definition, \textsl{overwrites} the Controller's action if an alert is raised, changing the next part of the run. This is theoretically not a problem, if one can distinguish between false and true positives. However, we can not know in advance what a false positive will be without creating a software capable of sensing an mapping the environment. But this is a Safety Monitor itself and, as every tool of this kind, it will have false positives even if extremely low, therefore this approach can not solve the problem.
 
-The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes possible to observe its true coverage. 
+The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes possible to approximate its coverage. 
 
 Recall that what we call a \textsl{"failure"} of the Controller is a transition from a \textsl{safe state}: a state in which the Controller can handle what's happening in the environment without crashing, to an \textsl{alert state}: a condition in which without a Safety Monitor, the System would inevitably go to a failure state.
-For this component, we want to measure its ability to distinguish between safe states and alert states. To do so, we defined positives and negatives predictions in this way:
+For this component, we want to measure its ability to distinguish between safe states and alert states. To do so, we defined positives and negatives predictions in this way:\newpage
 
 \begin{itemize}
-	\item True Positive
+	\item[TP:] True Positive
 	\begin{itemize}
 		\item[-] The system went in an alert state due to a Controller's failure, correctly detected and prevented by the monitor
 	\end{itemize}
-	\item True Negative
+	\item[TN:] True Negative
 	\begin{itemize}
 		\item[-] The system is in a safe state and the Monitor doesn't raise any alarm
 	\end{itemize}
-	\item False Positive
+	\item[FP:] False Positive
 	\begin{itemize}
 		\item[-] The system is in a safe state, but the Monitor raises an alarm
 	\end{itemize}
-	\item False Negative
+	\item[FN:] False Negative
 	\begin{itemize}
 		\item[-] The system is in an alert state and the Monitor doesn't detect the hazard
 	\end{itemize}
 \end{itemize}
 
-These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not possible at all, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives, since some times, this kind of situations may be seen only when a human operator analyse the specific run.
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/positive-negative.png}
+	\caption{Graphical Representation of what true and false predictions means in the system's state space. Recall that the light blue area is the set of \textbf{safe} states, and the yellow area represents the \textbf{alert state}, in which the Monitor intervention is \textbf{mandatory} to a void a system failure}
+\end{figure}
+
+
+These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not possible at all, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives because in most of the cases, this kind of situations may be seen only when a human operator analyse the specific run.
 
 Fortunately this can be omitted since a true negative does not change the behaviour of the system, therefore it was not considered during the Controller re-training phase.\newline
 
+Since we do not know the \textsl{real} amount of \textsl{True Negatives}, for the reason just described, some of the measures usually considered when assessing the prediction performances of a model could not be approximated. For the purpose of comparing the Monitor's performances for all the checkpoints, the following rates were approximated:
+
 \begin{itemize}
-	\item True Positive Rate
-	\begin{itemize}
-		\item[-] Rate di pericoli scampati
-	\end{itemize}
-	\item False Negatives Rate
-	\begin{itemize}
-		\item[-] Rate di pericoli non scampati
-	\end{itemize}
-	\item False Positives Rate
-	\begin{itemize}
-		\item[-] Rate di errori
-	\end{itemize}
+	\item True Positive Rate:
+	\vspace{-0.5cm}
+	\begin{center}
+		\begin{equation}
+		TPR\: =\: \frac{TP}{TP\: +\: FN}
+		\end{equation}
+	\end{center}
+	\item False Negative Rate:
+	\vspace{-0.5cm}
+	\begin{center}
+		\begin{equation}
+		FNR\: =\: \frac{FN}{FN\: +\: TP}\: =\: 1\: -\: TPR
+		\end{equation}
+	\end{center}
+	\item False Positives per Meter:
+	\vspace{-0.5cm}
+	\begin{center}
+		\begin{equation}
+		FPM\: =\: \frac{FP}{meters\: travelled}
+		\end{equation}
+	\end{center}
 \end{itemize}
 
-Prima Fase:
+These rates gives a good approximation of the Monitor's behaviour and these measures can be used for the purpose of comparison.
 
-- Controller test
+When testing the Monitor, it is advisable to \textsl{"stress"} it under detrimental conditions, in order to collect more possible evidences and linkage among the data. Note that this aspect is independent from the \textsl{difficulty level} defined above, as it is something related to the environment itself that may give evidences about the \textsl{situations} in which the Monitor performs well, and those in which it doesn't (e.g. think about a LiDAR sensor in a very rainy environment: the observations will likely to be fuzzy/noisy) and it is more related to \textsl{fault injection} at a higher level.
 
-- Monitor test
+The ways in which the parameters of a Safety Monitor can be tuned really depend on its implementation, and it's up to the developing team the decision on what and how many faults inject in the software. A very simple example can be that of reducing the amount of data read by the sensors (which will result in low-quality data and a poor mapping of the environment), or introduce some noise in the observations.
 
-Seconda fase:
+Doing this step when testing the Monitor allows also to understand how to tune the internal parameters of the software in order to have its \textsl{"best"} version, that will be used in the Controller retraining phase.
 
-- addestramento
+\subsection{Controller Retraining}
 
-Strategie di training:
+At this point we have collected data about the behaviours of the Monitor and the Controller. In this phase we are going to study how much this values vary with respect to the learning strategy adopted, when the neural network is retrained from the last checkpoint.
 
-- fare piu` pressione sulle reward
+As said at the beginning of this chapter, we are considering a Controller composed by a neural network, trained with reinforcement learning techniques. These kind of algorithms make use of a \textsl{reward function} to tell to the network if it's behaving \textsl{"good"} (positive value) or \textsl{"bad"} (negative value) and it is calculated at each prediction step (i.e. at each action taken by the Controller).\newline
 
-- istruire con un monitor
+The training function needs the following parameters, that are recorded at each algorithm iteration:
 
-- monitor + reward
+\begin{itemize}
+	\item[a)] Action taken by the Network
+	\item[b)] State of the network in which the action was taken
+	\item[c)] Reward given for the action taken in a certain state
+\end{itemize}
 
-- rimisurazione
+In this phase we want to discover how training strategies for the neural network may affect the overall behaviour of the system, with particular attention on the effectiveness of the Safety Monitor.
+
+To start an exploration in this topic, we defined 4 strategies and the outcomes we expect after the training is completed. These outcomes are \textsl{"forecasted"} in the sense that we don't know how the network will react to a change in the training strategy, nor if the observe behaviour will be the supposed one.
+
+The strategies developed in this method are mostly based on the reward function and on the actions taken by the network:
+
+\begin{itemize}
+	\item[1)] The reward function is now more punitive when the car hits something, while braking is slightly more rewarded, provided that the Car won't stop moving
+	\item[2)] The Safety Monitor is attached to the system and the actions of the network are replaced with the Monitor's, if an alert is raised
+	\item[3)] The network's action is replaced by the monitor's if it raises an alert and the reward function returns a positive value
+	\item[4)] The training step is stopped and the network is given a \textsl{negative} reward if an alert is raised
+\end{itemize}
+
+For the first strategy we expect at least the Controller's mean time/distance between failures to be lower. With this method one is also able to see if the new Controller can avoid the crashes of previous checkpoints. Another aspect we are interested in is how the Monitor's effectiveness changes in terms of positive/negative ratios.
+
+In the second strategy we are essentially cheating. The network is \textsl{"taught"} by the Monitor to brake whenever an alarm is raised. A possible outcome is that the alert states previously covered by the Monitor become safe states. However the Monitor's false positives will inevitably have an impact on the system's availability caused by erroneous safety-brakes.
+
+The third strategy is pretty much the same as the second. We expect that giving a positive reward when behaving like the Monitor may increase the learning speed.
+
+The last strategy may give the most interesting results. Giving a negative reward and alting the training step when the Safety Monitor raises an alarm, regardless if it's a true or false positive, should force the network to completely \textsl{avoid} the situations in which the Monitor intervenes. Essentially we expect that the effectiveness of the safety component will be drastically reduced.\newline
+
+After the four Controllers are trained enough, the new systems are tested as in phase one. The same measures listed before are approximated for the Controllers and the Monitor and the results are compared with the original checkpoints.
+
+
+=======================================================================
+
+FORSE
+
+=======================================================================
+
+As an additional step, we are going to treat the new Controllers as a Monitor for the runs recorded with the last checkpoint, to see how try to observe how the states space has changed.
+
