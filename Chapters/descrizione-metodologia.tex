@@ -32,7 +32,7 @@ A neural network will likely give good results after "enough" epochs. The harder
 
 where $checkpoint_{1}$ contains the network's weights at epoch 100, $checkpoint_{2}$ at epoch 200 and so on.\newline
 
-Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as it procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high, like a pedestrian suddenly crossing the road, if and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to avoid it:
+Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as it procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high, like a pedestrian suddenly crossing the road, if and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to prevent it:
 
 \begin{itemize}
 	\item If the Controller takes \textsl{any} action that would result in a crash, it's considered failed
@@ -208,11 +208,13 @@ For this component, we want to measure its ability to distinguish between safe s
 \end{figure}
 
 
-These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not possible at all, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives because in most of the cases, this kind of situations may be seen only when a human operator analyse the specific run.
+These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not impossible, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives because in most of the cases, this kind of situations may be seen only when a human operator analyse the specific run.
 
-Fortunately this can be omitted since a true negative does not change the behaviour of the system, therefore it was not considered during the Controller re-training phase.\newline
+In particular, an input for the Safety Monitor is composed by multiple, timed inputs, that can be seen as the evolution of the environment while the system is performing its operations. For this reason, it is hard to understand whether the next state will be an alert or a safe state because we don't know \textsl{when} the series of inputs that will eventually result in a crash will begin.
 
-Since we do not know the \textsl{real} amount of \textsl{True Negatives}, for the reason just described, some of the measures usually considered when assessing the prediction performances of a model could not be approximated. For the purpose of comparing the Monitor's performances for all the checkpoints, the following rates were approximated:
+This puts some limits on the metrics and the ratios that can be computed for the Monitor as they require the amount of true negatives. However, fortunately, a true negative does not change the behaviour of the system because there is no safety-brake, therefore after some analysis it was decided to ignore the true negative rate. At the same time, we want to observe at least the amount of false positives and convert it to a rate, for the purpose of comparison.\newline
+
+Since we do not know the \textsl{real} amount of \textsl{True Negatives}, for the reason just described, some of the measures usually considered when assessing the prediction performances of a model could not be approximated. To give a rate measure for false positives, it was decided to compute the amount of false positives over the distance travelled in a run.
 
 \begin{itemize}
 	\item True Positive Rate:
@@ -267,10 +269,10 @@ To start an exploration in this topic, we defined 4 strategies and the outcomes 
 The strategies developed in this method are mostly based on the reward function and on the actions taken by the network:
 
 \begin{itemize}
-	\item[1)] The reward function is now more punitive when the car hits something, while braking is slightly more rewarded, provided that the Car won't stop moving
-	\item[2)] The Safety Monitor is attached to the system and the actions of the network are replaced with the Monitor's, if an alert is raised
-	\item[3)] The network's action is replaced by the monitor's if it raises an alert and the reward function returns a positive value
-	\item[4)] The training step is stopped and the network is given a \textsl{negative} reward if an alert is raised
+	\item[S1)] The reward function is now more punitive when the car hits something, while braking is slightly more rewarded, provided that the Car won't stop moving
+	\item[S2)] The Safety Monitor is attached to the system and, if an alert is raised, the action of the network is replaced by the Monitor's action (the safety-brake)
+	\item[S3)] The network's action is replaced by the monitor's if it raises an alert. The network is given a positive reward for behaving like the Monitor
+	\item[S4)] The training step is stopped and the network is given a \textsl{negative} reward if an alert is raised
 \end{itemize}
 
 For the first strategy we expect at least the Controller's mean time/distance between failures to be lower. With this method one is also able to see if the new Controller can avoid the crashes of previous checkpoints. Another aspect we are interested in is how the Monitor's effectiveness changes in terms of positive/negative ratios.
@@ -290,5 +292,5 @@ FORSE
 
 =======================================================================
 
-As an additional step, we are going to treat the new Controllers as a Monitor for the runs recorded with the last checkpoint, to see how try to observe how the states space has changed.
+As an additional step, we are going to treat the new Controllers as a Monitor for the runs recorded with the last checkpoint, to try to observe how the states space has changed.
 

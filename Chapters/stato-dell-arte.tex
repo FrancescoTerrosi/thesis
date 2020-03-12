@@ -4,7 +4,7 @@ Self driving cars are one of the hottest topics of the decade. Artificial Intell
 
 \section{Autonomous Cars as CPS}
 
-In order for a car to be able to drive by itself, suitable hardware and software are required. This makes autonomous cars cyber physical computer systems, and the possible catastrophic consequences that a failure in/of these systems can cause, make them fall under the set of critical systems.
+In order for a car to be able to drive by itself, suitable hardware and software are required. This makes autonomous cars cyber physical systems, and the possible catastrophic consequences that a failure in/of these systems can cause, make them fall under the set of critical systems.
 
 To sense and map the surrounding environment, the system collects data from multiple sensors. Some of the most important sensors and their purposes are listed here:
 
@@ -71,7 +71,7 @@ The interaction between the Control System and the System Supervisor is at the c
 
 We consider \textsl{safe states} all the states in which the Control System produces an output that would not result in a crash.
 
-Imagine that an autonomous car is riding when suddenly an obstacle appears. If the Primary correctly detects the obstacles it should apply a safety-measure to \textbf{avoid} a transition in an \textsl{alert state} (e.g. a safety-brake). If the controller doesn't see \textsl{or} detects the obstacle but keeps throttling, there is a transition from a \textsl{safe-state} to an \textsl{alert-state}, in which the failure-avoidance components turn in. The System Supervisor's duty is now to launch a corrective-routine that will put the system in a fail-safe state (e.g. by applying the safety-brake not done by the controller and turning off the engine). An error of the Supervisor will inevitably cause the system to fail, as a result of the failure of both components, leading in a failure state (the crash happened). If we model the system's failures in this way, the level of safety of the system can be represented as the union of the failure area covered by the Controller and the one covered by the Supervisor
+Imagine that an autonomous car is riding when suddenly an obstacle appears. If the Primary correctly detects the obstacles it should apply a safety-measure to \textbf{avoid} a transition in an \textsl{alert state} (e.g. a safety-brake). If the controller doesn't see \textsl{or} detects the obstacle but keeps throttling, there is a transition from a \textsl{safe-state} to an \textsl{alert-state}, in which the failure-prevention components turn in. The System Supervisor's duty is now to launch a corrective-routine that will put the system in a fail-safe state (e.g. by applying the safety-brake not done by the controller and turning off the engine). An error of the Supervisor will inevitably cause the system to fail, as a result of the failure of both components, leading in a failure state (the crash happened). If we model the system's failures in this way, the level of safety of the system can be represented as the union of the failure area covered by the Controller and the one covered by the Supervisor
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/safety-area.png}
