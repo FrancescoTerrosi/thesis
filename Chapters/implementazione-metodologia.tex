@@ -40,7 +40,7 @@ Unfortunately, this version of CARLA has only 4 sensors available, which were al
 The three cameras were used during the training phase of the network. Three \textsl{scene final} cameras are attached to the car to actually \textsl{see} the environment (one on the front and one per side). The \textsl{depth map} camera allows the car to get a colormap of the distances from objects in the scenario.
 The \textsl{semantic segmentation} provides image classification features by querying the server for ground-truth values. This is with no doubt a semplification of a real system, where the most powerful image-classification softwares are essentially other neural networks trained separately. At the same time a misclassification can be considered as an error of the control system: if the safety monitor detects the possible hazard it will not "correct" the misclassification but it must react fast and safely to avoid the possible consequences of it, therefore this simplification won't have an impact on the overall method.\newline
 
-A ray-cast based Lidar is the only other sensor available for this version of CARLA. Parameters of this sensor can be easily tuned to simulate real lidars such as the \textsl{Velodyne LiDAR} or to simulate faults such as low data quality, noisy data or data loss\dots
+A ray-cast based Lidar is the only other sensor available for this version of CARLA. Parameters of this sensor can be easily tuned to simulate real lidars such as the \textsl{Velodyne LiDAR} or to simulate faults such as low data quality, noisy data or data loss\dots This data are generated using the \textsl{Point Cloud}\cite{pointcloud} format
 
 In the simulations, due to the high hardware resources requirements to simulate a real LiDAR, a slightly modified version of the \textsl{Velodyne64 LiDAR} is implemented with the following parameters:
 
@@ -82,16 +82,88 @@ The main component needed for the Controller implementation is the neural networ
 	\item[1] Training code must be available
 	\item[2] No critical issues in the codebase
 	\item[3] Provide an environment to interface the network with CARLA
+	\item[4] Provide a default training strategy
 \end{itemize}
 
-After analyzing all the machine-learning related projects for CARLA, we chose the reinforcement-learning framework \textsl{Coach}, developed by\textsl{Intel AI Lab}.\cite{coach}
+After analyzing all the machine-learning related projects for CARLA, we chose the reinforcement-learning framework \textsl{Coach}, developed by \textsl{Intel AI Lab}.\cite{coach}
 
+This framework satisfies all the requirements listed above: it is distributed as an \textsl{editable Python package}. The development team behind this project assure us the quality of the product. Moreover, several presets are available as a starting point. Two of these presets offer an interface to the CARLA simulator, as well as a default training strategy, which is exactly what we required.
+
+These presets implement the \textsl{Deep Deterministic Policy Gradient} algorithm, proposed in 2015.\cite{ddpg} This algorithm proved to perform well in tasks such as car driving, as shown in the original paper, and it's specifically adapted to perform in environments with continuos action space, such as the one we are considering.
+
+\begin{itemize}
+	\item[P1)] The first preset uses a single, front camera to perceive the environment, and the other data augmentation cameras provided by CARLA. The agent resulting from using this preset will likely not have any sense of depth
+	\item[P2)] This preset uses all the cameras available in CARLA and have a much more interesting architecture since the car is equipped with three regular cameras (Front, Left, Right) and all the data augmentation cameras available in CARLA, listed in the previous section
+\end{itemize}
+
+Unfortunately, the first preset suffers from an issue that causes the car to stop throttling, while being positively rewarded\cite{coachIssue}. It would have been interesting to test this preset as well, to understand what's the impact on the effectiveness of the Safety Monitor with respect to the quantity of data available to the network.\newline
+
+It's important to notice that our goal \textsl{is not} to build the \textsl{"perfect"} agent, nor the perfect autonomous cars. The codebase was studied but, due to reasons of time, we could not inspect all the details of the provided implementation. This framework was used as an example to demonstrate the concepts described in this work.
 
 
 \subsection{Safety-Monitor Implementation}
 
-PCL
-Implementazione (struttura client-server, object """detection""")
+In order to start the experimental activity, we needed a software capable of processing LiDAR data to map the environment and sense the obstacle. Moreover, this software needs to be \textsl{real-time} and capable of interacting with CARLA. The latter is obvious: whenever an alert is raised, the \textsl{"brake"} command must be sent to the CARLA server. The first required some reasoning: one could think to record the LiDAR data in advance and then run the simulations feeding the Monitor with these data. Unfortunately this approach can not work: this comes from the fact that we are not interested in having a 100\% prediction accuracy, but also in the \textsl{goodness} of the safety-measure adopted by the Monitor. The same measurement in two different simulations could give \textsl{slightly} different results, that could cause the Monitor to behave in a completely different way than the way it could have behaved using the \textsl{real time} data produced during the simulation. If the accuracy of measurements is strictly dependent on the simulator used for the experiments (CARLA is improving at every release on this side), we could not ignore the effects that a brake can have on a single run.
+
+In order to develop a decent Safety-Monitor, a research on the best, \textsl{"not-neural-network"} techniques was conducted, as well as a research on the open-source instruments available. The choice fell on the \textsl{Point Cloud Library}\cite{pcl}, an open-source library specifically dedicated to the processing of Point Cloud data, developed using C++ to achieve great performances when processing huge amount of data.
+This library was first released in 2011\cite{pclwiki} and it's been improved at every release, also thanks to the big community testing and debugging the new features.
+
+This library offers a multitude of functions that implements the most known techniques for Point Cloud processing. The steps to follow in order to develop an object-detection module are the following:
+
+\begin{itemize}
+	\item[1)] Downsampling
+	\begin{itemize}
+		\item[$\rightarrow$] The data generated by a single scan can contain more hundreds of thousands records, with possibly a lot of redundancy and noise. A downsample is usually necessary as a preliminary step to discard all the \textsl{"useless"} data. After some reasoning, the Voxel Grid Filter was chosen for this step
+	\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+	\item[2)] Ground Segmentation
+	\begin{itemize}
+		\item[$\rightarrow$] After the downsampling (if needed), the first mandatory step is to filter the data that are useless for the purpose of object detection, such as points relative to the ground. These point must be filtered in order to separate the ground from the objects we want to detect.
+		In our implementation this is done using the RANSAC\footnote{Random Sample Consensus} algorithm\cite{ransac}, a technique to separate \textsl{"inliers"} (i.e. data whose distribution is characterized by the model's parameters) from \textsl{"outliers"} (i.e. data that don't have a representation in the chosen model)
+	\end{itemize}
+\end{itemize}
+
+==================================================================================
+
+IMMAGINE PRE-POST SEGMENTATION
+
+==================================================================================
+
+\begin{itemize}
+	\item[3)] Clustering
+	\begin{itemize}
+		\item[$\rightarrow$] This final step is required to effectively identify what is an object in the scene, and what data points are relative to the same object. This can be done using clustering algorithms based on the distance among points. We chose the Euclidean Clustering Algorithm, a range search algorithm based on the euclidean distance between points, with the assumption that \textsl{very dense} points represent the same object
+	\end{itemize}
+\end{itemize}
+
+
+==================================================================================
+
+IMMAGINE CLUSTERING
+
+==================================================================================
+
+\begin{itemize}
+	\item[4)] Object Tracking and Avoidance
+	\begin{itemize}
+		\item[$\rightarrow$] Objects detected in the first three steps must be tracked over time in order to recognize if two objects observed in two consecutive steps, are actually the \textsl{same} object, usually using physical models to predict their behaviour over time, such as the Kalman Filter, and combine this model with a failure-prevention routine
+	\end{itemize}
+\end{itemize}
+
+Unfortunately, implementing a Kalman Filter for such a complex model would have been too much time-consuming, alting our study. Therefore we simplified the object-detection and the failure-prevention routine in this way:
+
+\begin{itemize}
+	\item Only data \textsl{in front of} the car are recorded. This is a huge semplification of the model, as the Monitor now can only detect obstacles ahead of the car. However, this will for sure have an impact on the effectiveness of the Safety Monitor, but the concepts explained in the previous section still holds
+	\item The failure-prevention routine implemented takes inspiration from the Responisbility-Sensitive Safety model proposed by Mobileye, an Intel company.\cite{rss}
+	If an object is detected, its speed relative to the system is computed. If the distance travelled by the system in 1 second  plus the braking distance is greater than the distance travelled by the object plus the distance between the system and the object, a safety brake is applied.
+\end{itemize}
+
+Since the Safety-Monitor is developed in C++, both for taking advantage of the Point Cloud Library and due to performance reasons, an infrastructure to exchange data with CARLA was developed.
+
+The software is composed of a C++ server that receives LiDAR Point Clouds from the CARLA client. This data are processed as in the steps above (with the semplification described) and, if needed, an alert is sent back to the client. If the message received by the Monitor is an alert, the actions of the Controller are ignored and a brake is performed.
+
 
 \section{Experimental Activity}
 
