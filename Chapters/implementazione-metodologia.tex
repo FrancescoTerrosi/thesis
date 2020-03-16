@@ -92,9 +92,11 @@ This framework satisfies all the requirements listed above: it is distributed as
 These presets implement the \textsl{Deep Deterministic Policy Gradient} algorithm, proposed in 2015.\cite{ddpg} This algorithm proved to perform well in tasks such as car driving, as shown in the original paper, and it's specifically adapted to perform in environments with continuos action space, such as the one we are considering.
 
 \begin{itemize}
-	\item[P1)] The first preset uses a single, front camera to perceive the environment, and the other data augmentation cameras provided by CARLA. The agent resulting from using this preset will likely not have any sense of depth
+	\item[P1)] The first preset uses a single, front camera to perceive the environment, and the other data augmentation cameras provided by CARLA. The agent resulting from using this preset will likely not have any sense of depth created by the regular camera and will rely solely on the depth camera
 	\item[P2)] This preset uses all the cameras available in CARLA and have a much more interesting architecture since the car is equipped with three regular cameras (Front, Left, Right) and all the data augmentation cameras available in CARLA, listed in the previous section
 \end{itemize}
+
+The usage of the data augmentation cameras (depth and semantic segmentation) allows us to ignore objects misclassifications (e.g. labeling a pedestrian as a light pole) as well as some other easinesses such as computing distances from objects. As pointed in the previous section, this is indeed a simplification of a real architecture, where object detection modules are neural networks themselves, that must be trained in advance and tested separately. However, again, a misclassification will probably cause the Controller to behave in unexpected manners that the Safety Monitor must be able to detect and possibly correct.
 
 Unfortunately, the first preset suffers from an issue that causes the car to stop throttling, while being positively rewarded\cite{coachIssue}. It would have been interesting to test this preset as well, to understand what's the impact on the effectiveness of the Safety Monitor with respect to the quantity of data available to the network.\newline
 
