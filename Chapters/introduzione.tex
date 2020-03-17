@@ -4,13 +4,13 @@ Nowadays, computer systems have a central role in our society. Originally intend
 
 The new domains in which these systems are used, required a redefinition of the concept of \textsl{"computer systems"}. Many of these systems must respect hard deadlines to fullfill their tasks, or there may be serious consequences which could result even in fatalities.
 
-Whenever the system must respect hard deadlines, we refer to them as \textsl{Critical Systems}. If a failure of such systems may be catastrophic, with serious damages to the environment, the infrastructures, or human beings, we talk about \textsl{Safety Critical Systems}.
+Whenever the system must respect hard deadlines, we refer to them as \textsl{Critical Systems}. If a failure of such systems may be catastrophic, with serious damages to the environment, the infrastructures, or human beings, we talk about \textsl{Safety Critical Systems}.\cite{safety-critical}
 
 There are cases in which these systems perform in a physical environment. An example of such a system is an autonomous car: a system composed by a \textsl{computer system}, in charge of doing the computations needed to fulfill the assigned task, and a physical component, in charge of interacting with the environment by change both the states of it and of the system itself.
 
 Because these systems are so pervasive and yet so dangerous, in case of a failure, to satisfy and guarantee their (usually) ultra-high \textsl{dependability} requirements is a key factor during the design and development phase.
 
-The \textsl{dependability} of a System is a measure of how \textsl{"trustable"} a system is, i.e. its ability to provide a \textbf{correct service}.
+The \textsl{dependability} of a System is a measure of how \textsl{"trustable"} a system is, i.e. its ability to provide a \textbf{correct service}.\cite{dependabilitypaper}
 
 A \textsl{failure} is an event that causes a disruption of the provided service.
 
@@ -81,7 +81,6 @@ The first are failures that we can somehow accept: the system will not provid a 
 As an example, think to an autonomous car. Imagine that the car is riding in "normal" conditions and suddenly an obstacle appers in front of it. A screeching halt and a consequent interruption of the ride is indeed a failed state, but it's considered as a \textsl{benign safe}, because no one got hurt. On the other hand, a situation in which the car beging to throttle towards the obstacle and eventually collides with it, is defined as an \textsl{unsafe failure} because people in the car could get seriously injuried (or killed).
 \newpage
 
-
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/safe-unsafe.png}
 	\caption{}
@@ -112,7 +111,7 @@ The dependability of a system comes from a set of four techniques that aims to p
 The effectiveness of the measures adopted to achieve the dependability requirements of a system is measured through the \textsl{validation} process.
 The validation of the system requirements is a process that must be repeated in each phase of the system development, even at the very beginning of the design phase.
 
-There are multiple validation techniques that may be specifically selected for each phase of the system development:
+There are multiple validation techniques that may be specifically selected for each phase of the system development: \cite{bonda}
 
 \begin{itemize}
 	\item \textsl{Analytical/Numerical Modeling}
@@ -140,6 +139,71 @@ It is important to keep in mind that these techniques are non-exclusive and the 
 
 \section{System Monitoring}
 
-The \textsl{Monitoring}
+The observation of a system operating in its environment to collect measures and evidences about its properties, is a technique called \textsl{System Monitoring}. Nowadays it's considered a good way to measure a system's dependability and diverse approaches on how it has to be done were proposed in literature. In this work we stick with the methoda described in these works \cite{monitor1}, \cite{monitor2}, \cite{monitor3}.
+This technique aims at constantly monitoring the system running in its \textsl{final} environment, verifying that the \textsl{observed behaviour} and \textsl{performance} meet the defined requirements.
+The data collected in the monitoring activity \textsl{must} be validated:
+
+\begin{itemize}
+	\item \textsl{Offline}: data are collected and stored somewhere, while the system is running, and are analyzed afterwards
+	\item \textsl{Online (or at Runtime)}: data are analyzed \textsl{while} they are being collected
+\end{itemize}
+
+A good monitoring technique must consider all these aspects:
+
+\begin{itemize}
+	\item \textsl{Identification} of the relevant events, measures and features of the system, that are necessary to assess the system dependability
+	\item \textsl{Labeling} data in order to enrich the raw measurement with more informations
+	\item \textsl{Transmission} of the data collected to the analysis node, in order to process them
+	\item \textsl{Filtering} and \textsl{Classification} of data with respect to the measures of interest
+\end{itemize}
+
+In the definition of a monitoring activity, we call \textsl{Target System} the whole system as it is. If the monitoring activity is related to a specific hardware or software component of the system, we refer to it as \textsl{Target Component} or \textsl{Target Application}. Both practitioners and academics agree on the effectiveness of these two models, very different from each other:
+
+\begin{itemize}
+	\item \textsl{Black-Box approach}
+	\item \textsl{White-Box approach}
+\end{itemize}
+
+The choice on which approach to use depends on how much control it's possible to have on the target system, especially on its internal implementation. If e.g. the details implementation are unknown because the monitoring activity is performed on a third-party system, only a black box approach can be adopted: after the definition of a \textsl{workload} (i.e. an input or a series of inputs, representative of a possible execution), the workload is given to the system and its outputs are observed.
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/black-box.png}
+	\caption{}
+\end{figure}
+
+If the internal details of the Target System are known and freely accessible, it's possible to monitor the system "from the inside", attaching \textsl{probes} to the system in order to observe the intermediate outputs produced by the system \textsl{during} its execution.
+These probes, since they are attached directly to the system's internal components, can give much more informations than the one collectable just by observing the system's outputs.
+If this approach provides a lot of more informations on the system's behaviour on one hand, on the other hand it requires extra care on how the monitoring activity and system probing are done. In particular, it's mandatory to adhere these two basic rules:
+
+\begin{itemize}
+	\item \textsl{Representativeness of Selections}: the probes must be able to observe an \textsl{adequate number of meaningful observations} to perform a good monitoring activity
+	\item \textsl{No Intrusiveness}: the system's behaviour \textsl{must not} be affected by probing, otherwise the measures will be meaningless 
+\end{itemize}
+
+The design and development of the monitoring system requires additional reasoning, especially on how the probing is done. In particular, a monitoring activity can be:
+
+\begin{itemize}
+	\item \textsl{Hardware Monitoring}
+	\item \textsl{Software Monitoring}
+	\item \textsl{Hybrid Monitoring}
+\end{itemize}
+
+A dedicated hardware circuit for monitoring is the best way to monitor a system because of the very low intrusiveness (outputs are read "on the fly" while being produced). However, systems are becoming more and more complex nowadays, making it very difficult, if not impossible, to install hardware probes.
+Software probes are very powerful instruments, because they have access to more informations than the ones available to hardware probes, because it's possible to know the \textsl{context} in which the specific output was produced.
+Software probing is done by adding instruction in the \textsl{Target Process}, specifically dedicated to data extraction and measurement, in the \textsl{Operative System} or by developing a new \textsl{probe process}.
+Hardware and software probes can be combined in a hybrid approach, with particular care on mitigating the cons of each technique.
 
 \section{Motivation and Goal of this work}
+
+In this work we are interested in monitoring a self-driving car composed by a Neural Network, in charge of driving the car, and a System Supervisor, a component that provides fault-tolerance mechanisms to avoid catastrophic failures.
+
+Autonomous cars are one of the most recent and promising safety-critical systems in terms of the implications they may have on future system developments.
+
+These kinds of system usually have ultra-high dependability requirements that are very hard to validate. Moreover, the nature of the software architecture, involving AIs and non-AI software interacting with each other.
+
+The goal of this work is to develop an experimental method to assess the dependability of such complex systems, with particular care for the problem of \textsl{what} measures are relevant for these systems and \textsl{what} are the issues that have an impact on the analysis activity.
+An experimental activity was conducted in a realistic simulated environment to demonstrate the concepts proposed in this thesis.
+
+We didn't have a trained Neural Network available, nor a System Supervisor. The network was trained from scratch and a simple System Supervisor was developed as part of this work.
+
+It's important to notice that this work doesn't aim at providing an \textsl{exhaustive} treaty on the argument, but at begin a phase of exploration of these concepts and problems, that will require further validation and exploration in future works.
