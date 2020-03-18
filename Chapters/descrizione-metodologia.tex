@@ -59,7 +59,7 @@ With this scheme in mind, the states space for this system can be modeled in thi
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/state-space-true.png}
-	\caption{The light blue area contains the states in which the Controller is \textsl{"in control"} of the situation: the action taken by the Controller \textbf{will not} cause a Failure. The Yellow area represents the states in which the Controller made a \textsl{"wrong"} action, and without the intervention of the Safety Monitor, the System would inevitably fail. The red areas represent the fail-states.}
+	\caption{Representation of the system's states space}
 \end{figure}
 
 As it's shown in this figure, we can classify the states of this system in 3 sets:
@@ -203,8 +203,8 @@ For this component, we want to measure its ability to distinguish between safe s
 
 
 \begin{figure}[h!]
-	\includegraphics[width=\textwidth]{img/positive-negative.png}
-	\caption{Graphical Representation of what true and false predictions means in the system's state space. Recall that the light blue area is the set of \textbf{safe} states, and the yellow area represents the \textbf{alert state}, in which the Monitor intervention is \textbf{mandatory} to a void a system failure}
+	\includegraphics[width=\textwidth]{img/positive-negative-set.png}
+	\caption{Graphical Representation of what true and false predictions means in the system's state space. Dots represent the current state of the System. A blue dot means that no alarm is raised, a red dot means that the Monitor raises an alarm}
 \end{figure}
 
 

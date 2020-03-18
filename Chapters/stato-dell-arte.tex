@@ -62,10 +62,10 @@ If neural networks gave promising results on one hand, and they seem the only wa
 \section{Controller - Checker Problem}
 
 
-The interaction between the Control System and the System Supervisor is at the core of the car's movements. The Control System, or \textsl{Primary Component}, is the software performing the main computations of the system, required to drive the car. In a context like this, it's mandatory to have fault-tolerance mechanisms such as the System Supervisor, to avoid catastrophic failures. This kind of architecture is a must for these systems, due to the extremely high dependability requirements they have, in order to try to cover all the possible failures that may happen. The state space of such systems may be sketched in this way:
+The interaction between the Control System and the System Supervisor is at the core of the car's movements. The Control System, or \textsl{Primary Component}, is the software performing the main computations of the system, required to drive the car. In a context like this, it's mandatory to have fault-tolerance mechanisms such as the System Supervisor, to avoid catastrophic failures. This kind of architecture is a must for these systems, due to the extremely high dependability requirements they have, in order to try to cover all the possible failures that may happen. The state space of such systems may be sketched as in figure 7.
 
 \begin{figure}[h!]
-	\includegraphics[height=5.5cm,width=\textwidth]{img/state-space.png}
+	\includegraphics[width=\textwidth]{img/state-space.png}
 	\caption{Sketch of the system's safe states}
 \end{figure}
 
@@ -73,21 +73,21 @@ We consider \textsl{safe states} all the states in which the Control System prod
 
 Imagine that an autonomous car is riding when suddenly an obstacle appears. If the Primary correctly detects the obstacles it should apply a safety-measure to \textbf{avoid} a transition in an \textsl{alert state} (e.g. a safety-brake). If the controller doesn't see \textsl{or} detects the obstacle but keeps throttling, there is a transition from a \textsl{safe-state} to an \textsl{alert-state}, in which the failure-prevention components turn in. The System Supervisor's duty is now to launch a corrective-routine that will put the system in a fail-safe state (e.g. by applying the safety-brake not done by the controller and turning off the engine). An error of the Supervisor will inevitably cause the system to fail, as a result of the failure of both components, leading in a failure state (the crash happened). If we model the system's failures in this way, the level of safety of the system can be represented as the union of the failure area covered by the Controller and the one covered by the Supervisor
 
-\begin{figure}[h!]
-	\includegraphics[width=\textwidth]{img/safety-area.png}
-	\caption{Visualization of safety areas}
-\end{figure}
-
 This problem is nothing but a generalization (related to safety) of the asymmetric fault-tolerant architecture for computer systems: the idea of having a \textsl{Primary Component} that does the main computations, and a \textsl{Primary Checker} in charge of detecting (and correcting) error of the Primary.\newline
 The problem of assessing the dependability of these simpler (but still complex) systems is a well known topic in literature and was explored in different studies. In a relatively recent work published by \textsl{Popov} and \textsl{Strigini} in 2010, it is shown that the probability of a system failing on a specific input (or set of inputs), strictly depends on both the coverage of the Primary \textsl{and} the Primary Checker, as shown in the figure above.\cite{striginiPopov}
 
 In the context of self-driving cars we want the area covered by the primary to be the largest possible. This is done by intensive training of the neural networks that will control the car. As long as the network is trained \textsl{"properly"}, the control system should be able to handle most of the dangerous situations that may happen. At one point, it is possible that the areas covered by the Controller and the Supervisor will eventually overlap, reducing the overall contribution to the system's safety given by the latter.
 
-Another possibility is that during the training, a portion of the failure area covered by the controlller becomes uncovered. This could result in a situation in which the overall dependability of the system is increased, but some of the previously safe states are now alarm state. Since the coverage area provided by the System Supervisor can not change without changing its implementation (it doesn't "learn" automatically), a transition to one of these states would now inevitably result in a failure.
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/area-growth-good.png}
+	\caption{The states covered by the Controller are now the ones previously covered, plus some states previously covered just by the Monitor}
+\end{figure}
+
+Another possibility is that during the training, a portion of the failure area covered by the controlller becomes uncovered. This could result in a situation in which some of the previously safe states are now alarm state, representing a serious harm to the system's dependability. Since the coverage area provided by the System Supervisor can not change without changing its implementation (it doesn't "learn" automatically), a transition to one of these states would now inevitably result in a failure.
 
 \begin{figure}[h!]
-	\includegraphics[width=\textwidth]{img/area-growth.png}
-	\caption{How the coverage of the system may vary when the network is trained  -----   codice colore come sopra}
+	\includegraphics[width=\textwidth]{img/area-growth-bad.png}
+	\caption{The Controller now covers all the states previously covered by the Monitor, but doesn't cover anymore some of the states he covered before the training}
 \end{figure}
 
 All these considerations and the lack of literature on the topic for these new systems such as autonomous cars, lead us to begin a study on the emergent behaviour resulting from the interaction of a neural network control system and a \textsl{"classic"} error checker, what happens when the network is \textsl{taught} by a supervisor during the training and how performance metrics of these 2 components can be computed.\newline

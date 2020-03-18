@@ -166,6 +166,8 @@ Since the Safety-Monitor is developed in C++, both for taking advantage of the P
 
 The software is composed of a C++ server that receives LiDAR Point Clouds from the CARLA client. This data are processed as in the steps above (with the semplification described) and, if needed, an alert is sent back to the client. If the message received by the Monitor is an alert, the actions of the Controller are ignored and a brake is performed.
 
+The object detection module is inspired by an open-source project developed by Engin Bozkurt\cite{LOD}. The codebase was deeply modified to adapt the detection algorithm parameters to fit our needs and to interact with CARLA.
+
 
 \section{Experimental Activity}
 
