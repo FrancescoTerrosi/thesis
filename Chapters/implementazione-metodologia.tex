@@ -12,11 +12,10 @@ In order to have a realistic environment, with accurate physics simulation and d
 CARLA is developed with a client-server architecture in mind. The \textsl{server} is basically a game, developed with \textsl{Unreal Engine 4} in C++. C++ performances are with no doubt essential to the functionality of the server: not only the environment must be simulated (including movements of pedestrians/vehicles, weather simulation\dots), but also all the data needed from the sensors attached to the system.\newline
 
 
-======================================================================================
-
-IMMAGINE CARLA
-
-======================================================================================
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/carla.jpg}
+	\caption{CARLA logo at carla.org}
+\end{figure}
 
 CARLA is currently at version 0.9.7 and huge improvements are done at every release, gaining more attention from the experts for its realism. Unfortunately, when this study started, CARLA 0.9 was recently released and the tools needed for our work couldn't be found online. Thanks to the quantity of work done for the last \textit{stable} version of CARLA, 0.8.4 was used at first.\newline
 Versions prior to 0.9 have some limitations on the control one has of the simulations parameters and on the data collectable from it. This doesn't impede our study, but of course limited in some way the informations on the environment and system. Some of these problems are still present in later versions of the simulator, but most of them were solved in the transition from 0.8 to 0.9.\newline\newline
@@ -127,25 +126,12 @@ This library offers a multitude of functions that implements the most known tech
 	\end{itemize}
 \end{itemize}
 
-==================================================================================
-
-IMMAGINE PRE-POST SEGMENTATION
-
-==================================================================================
-
 \begin{itemize}
 	\item[3)] Clustering
 	\begin{itemize}
 		\item[$\rightarrow$] This final step is required to effectively identify what is an object in the scene, and what data points are relative to the same object. This can be done using clustering algorithms based on the distance among points. We chose the Euclidean Clustering Algorithm, a range search algorithm based on the euclidean distance between points, with the assumption that \textsl{very dense} points represent the same object
 	\end{itemize}
 \end{itemize}
-
-
-==================================================================================
-
-IMMAGINE CLUSTERING
-
-==================================================================================
 
 \begin{itemize}
 	\item[4)] Object Tracking and Avoidance
@@ -158,7 +144,7 @@ Unfortunately, implementing a Kalman Filter for such a complex model would have 
 
 \begin{itemize}
 	\item Only data \textsl{in front of} the car are recorded. This is a huge semplification of the model, as the Monitor now can only detect obstacles ahead of the car. However, this will for sure have an impact on the effectiveness of the Safety Monitor, but the concepts explained in the previous section still holds
-	\item The failure-prevention routine implemented takes inspiration from the Responisbility-Sensitive Safety model proposed by Mobileye, an Intel company.\cite{rss}
+	\item The failure-prevention routine implemented takes inspiration from the Responsibility-Sensitive Safety model proposed by Mobileye, an Intel company.\cite{rss}
 	If an object is detected, its speed relative to the system is computed. If the distance travelled by the system in 1 second  plus the braking distance is greater than the distance travelled by the object plus the distance between the system and the object, a safety brake is applied.
 \end{itemize}
 
@@ -172,8 +158,68 @@ The object detection module is inspired by an open-source project developed by E
 
 In this section is described how the methodology developed in the previous chapter was implemented, and the technical problems found during the implementation.
 
-The Controller was trained with the default strategy provided by \textsl{Coach}
+The Controller was trained with the default strategy provided by \textsl{Coach} in order to generate four checkpoints to be subsequently tested.
+
+Scenarios were generated using the 150 spawn points\footnote{Coordinates in the map in which the car will start its ride.} provided by Carla.
+For each spawn point, a default setting and three variations of it were generated:
+
+\begin{itemize}
+	\item[h0)] \textsl{Default Setting}: the map is generated using the \textsl{same} conditions in which the Controller was trained, with 30 pedestrians and 15 cars
+	\item[h1)] \textsl{Pedestrians Setting}: the map is generated increasing the number of pedestrians from 30 to 60
+	\item[h2)] \textsl{Vehicles Setting}: the map is generated increasing the number of vehicles in the environment from 15 to 30
+	\item[h3]) \textsl{Pedestrians and Vehicles Setting}: the map is generated merging $h1$ and $h2$, resulting in an environment with 60 pedestrians and 30 vehicles
+\end{itemize}
 	
+For repeatibility, and consistency across the variations, 150 couples of unique seeds\footnote{These seeds are used in the generation of pedestrians and vehicles} were generated, each of them was associated to a starting point. This allows to have the same seed, for the same starting point, using different variations.
+
+In the first phase of the analysis, the four checkpoints generated were tested according to the methodology described in section 3.
+Since the \textsl{Coach} project is open-source, the codebase was freely available. This allowed us to use \textsl{software probes} to monitor the Controller's activity.
+The source code was modified adding some instructions to write all the needed data into different file for each run:
+
+\begin{itemize}
+	\item The scenario's starting point and seeds
+	\item Actions taken by the Controller
+	\item If there is a collision, with what
+\end{itemize}
+
+Modifying the source code may in general result in a worsening of the overall performances, and the accuracy of results. Fortunately, the CARLA simulator provides an option to run the simulations at a \textsl{fixed-time step}. This was set at its minimum: 10 FPS\footnote{Frames Per Second}, to assure that all the data received from the server are \textsl{timely} and \textsl{correct}. The first training phase and the Controller testing required circa 1 month to be performed.\newline
+
+The second step was to test the effectiveness of the Safety-Monitor for each checkpoint.
+
+The source code was once again modified to create two separate, concurrent processes: one takes LiDAR data from the CARLA server and sends them to the Safety-Monitor server; the other waits for the response of the Safety-Monitor to check whether a brake is needed.
+
+The LiDAR data are generated by the CARLA server at each frame. THe workload for data generation relies solely on the CPU, resulting in very much slower execution times. Unfortunately, CARLA suffers from a bug which causes data to be inaccurate, if FPSs are lower than 10. This required a powerful machine to guarantee the lower bound of 10 FPS.
+The source code was once again modified to insert software probes in the codebase to gather informations about alarms raised by the monitor.
+
+Runs recorded in the first step are now repeated observing the Safety-Monitor's behaviour. All the alerts raised during the run are considered \textsl{false positive}. The emergency brake is enabled 2 seconds before the collision, to estimate the amount of \textsl{true positives}.
+
+This approach, allows us to estimate the goodness of the Safety-Monitor in its operational environment.\newline
+
+After the first phase is concluded, data gathered are processed to compute the measures listed in the previous Chapter:
+
+\begin{itemize}
+	\item \textsl{Controller's Checkpoints}:
+	\begin{itemize}
+		\item[-] Mean Distance Between Failures
+		\item[-] Mean Time Between Failures
+		\item[-] Failure Rate
+		\item[-] Reliability
+	\end{itemize}
+	\item \textsl{Safety-Monitor}:
+	\begin{itemize}
+		\item[-] True Positive Rate
+		\item[-] False Negative Rate
+		\item[-] False Positives per Meter
+	\end{itemize}
+\end{itemize}
+
+At this point, training is resumed from the last checkpoints using the strategies described before, and the measurement process is repeated identically.
+
+Some of the strategies defined requires the training to be done \textsl{with} the Safety-Monitor, resulting in very low execution times. This phase took 2 months, after which the training was stopped.
+
+The numerical results collected can be compared to check if the network is learning properly and how the Safety-Monitor's effectiveness changes when the network improves.
+
+The collected results are presented and compared in the next section.
 
 \section{Results}
 
