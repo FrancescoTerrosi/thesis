@@ -172,7 +172,9 @@ For each spawn point, a default setting and three variations of it were generate
 	
 For repeatibility, and consistency across the variations, 150 couples of unique seeds\footnote{These seeds are used in the generation of pedestrians and vehicles} were generated, each of them was associated to a starting point. This allows to have the same seed, for the same starting point, using different variations.
 
-In the first phase of the analysis, the four checkpoints generated were tested according to the methodology described in section 3.
+In general, it may require a huge amount of time for a crash to happen. For this reason, in order to demonstrate the concepts explained in this work, it was defined a maximum running time of 15 minutes, after which the System's task is considered succeeded.
+
+In the first phase of the analysis, four checkpoints generated were tested according to the methodology described in section 3.
 Since the \textsl{Coach} project is open-source, the codebase was freely available. This allowed us to use \textsl{software probes} to monitor the Controller's activity.
 The source code was modified adding some instructions to write all the needed data into different file for each run:
 
@@ -222,6 +224,10 @@ The numerical results collected can be compared to check if the network is learn
 The collected results are presented and compared in the next section.
 
 \section{Results}
+
+The data collected are saved in separate files for each run and processed using Python scripts, computing the measures listed in Chapter 3.
+
+The measures collected are compared to check the goodness of the Controller and changes in the effectiveness of the Safety-Monitor over the neural network's checkpoints.
 
 \begin{itemize}
 	\item Generazione 1:
