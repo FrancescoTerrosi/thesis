@@ -160,7 +160,7 @@ In this section is described how the methodology developed in the previous chapt
 
 The Controller was trained with the default strategy provided by \textsl{Coach} in order to generate four checkpoints to be subsequently tested.
 
-Scenarios were generated using the 150 spawn points\footnote{Coordinates in the map in which the car will start its ride.} provided by Carla.
+Scenarios were generated using the 152 spawn points\footnote{Coordinates in the map in which the car will start its ride.} provided by Carla.
 For each spawn point, a default setting and three variations of it were generated:
 
 \begin{itemize}
@@ -184,7 +184,9 @@ The source code was modified adding some instructions to write all the needed da
 	\item If there is a collision, with what
 \end{itemize}
 
-Modifying the source code may in general result in a worsening of the overall performances, and the accuracy of results. Fortunately, the CARLA simulator provides an option to run the simulations at a \textsl{fixed-time step}. This was set at its minimum: 10 FPS\footnote{Frames Per Second}, to assure that all the data received from the server are \textsl{timely} and \textsl{correct}. The first training phase and the Controller testing required circa 1 month to be performed.\newline
+Modifying the source code may in general result in a worsening of the overall performances, and the accuracy of results. Fortunately, the CARLA simulator provides an option to run the simulations at a \textsl{fixed-time step}. This was set at its minimum: 10 FPS\footnote{Frames Per Second}, to assure that all the data received from the server are \textsl{timely} and \textsl{correct}. This also serves as a mean for \textsl{repeatibility} of tests: a \textsl{variable time-step} may introduce randomness in data since we have no control over it.
+
+The first training phase and the Controller testing required circa 1 month to be performed.\newline
 
 The second step was to test the effectiveness of the Safety-Monitor for each checkpoint.
 
@@ -225,16 +227,89 @@ The collected results are presented and compared in the next section.
 
 \section{Results}
 
+\subsection{Phase 1}
+
 The data collected are saved in separate files for each run and processed using Python scripts, computing the measures listed in Chapter 3.
 
 The measures collected are compared to check the goodness of the Controller and changes in the effectiveness of the Safety-Monitor over the neural network's checkpoints.
 
+Since the Controller checkpoints were tested in the \textsl{same} scenarios, the distances travelled for each scenario were plotted to check if meters travelled are increasing and if there are scenarios somehow \textsl{"favorable"} or extremely \textsl{"hard"} for the system. This first step allows testers to filter between critical scenarios and easy scenarios. Ideally, given a Scenario $x$, if the distance travelled by the Controller in $x$ is lower than the average distance travelled in all the checkpoints, there may be two cases:
+
+\begin{itemize}
+	\item[1)] In the case that the Controller always travel the same distance in all the checkpoints before crashing, there may be a hazard that the Controller has not learned to handle
+	\item[2)] In the case the distance travelled fluctuates in a certain (small) interval, the happening of a crash may depend from the inital conditions
+\end{itemize}
+
+Regardless of the case, with this approach it's easy to see which scenarios make the Controller crash soon, and they can be examined individually with more attention.
+
+\begin{minipage}[c]{\textwidth}
+	\includegraphics[width=\textwidth]{simulations/gen1/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by the Controller in the first checkpoint}
+
+	\includegraphics[width=\textwidth]{simulations/gen4/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by the Controller in the fourth checkpoint}
+
+\vspace{0.5cm}
+The order of magnitude is quite different between the two checkpoints and in one scenario it has been reached the maximum length defined for these experiments. These figures are just demonstrative of the improvement of the Controller over checkpoints.
+\end{minipage}
+
+The use of a \textsl{fixed time-step} when running the simulations, i.e. the simulation time elapsed between two steps of the simulation is fixed and known, gives us knowled of the interval of time between two consecutive actions: observing how many actions the Controller has taken it's possible to compute the total time of a single run.
+
+In this way, we are able to easily approximate the \textsl{Reliability Function} for each Checkpoint:
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/reliability-comparison.png}
+	\caption{}
+\end{figure}
+
+As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint has a higher MTTF than Checkpoints 3 and 4. However, analyzing some of the runs in which the second Checkpoint performed better, it could be seen that its driving was more dangerous than the other two. This resulted in reckless runs, with sudden steers and disrespect of road rules.
+
+
+\subsection{Phase 2}
+
+
 \begin{itemize}
 	\item Generazione 1:
 	\begin{itemize}
-		\item MDBF: 125.89
-		\item STANDARD: Max Distance: 371,04   - MIN DISTANCE:  18.10
-		\item Pedestrians:
+		\item MDBF: 131,67
+		\item MTTF: 19,39
 	\end{itemize}
+	\item Generazione 2:
+	\begin{itemize}
+		\item MDBF: 677,98
+		\item MTTF: 72,71
+	\end{itemize}
+	\item Generazione 3:
+	\begin{itemize}
+		\item MDBF: 579,37
+		\item MTTF: 67,07
+	\end{itemize}
+	\item Generazione 4:
+	\begin{itemize}
+		\item MDBF: 594,94
+		\item MTTF: 67,72
+	\end{itemize}
+	\item Generazione Pro:
+	\begin{itemize}
+		\item MDBF: 1108,86
+		\item MTTF: 124,6
+	\end{itemize}
+	\item Generazione NonPro:
+	\begin{itemize}
+		\item MDBF: 994,31
+		\item MTTF: 111,42
+	\end{itemize}
+
+\vspace{1cm}
+
+
+$R_{C1}(x)\: =\: e^{-3.33\cdot x}$\newline\newline
+$R_{C2}(x)\: =\: e^{-0.82\cdot x}$\newline\newline
+$R_{C3}(x)\: =\: e^{-0.89\cdot x}$\newline\newline
+$R_{C4}(x)\: =\: e^{-0.88\cdot x}$
+
+
+
 
 \end{itemize}
