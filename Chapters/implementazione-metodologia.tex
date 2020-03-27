@@ -158,7 +158,7 @@ The object detection module is inspired by an open-source project developed by E
 
 In this section is described how the methodology developed in the previous chapter was implemented, and the technical problems found during the implementation.
 
-The Controller was trained with the default strategy provided by \textsl{Coach} in order to generate four checkpoints to be subsequently tested.
+The Controller was trained in an urban environment, with the default strategy provided by \textsl{Coach} in order to generate four checkpoints to be subsequently tested.
 
 Scenarios were generated using the 152 spawn points\footnote{Coordinates in the map in which the car will start its ride.} provided by Carla.
 For each spawn point, a default setting and three variations of it were generated:
@@ -170,7 +170,7 @@ For each spawn point, a default setting and three variations of it were generate
 	\item[h3]) \textsl{Pedestrians and Vehicles Setting}: the map is generated merging $h1$ and $h2$, resulting in an environment with 60 pedestrians and 30 vehicles
 \end{itemize}
 	
-For repeatibility, and consistency across the variations, 150 couples of unique seeds\footnote{These seeds are used in the generation of pedestrians and vehicles} were generated, each of them was associated to a starting point. This allows to have the same seed, for the same starting point, using different variations.
+For repeatibility, and consistency across the variations, 152 couples of unique seeds\footnote{These seeds are used in the generation of pedestrians and vehicles} were generated, each of them was associated to a starting point. This allows to have the same seed, for the same starting point, using different variations.
 
 In general, it may require a huge amount of time for a crash to happen. For this reason, in order to demonstrate the concepts explained in this work, it was defined a maximum running time of 15 minutes, after which the System's task is considered succeeded.
 
@@ -179,7 +179,7 @@ Since the \textsl{Coach} project is open-source, the codebase was freely availab
 The source code was modified adding some instructions to write all the needed data into different file for each run:
 
 \begin{itemize}
-	\item The scenario's starting point and seeds
+	\item The starting point and seeds of the Scenario
 	\item Actions taken by the Controller
 	\item If there is a collision, with what
 \end{itemize}
@@ -233,12 +233,13 @@ The data collected are saved in separate files for each run and processed using 
 
 The measures collected are compared to check the goodness of the Controller and changes in the effectiveness of the Safety-Monitor over the neural network's checkpoints.
 
-Since the Controller checkpoints were tested in the \textsl{same} scenarios, the distances travelled for each scenario were plotted to check if meters travelled are increasing and if there are scenarios somehow \textsl{"favorable"} or extremely \textsl{"hard"} for the system. This first step allows testers to filter between critical scenarios and easy scenarios. Ideally, given a Scenario $x$, if the distance travelled by the Controller in $x$ is lower than the average distance travelled in all the checkpoints, there may be two cases:
+Since the Checkpoints were tested in the \textsl{same} scenarios, the distances travelled for each scenario were plotted to check if meters travelled are increasing and if there are scenarios somehow \textsl{"favorable"} or extremely \textsl{"hard"} for the system. This first step allows testers to filter between critical scenarios and easy scenarios. Ideally, given a Scenario $x$, if the distance travelled by the Controller in $x$ is lower than the average distance travelled in all the checkpoints, there may be two cases:
 
 \begin{itemize}
 	\item[1)] In the case that the Controller always travel the same distance in all the checkpoints before crashing, there may be a hazard that the Controller has not learned to handle
 	\item[2)] In the case the distance travelled fluctuates in a certain (small) interval, the happening of a crash may depend from the inital conditions
 \end{itemize}
+
 
 Regardless of the case, with this approach it's easy to see which scenarios make the Controller crash soon, and they can be examined individually with more attention.
 
@@ -255,18 +256,78 @@ The order of magnitude is quite different between the two checkpoints and in one
 
 The use of a \textsl{fixed time-step} when running the simulations, i.e. the simulation time elapsed between two steps of the simulation is fixed and known, gives us knowled of the interval of time between two consecutive actions: observing how many actions the Controller has taken it's possible to compute the total time of a single run.
 
-In this way, we are able to easily approximate the \textsl{Reliability Function} for each Checkpoint:
-
+In this way, we are able to easily approximate the \textsl{Reliability Function} for each Checkpoint.
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/reliability-comparison.png}
+	\caption{Graphics that shows the probability $y$ of the system being operational, after $x$ minutes of operation}
+\end{figure}
+
+As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint seems to have better performances (higher MTTF) than Checkpoints 3 and 4. However, analyzing a subset of the runs in which the second Checkpoint achieved very good performances in terms of time to failure and distance travelled, it can be seen that its driving is way more dangerous than the other two, resulting in reckless runs, with sudden steer and disrespect of road rules.
+
+Fortunately, as we will show with the results collected in phase 3, the Controller managed to overcome this problem.\newline
+
+The same behaviour is observed for distances travelled by each Checkpoint: longer runs are actually runs in which the car travels more meters. This assure us that the system is not \textsl{"cheating"}: a longer execution time may result from the car not moving. Computing the average distance travelled by each Checkpoint in each difficulty level, allows us to approximate the Reliability Function in terms of kilometers travelled before crashing.
+
+Moreover, the observed progresses in the \textsl{mean distance to failure} seems to follow the progresses of the \textsl{mean time to failure}, which is another assurance of the correspondence between the two metrics.
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/reliability-meters-comparison.png}
+	\caption{Graphics that shows the probability $y$ of the system being operational, after $x$ kilometers}
+\end{figure}
+
+As another mean to analyze the Controller's behaviour over Checkpoints, since CARLA provides means to record the kind of object with which a collision occured, ratios of kind of object collided with respect to total collisions are computed for each Checkpoint, for each level of difficulty.
+This procedure serves multiple purposes:
+
+\begin{itemize}
+	\item[1)] To monitor whether the Car crashes with obstacles, indicating that it tends to go off-road by crashing with walls, light poles, fences\dots
+	\item[2)] To monitor how the Car reacts to diverse level of difficulty, e.g. if we increase the number of pedestrians and we observe for example less collisions with pedestrians, it may be an indicator that the System is capable of avoiding collisions with people.
+	\item[3)] Understand the System's ability to avoid crashes with specific "objects" (pedestrians, vehicles and generic obstacles)
+\end{itemize}
+
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/hit-ratios.png}
 	\caption{}
 \end{figure}
 
-As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint has a higher MTTF than Checkpoints 3 and 4. However, analyzing some of the runs in which the second Checkpoint performed better, it could be seen that its driving was more dangerous than the other two. This resulted in reckless runs, with sudden steers and disrespect of road rules.
+These diagrams are useful to have an overlook of how the System performs when changing the difficulty of the Scenario, while being trained.
+As we could expect, the first Checkpoint mostly collides with off-road obstacles, indicating poor driving skills of the Controller.
 
+It also seems that there is a tendency in which the ratio of collisions with generic obstacles follows the overall Checkpoint's performances.
+Observing this diagram and those of the Reliability Function, it can be seen that C1 (lowest MTTF), tends to crash against obstacles, C2, which had the best performances in terms of MTTF and MDTF, has the lowest ratio of collisions against obstacles. C3 increased the ratios of these collisions, coeherently with its worsening of the MTTF/MDTF, which is subsequently lowered by C4.
+
+Moreover, the increasing or lowering of the hit ratios with a specific kind of object, follows the features of the difficulty chosen. This means that the crashes observed are strictly dependent on the environmental conditions.
+
+This aspect is useful for the definition of more complex difficulties. These measures also allows to detect correlations between the increase/decrease of kind of collisions.
 
 \subsection{Phase 2}
+
+Dati del Monitor
+
+
+\subsection{Phase 3}
+
+DATI DELLA RETE RI-ADDESTRATA. VANTAGGI DI TRAINING PIU` PUNITIVO E FALLIMENTO DEL TRAINING CON MONITOR
+
+
+
+MIEI REMINDER:
+
+
+\begin{itemize}
+	\item[-] p = pedestrians hit
+	\item[-] v = vehicles hit
+	\item[-] o = obstacles hit
+\end{itemize}
+
+\begin{itemize}
+	\item[-] 0 = standard difficulty
+	\item[-] 1 = increase \# pedestrians
+	\item[-] 2 = increase \# vehicles
+	\item[-] 3 = increase \# pedestrians and vehicles
+\end{itemize}
+
+
 
 
 \begin{itemize}
@@ -277,18 +338,18 @@ As we expected, the MTTF of the first checkpoint is very low (20 seconds) and in
 	\end{itemize}
 	\item Generazione 2:
 	\begin{itemize}
-		\item MDBF: 677,98
-		\item MTTF: 72,71
-	\end{itemize}
-	\item Generazione 3:
-	\begin{itemize}
 		\item MDBF: 579,37
 		\item MTTF: 67,07
 	\end{itemize}
-	\item Generazione 4:
+	\item Generazione 3:
 	\begin{itemize}
 		\item MDBF: 594,94
 		\item MTTF: 67,72
+	\end{itemize}
+	\item Generazione 4:
+	\begin{itemize}
+		\item MDBF: 677,98
+		\item MTTF: 72,71
 	\end{itemize}
 	\item Generazione Pro:
 	\begin{itemize}
@@ -300,16 +361,25 @@ As we expected, the MTTF of the first checkpoint is very low (20 seconds) and in
 		\item MDBF: 994,31
 		\item MTTF: 111,42
 	\end{itemize}
-
-\vspace{1cm}
-
-
-$R_{C1}(x)\: =\: e^{-3.33\cdot x}$\newline\newline
-$R_{C2}(x)\: =\: e^{-0.82\cdot x}$\newline\newline
-$R_{C3}(x)\: =\: e^{-0.89\cdot x}$\newline\newline
-$R_{C4}(x)\: =\: e^{-0.88\cdot x}$
-
-
-
-
+	
+	\vspace{1cm}
+	
+	
+	$R_{C1}(x)\: =\: e^{-3.33\cdot x}$\newline\newline
+	$R_{C2}(x)\: =\: e^{-0.82\cdot x}$\newline\newline
+	$R_{C3}(x)\: =\: e^{-0.89\cdot x}$\newline\newline
+	$R_{C4}(x)\: =\: e^{-0.77\cdot x}$
+	
+	
+	
+	$R_{C1-km}(x)\: =\: e^{-7.69\cdot x}$\newline\newline
+	$R_{C2-km}(x)\: =\: e^{-1.72\cdot x}$\newline\newline
+	$R_{C3-km}(x)\: =\: e^{-1.69\cdot x}$\newline\newline
+	$R_{C4-km}(x)\: =\: e^{-1.47\cdot x}$
+	
+	
+	
+	
 \end{itemize}
+
+
