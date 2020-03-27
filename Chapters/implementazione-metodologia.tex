@@ -154,6 +154,8 @@ The software is composed of a C++ server that receives LiDAR Point Clouds from t
 
 The object detection module is inspired by an open-source project developed by Engin Bozkurt\cite{LOD}. The codebase was deeply modified to adapt the detection algorithm parameters to fit our needs and to interact with CARLA.
 
+We are conscious that this Monitor will likely not achieve "state of art" performances and it's likely to produce a lot of \textsl{false positives}. This aspect may have some consequences on the traning efficacy, but the concepts explained in this work still holds.
+
 \section{Experimental Activity}
 
 In this section is described how the methodology developed in the previous chapter was implemented, and the technical problems found during the implementation.
@@ -227,7 +229,7 @@ The collected results are presented and compared in the next section.
 
 \section{Results}
 
-\subsection{Phase 1}
+\subsection{Phase 1 - Controller Testing}
 
 The data collected are saved in separate files for each run and processed using Python scripts, computing the measures listed in Chapter 3.
 
@@ -242,6 +244,10 @@ Since the Checkpoints were tested in the \textsl{same} scenarios, the distances 
 
 
 Regardless of the case, with this approach it's easy to see which scenarios make the Controller crash soon, and they can be examined individually with more attention.
+
+It is important to keep in mind that if a trend is observed when testing different Checkpoints, e.g. a scenario in which the Controller \textsl{always} performs extremely good or extremely bad, an analysis of the specific case is needed, in both of the cases.
+
+The reason is obvious for "bad" runs, for the reason listed above. It may seem counter-intuitive, but repeated "good" runs in the same scenario requires particular attention. An analysis of the correlation between performances and initial conditions is mandatory, and it may be demonstrated or confuted with this approach. A more complex case is when the System finds a \textsl{"lucky pattern"}, for example 
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/gen1/standard/distance-travelled-figure.pdf}
@@ -290,7 +296,7 @@ This procedure serves multiple purposes:
 	\caption{}
 \end{figure}
 
-These diagrams are useful to have an overlook of how the System performs when changing the difficulty of the Scenario, while being trained.
+These diagrams are useful to have an overlook of how the System performs when changing the difficulty of the Scenario while being trained and to observe correlations between the kinds of collision and the Checkpoints.
 As we could expect, the first Checkpoint mostly collides with off-road obstacles, indicating poor driving skills of the Controller.
 
 It also seems that there is a tendency in which the ratio of collisions with generic obstacles follows the overall Checkpoint's performances.
@@ -298,14 +304,16 @@ Observing this diagram and those of the Reliability Function, it can be seen tha
 
 Moreover, the increasing or lowering of the hit ratios with a specific kind of object, follows the features of the difficulty chosen. This means that the crashes observed are strictly dependent on the environmental conditions.
 
-This aspect is useful for the definition of more complex difficulties. These measures also allows to detect correlations between the increase/decrease of kind of collisions.
+This aspect is useful for the definition of more complex difficulties. These measures also allows to detect correlations between the increase/decrease of kind of collisions.\newline
 
-\subsection{Phase 2}
+With the methodology defined for the first phase, combining the definition of the Scenarios, the difficulty levels and the metrics chosen, allows to observe many features of the Controller without actively observing its executions. Moreover, combining the few metrics chosen it is possible to have an overlook of possible correlations between environmental conditions, initial conditions, and Checkpoints.
+
+\subsection{Phase 2 - Monitor Testing}
 
 Dati del Monitor
 
 
-\subsection{Phase 3}
+\subsection{Phase 3 - Retraining and Retesting}
 
 DATI DELLA RETE RI-ADDESTRATA. VANTAGGI DI TRAINING PIU` PUNITIVO E FALLIMENTO DEL TRAINING CON MONITOR
 
