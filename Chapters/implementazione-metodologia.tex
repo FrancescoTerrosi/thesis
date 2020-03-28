@@ -104,7 +104,7 @@ It's important to notice that our goal \textsl{is not} to build the \textsl{"per
 
 \subsection{Safety-Monitor Implementation}
 
-In order to start the experimental activity, we needed a software capable of processing LiDAR data to map the environment and sense the obstacle. Moreover, this software needs to be \textsl{real-time} and capable of interacting with CARLA. The latter is obvious: whenever an alert is raised, the \textsl{"brake"} command must be sent to the CARLA server. The first required some reasoning: one could think to record the LiDAR data in advance and then run the simulations feeding the Monitor with these data. Unfortunately this approach can not work: this comes from the fact that we are not interested in having a 100\% prediction accuracy, but also in the \textsl{goodness} of the safety-measure adopted by the Monitor. The same measurement in two different simulations could give \textsl{slightly} different results, that could cause the Monitor to behave in a completely different way than the way it could have behaved using the \textsl{real time} data produced during the simulation. If the accuracy of measurements is strictly dependent on the simulator used for the experiments (CARLA is improving at every release on this side), we could not ignore the effects that a brake can have on a single run.
+In order to start the experimental activity, we needed a software capable of processing LiDAR data to map the environment and sense the obstacle. Moreover, this software needs to be \textsl{real-time} and capable of interacting with CARLA. The latter is obvious: whenever an alert is raised, the \textsl{"brake"} command must be sent to the CARLA server. The first required some reasoning: one could think to record the LiDAR data in advance and then run the simulations feeding the Monitor with these data. Unfortunately this approach can not work: this comes from the fact that we are not only interested in having a 100\% prediction accuracy, but also in the \textsl{goodness} of the safety-measure adopted by the Monitor. The same measurement in two different simulations could give \textsl{slightly} different results, that could cause the Monitor to behave in a completely different way than the way it could have behaved using the \textsl{real time} data produced during the simulation. If the accuracy of measurements is strictly dependent on the simulator used for the experiments (CARLA is improving at every release on this side), we could not ignore the effects that a brake can have on a single run.
 
 In order to develop a decent Safety-Monitor, a research on the best, \textsl{"not-neural-network"} techniques was conducted, as well as a research on the open-source instruments available. The choice fell on the \textsl{Point Cloud Library}\cite{pcl}, an open-source library specifically dedicated to the processing of Point Cloud data, developed using C++ to achieve great performances when processing huge amount of data.
 This library was first released in 2011\cite{pclwiki} and it's been improved at every release, also thanks to the big community testing and debugging the new features.
@@ -238,16 +238,15 @@ The measures collected are compared to check the goodness of the Controller and 
 Since the Checkpoints were tested in the \textsl{same} scenarios, the distances travelled for each scenario were plotted to check if meters travelled are increasing and if there are scenarios somehow \textsl{"favorable"} or extremely \textsl{"hard"} for the system. This first step allows testers to filter between critical scenarios and easy scenarios. Ideally, given a Scenario $x$, if the distance travelled by the Controller in $x$ is lower than the average distance travelled in all the checkpoints, there may be two cases:
 
 \begin{itemize}
-	\item[1)] In the case that the Controller always travel the same distance in all the checkpoints before crashing, there may be a hazard that the Controller has not learned to handle
+	\item[1)] In the case that the Controller always travels the same distance in all the checkpoints before crashing, there may be a hazard that the Controller has not learned to handle
 	\item[2)] In the case the distance travelled fluctuates in a certain (small) interval, the happening of a crash may depend from the inital conditions
 \end{itemize}
-
 
 Regardless of the case, with this approach it's easy to see which scenarios make the Controller crash soon, and they can be examined individually with more attention.
 
 It is important to keep in mind that if a trend is observed when testing different Checkpoints, e.g. a scenario in which the Controller \textsl{always} performs extremely good or extremely bad, an analysis of the specific case is needed, in both of the cases.
 
-The reason is obvious for "bad" runs, for the reason listed above. It may seem counter-intuitive, but repeated "good" runs in the same scenario requires particular attention. An analysis of the correlation between performances and initial conditions is mandatory, and it may be demonstrated or confuted with this approach. A more complex case is when the System finds a \textsl{"lucky pattern"}, for example 
+The reason is obvious for "bad" runs, for the reason listed above. It may seem counter-intuitive, but repeated "good" runs in the same scenario requires particular attention. An analysis of the correlation between performances and initial conditions is mandatory, and it may be demonstrated or confuted with this approach. A more complex case is when the System finds a \textsl{"lucky pattern"}, e.g. a run in which the car just follows the same pattern without finding any car on the road. 
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/gen1/standard/distance-travelled-figure.pdf}
@@ -308,86 +307,103 @@ This aspect is useful for the definition of more complex difficulties. These mea
 
 With the methodology defined for the first phase, combining the definition of the Scenarios, the difficulty levels and the metrics chosen, allows to observe many features of the Controller without actively observing its executions. Moreover, combining the few metrics chosen it is possible to have an overlook of possible correlations between environmental conditions, initial conditions, and Checkpoints.
 
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+
 \subsection{Phase 2 - Monitor Testing}
 
-Dati del Monitor
+After the Controller has been tested, and its runs are recorded, it's possible to test the Safety-Monitor in order to approximate its prediction accuracy, but also how it affects the safety of the whole System.
+
+As said before, LiDAR data are collected at each frame and sent to the Safety-Monitor. These data are then processed using the algorithm described in the \textsl{Monitor Implementation} section and a message is sent back to the Control System, containing informations about whether braking or not. There is no synchronization between these 2 components, as it is in real systems of this kind: it would not be possible for the Controller to wait for the message of the Safety-Monitor at each frame, as it would result in jerky runs.
+
+The amounts of True Positives, True Negatives and False Positives are computed using the procedure described in the previous chapter:
+
+\begin{itemize}
+	\item The Controller runs recorded in the previous phase are repeated attaching the Safety-Monitor to the car
+	\item The Safety-Monitor is allowed to generate alerts, but the safety brake is not performed until the istant of time $t$ in which the System enters in an \textsl{alert state}, defined as in Chapter 3.
+	\begin{itemize}
+		\item[-] The choice of $t$ is a critical parameter for the accuracy of measurements, as a choice of an \textsl{"early"} $t$ may cause a brake for an event that the Controller actually handled, and a \textsl{"late"} $t$ may result in a failure of the Safety-Monitor just because the safety brake was enabled too late. Ideally, the safety brake should be enabled as soon as there is a transition from a \textsl{safe state} to an \textsl{alert state}. Unfortunately it's not always possible (if not possible at all in complex runs) to understand when this transition happened. In this work, $t$ was approximated observing the average speed of the car wrt speed limit and the time needed to process LiDAR data and get the answer from the Safety-Monitor and was set to 2 seconds
+	\end{itemize}
+	\item All the alerts generated before $t$ are considered \textsl{false positives}
+	\item If the System managed to survive for the maximum time defined for a single run, but the Safety-Monitor raises an alert, this alert is considered a \textsl{false positive}
+	\item A successfull avoidance of the crash (if happened) because of the brake caused by the Safety-Monitor, is considered to be a \textsl{true positive}
+	\item If a crash happens, regardless of whether the Safety-Monitor raised an alarm or not, it's classified as a \textsl{false negative}
+\end{itemize}
+
+\vspace{0.5cm}
+\begin{table}[h]
+	\caption{Prediction Rates}
+	\begin{center}
+		\begin{tabular}{ |c|c|c|c|c| }
+			\hline
+			  & C1 & C2 & C3 & C4 \\
+			\hline
+			TPR & 0.75 & 0.82 & 0.75 & 0.77 \\
+			\hline
+			FNR & 0.25 & 0.15 & 0.25 & 0.23 \\
+			\hline
+			FPPM & 0.52 & 1.13 & 1.02 & 1.12 \\
+			\hline
+			
+		\end{tabular}
+	\\
+	\vspace{0.3cm}
+	True Positive Rate, False Positive Rate, False Positive per Meter for Checkpoints 1-4
+	\end{center}
+\end{table}
+
+\begin{table}
+	\caption{False Positives Causes}
+	\begin{center}
+		\begin{tabular}{ |c|c|c|c|c| }
+			\hline
+			  & C1 & C2 & C3 & C4 \\
+			\hline
+			SM ERROR & 80\% & 41\% & 39\% & 57\% \\
+			\hline
+			SUDDEN STEER & 0\% & 9\% & 24\% & 12\% \\
+			\hline
+			FAST SPEED & 19\% & 48\% & 36\% & 30\% \\
+			\hline
+			SLOW SPEED & 1\% & 2\% & 1\% & 1\% \\
+			\hline
+		\end{tabular}
+	\\
+	\vspace{0.3cm}
+	Percentage of false positives causes. The use of a simulator such as CARLA, and the recording of the car's runs, allow to have a deep understanding on the system's behaviour
+	\end{center}
+\end{table}
+
+The method developed in this work seems a promising mean not only to observe the Monitor's behaviour, but also to understand and validate the hypothesis on the Controller's behaviour.
+
+Analyzing tables 1 and 2, it seems like the Monitor's effectiveness is influenced by the Controller's reliability. Looking at prediction rates, the best performance for the Monitor is observed with Checkpoint 2, where the Controller had the lowest failure rate. The Monitor's effectiveness then is lower for Checkpoint 3, and improves a little bit in Checkpoint 4, which is exactly the same progress observed in the Reliability Functions for these Checkpoints. Anyway, the Safety-Monitor \textsl{true positive rate} and \textsl{false negative rate} are stable at around $0.75$ and $0.25$ except for C2, which anyway exhibited a weird behaviour in the simulations.
+
+In phase 1, we had to manually rerun and observe some of the best runs for Checkpoint 2, to understand why that was the case. If we look at the percentage of false positives cases, we can see that an excessive speed is the main cause of Monitor's failures for C2.\footnote{FAST SPEED: the car's speed was over 40km/h when the crash happened.\newline SLOW SPEED: the car's speed was lower then 5 km/h when the crash happened}
+Another interesting aspect that can be observed collecting data in this way, is that it seems like the more the network learns to handle new situations, the more the Safety-Monitor tends to produce more false positives and, above all, the situations that will eventually result in a crash, are of a new kind that the Monitor is not able to detect (SM ERROR).\newline
+The measures listed in table 2 are just demonstrative of how this method works and how, with few measures, a lot of informations and evidences about the System's behaviour can be extracted. Depending on the actual hardware available and the simulation environment, more measures can be extracted and combined to enrich these informations.\newline
+As we hypothesized at the beginning of this work, the Monitor effectiveness seems to be influenced by \textsl{how} the Controller behaves. Most importantly, data suggests that the prediction accuracy of the Monitor is not directly dependent on how long the Controller is trained. Retraining the Network again with different strategies and apply the same monitoring method for the Controllers thus obtained may confirm or deny this fact.
+
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
+
+
+
 
 
 \subsection{Phase 3 - Retraining and Retesting}
 
 DATI DELLA RETE RI-ADDESTRATA. VANTAGGI DI TRAINING PIU` PUNITIVO E FALLIMENTO DEL TRAINING CON MONITOR
-
-
-
-MIEI REMINDER:
-
-
-\begin{itemize}
-	\item[-] p = pedestrians hit
-	\item[-] v = vehicles hit
-	\item[-] o = obstacles hit
-\end{itemize}
-
-\begin{itemize}
-	\item[-] 0 = standard difficulty
-	\item[-] 1 = increase \# pedestrians
-	\item[-] 2 = increase \# vehicles
-	\item[-] 3 = increase \# pedestrians and vehicles
-\end{itemize}
-
-
-
-
-\begin{itemize}
-	\item Generazione 1:
-	\begin{itemize}
-		\item MDBF: 131,67
-		\item MTTF: 19,39
-	\end{itemize}
-	\item Generazione 2:
-	\begin{itemize}
-		\item MDBF: 579,37
-		\item MTTF: 67,07
-	\end{itemize}
-	\item Generazione 3:
-	\begin{itemize}
-		\item MDBF: 594,94
-		\item MTTF: 67,72
-	\end{itemize}
-	\item Generazione 4:
-	\begin{itemize}
-		\item MDBF: 677,98
-		\item MTTF: 72,71
-	\end{itemize}
-	\item Generazione Pro:
-	\begin{itemize}
-		\item MDBF: 1108,86
-		\item MTTF: 124,6
-	\end{itemize}
-	\item Generazione NonPro:
-	\begin{itemize}
-		\item MDBF: 994,31
-		\item MTTF: 111,42
-	\end{itemize}
-	
-	\vspace{1cm}
-	
-	
-	$R_{C1}(x)\: =\: e^{-3.33\cdot x}$\newline\newline
-	$R_{C2}(x)\: =\: e^{-0.82\cdot x}$\newline\newline
-	$R_{C3}(x)\: =\: e^{-0.89\cdot x}$\newline\newline
-	$R_{C4}(x)\: =\: e^{-0.77\cdot x}$
-	
-	
-	
-	$R_{C1-km}(x)\: =\: e^{-7.69\cdot x}$\newline\newline
-	$R_{C2-km}(x)\: =\: e^{-1.72\cdot x}$\newline\newline
-	$R_{C3-km}(x)\: =\: e^{-1.69\cdot x}$\newline\newline
-	$R_{C4-km}(x)\: =\: e^{-1.47\cdot x}$
-	
-	
-	
-	
-\end{itemize}
-
 
