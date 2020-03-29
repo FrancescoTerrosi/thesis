@@ -225,7 +225,10 @@ Some of the strategies defined requires the training to be done \textsl{with} th
 
 The numerical results collected can be compared to check if the network is learning properly and how the Safety-Monitor's effectiveness changes when the network improves.
 
-The collected results are presented and compared in the next section.
+Data collected were processed using \textsl{Python} scripts, to aggregate data in order to produce metrics of the \textsl{overall} performances of the Controller and the Safty-Monitor.
+Data aggregation is fundamental for this kind of activity. At the same time, due to the complex nature of these systems and the fact that many hazardous events are \textsl{rare events}, it is \textsl{necessary} to study specific runs individually and to separately compare their performances before aggregating data as well (e.g. compare performances for the same Controller in each difficulty level).
+
+In the next section we present collected results mostly in aggregated form, due to the huge amount of data collected. However, there are considerations on \textsl{"raw"} data that can not be shown in this work, but are attached separately for examination.
 
 \section{Results}
 
@@ -248,27 +251,27 @@ It is important to keep in mind that if a trend is observed when testing differe
 
 The reason is obvious for "bad" runs, for the reason listed above. It may seem counter-intuitive, but repeated "good" runs in the same scenario requires particular attention. An analysis of the correlation between performances and initial conditions is mandatory, and it may be demonstrated or confuted with this approach. A more complex case is when the System finds a \textsl{"lucky pattern"}, e.g. a run in which the car just follows the same pattern without finding any car on the road. 
 
+Looking at charts of distances travelled in each scenario for Checkpoint 1 and 4 at \textsl{standard difficulty} below, it's obvious that the order of magnitude is quite different between the two checkpoints (C1 never travels more then 400 meters, while C4 has several runs longer than 1 km) and in a couple scenarios it has been reached the maximum length defined for these experiments.
+Another very interesting fact observed with this approach, is that the lower bound on distance travelled doesn't change for C2-4 and it's stuck at 22 meters in \textsl{all} the difficulties. A deeper analysis on travelled distances and running times shows that there are runs in which the Controller doesn't make any progress, as an indicator that the event causing a crash may be of a particular kind, which is hard for the Controller to handle. Results of this kind are with no doubt interesting in understanding if the shortest runs have some environmental conditions in common, which may cause the Controller to perform badly.
+
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/gen1/standard/distance-travelled-figure.pdf}
 	\captionof{figure}{Meters travelled by the Controller in the first checkpoint}
 
 	\includegraphics[width=\textwidth]{simulations/gen4/standard/distance-travelled-figure.pdf}
 	\captionof{figure}{Meters travelled by the Controller in the fourth checkpoint}
-
-\vspace{0.5cm}
-The order of magnitude is quite different between the two checkpoints and in one scenario it has been reached the maximum length defined for these experiments. These figures are just demonstrative of the improvement of the Controller over checkpoints.
 \end{minipage}
 
 The use of a \textsl{fixed time-step} when running the simulations, i.e. the simulation time elapsed between two steps of the simulation is fixed and known, gives us knowled of the interval of time between two consecutive actions: observing how many actions the Controller has taken it's possible to compute the total time of a single run.
 
-In this way, we are able to easily approximate the \textsl{Reliability Function} for each Checkpoint.
+In this way, we are able to easily approximate the \textsl{Reliability Function} for each Checkpoint, based on the average MTTF in each level of difficulty.
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/reliability-comparison.png}
 	\caption{Graphics that shows the probability $y$ of the system being operational, after $x$ minutes of operation}
 \end{figure}
 
-As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint seems to have better performances (higher MTTF) than Checkpoints 3 and 4. However, analyzing a subset of the runs in which the second Checkpoint achieved very good performances in terms of time to failure and distance travelled, it can be seen that its driving is way more dangerous than the other two, resulting in reckless runs, with sudden steer and disrespect of road rules.
+As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint seems to have better performances (higher MTTF) than Checkpoints 3 and 4. However, analyzing a subset of the runs in which the second Checkpoint achieved very good performances in terms of time to failure and distance travelled, it can be seen that its driving is way more dangerous than the other two, resulting in a bad driving style in which most of the times the car avoided a crash by steering at the very last moment. As another indicator of the fact that C2 is not really better than C3 and C4 is that it \textbf{never} reached a goal destination as opposed to C3/C4, as another evidence that the \textsl{apparent} higher safety is likely to be a result of \textsl{"lucky patterns"} in the sense defined above.
 
 Fortunately, as we will show with the results collected in phase 3, the Controller managed to overcome this problem.\newline
 
@@ -299,23 +302,13 @@ These diagrams are useful to have an overlook of how the System performs when ch
 As we could expect, the first Checkpoint mostly collides with off-road obstacles, indicating poor driving skills of the Controller.
 
 It also seems that there is a tendency in which the ratio of collisions with generic obstacles follows the overall Checkpoint's performances.
-Observing this diagram and those of the Reliability Function, it can be seen that C1 (lowest MTTF), tends to crash against obstacles, C2, which had the best performances in terms of MTTF and MDTF, has the lowest ratio of collisions against obstacles. C3 increased the ratios of these collisions, coeherently with its worsening of the MTTF/MDTF, which is subsequently lowered by C4.
+Observing this diagram and those of the Reliability Function, it can be seen that C1 (lowest MTTF), tends to crash against obstacles, C2, which had the best performances in terms of MTTF and MDTF, has the lowest ratio of collisions against obstacles. C3 increased the ratios of these collisions, coeherently with its worsening of the MTTF/MDTF, which is subsequently lowered by C4.\newline
 
-Moreover, the increasing or lowering of the hit ratios with a specific kind of object, follows the features of the difficulty chosen. This means that the crashes observed are strictly dependent on the environmental conditions.
+The four levels of difficulty defined, even if quite simple, proved to be a good way to assess the System's performances in environments that are different from the training environment. MTTFs and MDTFs are sensibly lower in difficulties 3 and 4 (increasing the number of vehicles, increasing the number of pedestrians and vehicles) giving evidences that situations of dense traffic tend to be harder to handle. At the same time increase/decrease of the hit ratios with a specific kind of object, follows the features of the difficulty chosen. This suggests that the crashes observed are strictly dependent on the environmental conditions. Increasing the number of pedestrians resulted in more collisions with these \textsl{"objects"} and increasing the number of vehicles shows the same evidence. Increasing the amount of pedestrians and vehicles shows that collisions with other cars is still the main cause of a crash, giving evidences that dense traffic is more likely to create harder situations for the Controller.
 
-This aspect is useful for the definition of more complex difficulties. These measures also allows to detect correlations between the increase/decrease of kind of collisions.\newline
+These aspects are useful for the definition of more complex difficulties. These measures also allows to detect correlations between the increase/decrease of kind of collisions.\newline
 
 With the methodology defined for the first phase, combining the definition of the Scenarios, the difficulty levels and the metrics chosen, allows to observe many features of the Controller without actively observing its executions. Moreover, combining the few metrics chosen it is possible to have an overlook of possible correlations between environmental conditions, initial conditions, and Checkpoints.
-
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
 
 \subsection{Phase 2 - Monitor Testing}
 
@@ -351,7 +344,6 @@ The amounts of True Positives, True Negatives and False Positives are computed u
 			\hline
 			FPPM & 0.52 & 1.13 & 1.02 & 1.12 \\
 			\hline
-			
 		\end{tabular}
 	\\
 	\vspace{0.3cm}
@@ -383,27 +375,51 @@ The amounts of True Positives, True Negatives and False Positives are computed u
 
 The method developed in this work seems a promising mean not only to observe the Monitor's behaviour, but also to understand and validate the hypothesis on the Controller's behaviour.
 
-Analyzing tables 1 and 2, it seems like the Monitor's effectiveness is influenced by the Controller's reliability. Looking at prediction rates, the best performance for the Monitor is observed with Checkpoint 2, where the Controller had the lowest failure rate. The Monitor's effectiveness then is lower for Checkpoint 3, and improves a little bit in Checkpoint 4, which is exactly the same progress observed in the Reliability Functions for these Checkpoints. Anyway, the Safety-Monitor \textsl{true positive rate} and \textsl{false negative rate} are stable at around $0.75$ and $0.25$ except for C2, which anyway exhibited a weird behaviour in the simulations.
+Analyzing tables 1 and 2, it seems like the Monitor's effectiveness is influenced by the Controller's reliability. Looking at prediction rates, the best performance for the Monitor is observed with Checkpoint 2, where the Controller had the lowest failure rate. The Monitor's effectiveness then is lower for Checkpoint 3, and improves a little bit in Checkpoint 4, which is exactly the same progress observed in the Reliability Functions for these Checkpoints. Anyway, the Safety-Monitor \textsl{true positive rate} and \textsl{false negative rate} are stable at around $0.75$ and $0.25$ except for C2, which anyway exhibited a weird behaviour in the simulations. As we expected, this Monitor tends to produce many false positives (around 1 false positive per meter). This doesn't affect the effectiveness of the monitoring methodology described, but raises some concerns on the effectiveness of a training strategy using \textsl{this} Monitor.\newline
 
 In phase 1, we had to manually rerun and observe some of the best runs for Checkpoint 2, to understand why that was the case. If we look at the percentage of false positives cases, we can see that an excessive speed is the main cause of Monitor's failures for C2.\footnote{FAST SPEED: the car's speed was over 40km/h when the crash happened.\newline SLOW SPEED: the car's speed was lower then 5 km/h when the crash happened}
 Another interesting aspect that can be observed collecting data in this way, is that it seems like the more the network learns to handle new situations, the more the Safety-Monitor tends to produce more false positives and, above all, the situations that will eventually result in a crash, are of a new kind that the Monitor is not able to detect (SM ERROR).\newline
 The measures listed in table 2 are just demonstrative of how this method works and how, with few measures, a lot of informations and evidences about the System's behaviour can be extracted. Depending on the actual hardware available and the simulation environment, more measures can be extracted and combined to enrich these informations.\newline
 As we hypothesized at the beginning of this work, the Monitor effectiveness seems to be influenced by \textsl{how} the Controller behaves. Most importantly, data suggests that the prediction accuracy of the Monitor is not directly dependent on how long the Controller is trained. Retraining the Network again with different strategies and apply the same monitoring method for the Controllers thus obtained may confirm or deny this fact.
 
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
-LE DIFFICOLTA` SERVONO PER I LUCKY PATTERN!!!
-
-
-
-
-
 \subsection{Phase 3 - Retraining and Retesting}
 
-DATI DELLA RETE RI-ADDESTRATA. VANTAGGI DI TRAINING PIU` PUNITIVO E FALLIMENTO DEL TRAINING CON MONITOR
+If \textsl{phase 2} already gave some hints about the fact that the effectiveness of the \textsl{same} Safety-Monitor is likely to change when applied to different Checkpoints, the re-training with different strategies and the performance comparison of the Controllers trained with such strategies and the one we took as the default strategy, will be central in confirming or denying this hypothesis.
+
+\begin{itemize}
+	\item[S0)] The default strategy provided by \textsl{Coach framework}, where the reward function computed based on the overall neural network performances (collisions, time spent off-road or off-lane, travel speed\dots)
+	\item[S1)] The reward function is now more punitive when the car hits something, while braking is slightly more rewarded, provided that the Car won't stop moving
+	\item[S2)] The Safety Monitor is attached to the system and, if an alert is raised, the action of the network is replaced by the Monitor's action (the safety-brake)
+	\item[S3)] The network's action is replaced by the monitor's if it raises an alert. The network is given a positive reward for behaving like the Monitor
+	\item[S4)] The training step is stopped and the network is given a \textsl{negative} reward if an alert is raised
+\end{itemize}
+
+\subsubsection{- On the Effectiveness of Strategies S2, S3, S4:}
+
+Unfortunately, the strategies that used the Safety-Monitor did not give the results we expected and the neural network got stuck in a \textsl{local minimum}. Specifically, S3 and S4 turned to make the Controller to not move, while S2 makes the Controller stop after very few meters travelled, if there is an object in front of the car, even if very far. This is almost surely caused by the very high false positives of the Monitor. A long training conducted in this way taught the car to not move in order to avoid the alerts raised by the Safety-Monitor and, even if these strategies takes into account the eventuality in which the Car does not move, punishing it with a negative reward, this was not enough to prevent the car from standing still.
+We believe that the \textsl{reward functions} for the \textsl{DDPG algorithm} used for the training activity is well specified, in the sense that all the positive and negative behaviours were taken into account when designing it. However, the complexity of the situations that a network must be able to handle in order to write a car, makes it very difficult to tune all the reward parameters in order to prevent outcomes like the one we had.
+
+The biggest issue in the training activity is the extremely time consuming, and it's not thinkable to train $n$ agents with $n$ strategies and wait for them to be trained to analyze which strategy gave the best result.
+An interesting approach would be to develop stochastic models to guide us in the tuning of the reward function parameters, in order to perform a \textsl{calibration activity} prior to the monitoring activity described in this work. In general, it's not clear \textsl{a priori} what value the reward function should assign to each state, and the continuous space state and the \textsl{complexity} of it, when it comes to self-driving cars, make this task even harder.
+
+The design of the \textsl{reward function} for these relatively new algorithms is a hot topic in the academic community, and researchers are working on methods that aims at understanding \textsl{how} to specifiy a \textsl{good model} for the learning agent. \cite{reward1} \cite{reward2} \cite{reward3}
+
+Unfortunately, the complexity and the novelty of these systems and techniques, still requires more research to solve these problems.
+
+\subsubsection{- Performance Comparison and Analyis of S0 and S1:}
+
+The failure of the strategies that relied on the Monitor, doesn't allow us to analyze how the effectiveness of the Monitor is influenced by those strategies. However, the monitoring activity can still be performed on $C_{S0}$ and $C_{S1}$ to observe:
+
+\begin{itemize}
+	\item[a)] How the accuracy and effectiveness of the same Safety-Monitor is influenced by the Controller's effectiveness
+	\item[b)] If harshening the punishments (negative rewards) during the training has an impact on both the Controller's and Monitor's performances
+\end{itemize}
+
+The monitoring activity is basically a repetition of \textsl{phase 1} and \textsl{phase 2}.
+
+\begin{minipage}[c]{\textwidth}
+	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-comparison.png}
+
+	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-km-comparison.png}
+\end{minipage}
 
