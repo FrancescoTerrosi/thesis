@@ -417,12 +417,19 @@ The failure of the strategies that relied on the Monitor, doesn't allow us to an
 
 The monitoring activity is basically a repetition of \textsl{phase 1} and \textsl{phase 2}. The same measures are computed and aggregated in the same form for the purpose of comparison.
 
-$C_{S1}$ performed significantly better than $C_{S0}$ both in terms of MTTF and MDTF. This reassure us on the fact that the System is actually travelling and higher MTTF is not a result of the car not moving, as happened for $C_{S2-4}$.
+$C_{S1}$ performed significantly better than $C_{S0}$ both in terms of MTTF and MDTF. This reassure us on the fact that the System is actually travelling and higher MTTF is not a result of the car not moving, as happened for $C_{S2\dots 4}$.
 
 This is an interesting result, from the moment that the training period was the same for both Controllers (someone could argue that $C_{S1}$ was trained for more time, but this is not the case), a more punitive strategy applied after a certain training phase gave good results and in terms of running times and travelled distances.
 \newline
 
-Comparing travelled distances charts, it looks like that $C_{S0}$ is the \textsl{"natural"} progress of $C4$. This makes sense, as it was trained with the same strategy. Looking at $C_{S1}$, if on one hand it had the best overall performances, there are scenarios in which it fails earlier than $C4$. This can be seen graphically looking at the right side of charts (approximately after scenario 130). It is true that differences are seen with $C4$ and $C_{S0}$ too, but small differences in running time may mean that the network is trying new solutions to avoid the events that resulted in a crash, while for $C_{S1}$ it seems that the Controller is not able anymore to handle some of the situations it previously handled.
+Comparing travelled distances charts, we can see that both $C_{S0}$ and $C_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C_{S0}$ which reached max length only once.
+
+This is validated by the Reliability Functions computed both in term of time in operation and distance travelled, as $R_{C_{S1}} > R_{C_{S0}} > R_{C4}$
+
+CS0 FA FATICA DOVE C4 MENTRE CS1 SUPERA ALCUNE E FALLISCE ALTRE
+
+
+Looking at $C_{S1}$, if on one hand it had the best overall performances, there are scenarios in which it fails earlier than $C4$. This can be seen graphically looking at the right side of charts (approximately after scenario 130). It is true that differences are seen with $C4$ and $C_{S0}$ too, but small differences in running time may mean that the network is trying new solutions to avoid the events that resulted in a crash, while for $C_{S1}$ it seems that the Controller is not able anymore to handle some of the situations it previously handled.
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/genstupid/standard/distance-travelled-figure.pdf}
@@ -450,7 +457,9 @@ Comparing travelled distances charts, it looks like that $C_{S0}$ is the \textsl
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-comparison.png}
+	\captionof{figure}{Reliability Function (minutes of operation) comparison between $C_{S0}$ and $C_{S1}$}
 
 	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-km-comparison.png}
+	\captionof{figure}{Reliability Function (kilometers travelled) comparison between $C_{S0}$ and $C_{S1}$}
 \end{minipage}
 
