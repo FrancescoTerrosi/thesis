@@ -256,10 +256,10 @@ Another very interesting fact observed with this approach, is that the lower bou
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/gen1/standard/distance-travelled-figure.pdf}
-	\captionof{figure}{Meters travelled by the Controller in the first checkpoint}
+	\captionof{figure}{Meters travelled by Controller C1 (first Checkpoint) in each scenario at standard difficulty}
 
 	\includegraphics[width=\textwidth]{simulations/gen4/standard/distance-travelled-figure.pdf}
-	\captionof{figure}{Meters travelled by the Controller in the fourth checkpoint}
+	\captionof{figure}{Meters travelled by Controller C4 (fourth Checkpoint) in each scenario at standard difficulty}
 \end{minipage}
 
 The use of a \textsl{fixed time-step} when running the simulations, i.e. the simulation time elapsed between two steps of the simulation is fixed and known, gives us knowled of the interval of time between two consecutive actions: observing how many actions the Controller has taken it's possible to compute the total time of a single run.
@@ -408,14 +408,45 @@ Unfortunately, the complexity and the novelty of these systems and techniques, s
 
 \subsubsection{- Performance Comparison and Analyis of S0 and S1:}
 
-The failure of the strategies that relied on the Monitor, doesn't allow us to analyze how the effectiveness of the Monitor is influenced by those strategies. However, the monitoring activity can still be performed on $C_{S0}$ and $C_{S1}$ to observe:
+The failure of the strategies that relied on the Monitor, doesn't allow us to analyze how the effectiveness of the Monitor is influenced by those strategies. However, the monitoring activity can still be performed on $C_{S0}$ (or $C5$) and $C_{S1}$ to observe:
 
 \begin{itemize}
 	\item[a)] How the accuracy and effectiveness of the same Safety-Monitor is influenced by the Controller's effectiveness
 	\item[b)] If harshening the punishments (negative rewards) during the training has an impact on both the Controller's and Monitor's performances
 \end{itemize}
 
-The monitoring activity is basically a repetition of \textsl{phase 1} and \textsl{phase 2}.
+The monitoring activity is basically a repetition of \textsl{phase 1} and \textsl{phase 2}. The same measures are computed and aggregated in the same form for the purpose of comparison.
+
+$C_{S1}$ performed significantly better than $C_{S0}$ both in terms of MTTF and MDTF. This reassure us on the fact that the System is actually travelling and higher MTTF is not a result of the car not moving, as happened for $C_{S2-4}$.
+
+This is an interesting result, from the moment that the training period was the same for both Controllers (someone could argue that $C_{S1}$ was trained for more time, but this is not the case), a more punitive strategy applied after a certain training phase gave good results and in terms of running times and travelled distances.
+\newline
+
+Comparing travelled distances charts, it looks like that $C_{S0}$ is the \textsl{"natural"} progress of $C4$. This makes sense, as it was trained with the same strategy. Looking at $C_{S1}$, if on one hand it had the best overall performances, there are scenarios in which it fails earlier than $C4$. This can be seen graphically looking at the right side of charts (approximately after scenario 130). It is true that differences are seen with $C4$ and $C_{S0}$ too, but small differences in running time may mean that the network is trying new solutions to avoid the events that resulted in a crash, while for $C_{S1}$ it seems that the Controller is not able anymore to handle some of the situations it previously handled.
+
+\begin{minipage}[c]{\textwidth}
+	\includegraphics[width=\textwidth]{simulations/genstupid/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by $C_{S0}$ in each scenario at standard difficulty}
+	\vspace{0.5cm}
+	\includegraphics[width=\textwidth]{simulations/genpro/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by $C_{S1}$ in each scenario at standard difficulty}
+\end{minipage}
+
+\begin{minipage}[c]{\textwidth}
+	\includegraphics[width=\textwidth]{simulations/gen4/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by $C4$ in each scenario at standard difficulty}
+	\vspace{0.5cm}
+	\includegraphics[width=\textwidth]{simulations/genstupid/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by $C_{S0}$ in each scenario at standard difficulty}
+\end{minipage}
+
+\begin{minipage}[c]{\textwidth}
+	\includegraphics[width=\textwidth]{simulations/gen4/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by $C4$ in each scenario at standard difficulty}
+	\vspace{0.5cm}
+	\includegraphics[width=\textwidth]{simulations/genpro/standard/distance-travelled-figure.pdf}
+	\captionof{figure}{Meters travelled by $C_{S1}$ in each scenario at standard difficulty}
+\end{minipage}
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-comparison.png}
