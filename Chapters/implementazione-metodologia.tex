@@ -172,7 +172,9 @@ For each spawn point, a default setting and three variations of it were generate
 	\item[h3]) \textsl{Pedestrians and Vehicles Setting}: the map is generated merging $h1$ and $h2$, resulting in an environment with 60 pedestrians and 30 vehicles
 \end{itemize}
 	
-For repeatibility, and consistency across the variations, 152 couples of unique seeds\footnote{These seeds are used in the generation of pedestrians and vehicles} were generated, each of them was associated to a starting point. This allows to have the same seed, for the same starting point, using different variations.
+For repeatibility, and consistency across the variations, 152 couples of unique seeds\footnote{These seeds are used in the generation of pedestrians and vehicles} were generated, each of them was associated to a starting point. This allows to use the same seed, for the same starting point, using different variations.
+
+To enrich the informations about the System's overall performances, the car is also given a \textsl{Destination Goal} to reach, which is also recorded for repeatibility. If the Goal is reached, the success is recorded and the System is given a new destination to reach.\newline
 
 In general, it may require a huge amount of time for a crash to happen. For this reason, in order to demonstrate the concepts explained in this work, it was defined a maximum running time of 15 minutes, after which the System's task is considered succeeded.
 
@@ -271,7 +273,7 @@ In this way, we are able to easily approximate the \textsl{Reliability Function}
 	\caption{Graphics that shows the probability $y$ of the system being operational, after $x$ minutes of operation}
 \end{figure}
 
-As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint seems to have better performances (higher MTTF) than Checkpoints 3 and 4. However, analyzing a subset of the runs in which the second Checkpoint achieved very good performances in terms of time to failure and distance travelled, it can be seen that its driving is way more dangerous than the other two, resulting in a bad driving style in which most of the times the car avoided a crash by steering at the very last moment. As another indicator of the fact that C2 is not really better than C3 and C4 is that it \textbf{never} reached a goal destination as opposed to C3/C4, as another evidence that the \textsl{apparent} higher safety is likely to be a result of \textsl{"lucky patterns"} in the sense defined above.
+As we expected, the MTTF of the first checkpoint is very low (20 seconds) and increases over Checkpoints. Surprisingly, the second Checkpoint seems to have better performances (higher MTTF) than Checkpoints 3 and 4. However, analyzing a subset of the runs in which the second Checkpoint achieved very good performances in terms of time to failure and distance travelled, it can be seen that its driving is way more dangerous than the other two, resulting in a bad driving style in which most of the times the car avoided a crash by steering at the very last moment. As another indicator of the fact that C2 is not really better than C3 and C4 is that it reached \textsl{Goals Destinations} fewer times than C3/C4, as another evidence that the \textsl{apparent} higher safety is likely to be a result of \textsl{"lucky patterns"} in the sense defined above (Goals reached charts are shown in \textsl{Section 3}).
 
 Fortunately, as we will show with the results collected in phase 3, the Controller managed to overcome this problem.\newline
 
@@ -425,11 +427,17 @@ This is an interesting result, from the moment that the training period was the 
 Comparing travelled distances charts, we can see that both $C_{S0}$ and $C_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C_{S0}$ which reached max length only once.
 This is validated by the Reliability Functions computed both in term of time in operation and distance travelled, as $R_{C_{S1}} > R_{C_{S0}} > R_{C4}$.
 
-Looking at $C_{S1}$, if on one hand it had the best overall performances, there are many scenarios in which it fails earlier than $C4$. This can be seen very clearly looking at the right side of charts (approximately after scenario 120), where if on one hand $C_{S0}$ is learning how to handle some of those scenario (while of course still failing in others, as it would have required too much time to wait for it to master all of them), $C_{S1}$ shows a total different behaviour and in general it performs worse than both $C4$ and $C_{S0}$
+Looking at $C_{S1}$, if on one hand it had the best overall performances, there are many scenarios in which it fails earlier than $C4$. This can be seen very clearly looking at the right side of charts (approximately after scenario 120), where if on one hand $C_{S0}$ is learning how to handle some of those scenario (while of course still failing in others, as it would have required too much time to wait for it to master all of them), $C_{S1}$ shows a total different behaviour and in general it performs worse than both $C4$ and $C_{S0}$ in those scenarios.
 
 
+To have a better understanding on how these Controllers behave, we look at how many times they reached a goal in each difficulty level, and combine this information with \textsl{MTTFs} and \textsl{MDTFs}.
 
-PARLA DEI GOAL FORSE
+What confirms our hypothesis on $C2$'s performances is that it reaches few goals compared to the others. This validate the hypothesis that the longer \textsl{MTTFs} and \textsl{MDTFs} were a result of \textsl{"lucky"} runs.
+
+Moreover, $C_{S1}$ chart is more balanced in terms of goals reached per difficulty. A fair objection would be that $C4$ reached its goals more times, but the average distance travelled is significantly lower than both $C_{S0}$ and $C_{S1}$. In addition to this, $C_{S0}$, which is the \textsl{"natural continuation"} of $C4$ as it is obtained from $C4$ using the \textsl{same} training strategy, performs well at \textsl{standard difficulty}, fact validated by comparing times to failure in each difficulty, as $MTTF_{C_{S0}h_{0}} >> MTTF_{C_{S0}h_{1\dots 3\dots 3}}$.
+This seems to suggest that the training strategy adopted has a strong influence on how the System will perform in conditions different from the training ones. Data collected confirm this, as looking at raw data, we observe that $MTTF_{C_{S1}h_{i}} > MTTF_{C_{S0}h_{i}}$ as a proof that $C_{S1}$ performs better in harder conditions. Moreover, the differences observe on the average travelled distances are lower than the ones observed for \textsl{all} the other Controllers, which again reassure us on this fact.
+
+As done for $C1\dots 4$, hit ratios of collisions with specific kinds of object wrt to total collisions are computed and shown in \textsl{figure 27}. Those for $C_{S0}$ and $C_{S1}$ looks similar, as hit ratios has close values. At first we thought that, as for $C2$, this was caused by the Car driving off-road. To confirm or deny this fact, a subset of runs was analyzed and it was observed that the main cause of collisions with generic obstacles is caused by the Car actually trying to avoid other cars and pedestrians. More consciousness about this fact will be probably given by analyzing the runs with the Safety-Monitor attached to the System.
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/genstupid/standard/distance-travelled-figure.pdf}
@@ -458,14 +466,74 @@ PARLA DEI GOAL FORSE
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-comparison.png}
 	\captionof{figure}{Reliability Function (minutes of operation) comparison between $C_{S0}$ and $C_{S1}$}
-
+	\vspace{0.5cm}
 	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-km-comparison.png}
 	\captionof{figure}{Reliability Function (kilometers travelled) comparison between $C_{S0}$ and $C_{S1}$}
 \end{minipage}
 
+\begin{minipage}[c]{\textwidth}
+	\includegraphics[width=\textwidth]{img/hit-ratios-stupid-pro.png}
+	\captionof{figure}{Hit ratios for $C_{S0}$ and $C_{S1}$}
+		
+\end{minipage}
+
+\begin{minipage}[c]{450px}
+	\includegraphics[width=450px,height=600px]{img/goals.png}
+	\captionof{figure}{Goals reached charts for each Checkpoint, in each difficulty level}
+\end{minipage}
 
 
+\subsubsection{- On the Effectiveness of the Safety-Monitor:}
 
-MONITOR TEST
+The analysis of the Safety-Monitor performances isn't different from what we did in \textsl{Phase 2}.
 
+This second assessmet of the Safety-Monitor seemed promising in conferming the fact that the effectiveness of the Safety-Monitor strongly depends both on the \textsl{training strategy} adopted and on the Controller's performances.
 
+Looking at tables, we can see that the Monitor attached to $C_{1\dots 4}$ and $C_{S0}$ have a \textsl{True Positive Rate} of approximately $0.75$, with the exception of $C2$, that acted as an outlier in our data. The fact that the Monitor with $C_{S0}$ has the same prediction performances of the previous Checkpoints is a good result, and a promising starting point for further examinations. However, to claim this fact, more data and analysis are needed and will be a central point in our next studies.\newline
+
+Analyzing hit ratios, we have another interesting result. The percentage of \textsl{"unknown"} causes, labeled as generic errors of the Safety-Monitor is higher for $C_{S1}$ than $C_{S0}$, which is the main cause of crashes for the first, while the latter tends to crash at high speed. This may ring a bell on the fact that $C_{S1}$, which now we can confirm performed better than \textsl{all} the other Checkpoints, gets into situations which are more complex to handle. This is a very important point to analyze. A fair objection would be that our Safety-Monitor is not good enough to detect the new kinds of hazard caused by the novel Controller's behaviour. It is true that a more sophisticated Monitor would be able to detect and prevent more complex events and it may even show a SM-ERROR rate of 0\% when tested with a controller $C_{i}$, but what we are pointing out in this work is that \textsl{we can not assure} that if $C_{i}$ is trained to drive in \textsl{new environments}, obtaining $C_{i+j}$, the SM-ERROR rate will still be 0\%.\newline
+
+The high percentage of FAST SPEED errors observed in $C_{S0}$ also provides a deeper explanation on the higher collision rate against pedestrians and vehicles: in many scenarios the System just continue its run without trying to avoid objects on its road. At the same time, the similarity in the ratios assure us that both Checkpoints are learning to don't go off-road and raises more questions on \textsl{how} the definition of the reward function causes behaviours that were not specifically planned or considered, when designin the training strategy.
+
+\vspace{0.5cm}
+\begin{table}[h]
+	\caption{Prediction Rates}
+	\begin{center}
+		\begin{tabular}{ |c|c|c| }
+			\hline
+			& $C_{S0}$ & $C_{S1}$ \\
+			\hline
+			TPR & 0.74 & 0.67 \\
+			\hline
+			FNR & 0.26 & 0.33 \\
+			\hline
+			FPPM & 0.99 & 0.89 \\
+			\hline
+		\end{tabular}
+		\\
+		\vspace{0.3cm}
+		True Positive Rate, False Positive Rate, False Positive per Meter for Checkpoints S0, S1
+	\end{center}
+\end{table}
+
+\begin{table}
+	\caption{False Positives Causes}
+	\begin{center}
+		\begin{tabular}{ |c|c|c| }
+			\hline
+			& $C_{S0}$ & $C_{S1}$ \\
+			\hline
+			SM ERROR & 28\% & 50\% \\
+			\hline
+			SUDDEN STEER & 14\% & 13\% \\
+			\hline
+			FAST SPEED & 58\% & 37\% \\
+			\hline
+			SLOW SPEED & 0\% & 0\% \\
+			\hline
+		\end{tabular}
+		\\
+		\vspace{0.3cm}
+		Percentage of false positives causes. The use of a simulator such as CARLA, and the recording of the car's runs, allow to have a deep understanding on the system's behaviour
+	\end{center}
+\end{table}
