@@ -423,13 +423,13 @@ This is an interesting result, from the moment that the training period was the 
 \newline
 
 Comparing travelled distances charts, we can see that both $C_{S0}$ and $C_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C_{S0}$ which reached max length only once.
+This is validated by the Reliability Functions computed both in term of time in operation and distance travelled, as $R_{C_{S1}} > R_{C_{S0}} > R_{C4}$.
 
-This is validated by the Reliability Functions computed both in term of time in operation and distance travelled, as $R_{C_{S1}} > R_{C_{S0}} > R_{C4}$
-
-CS0 FA FATICA DOVE C4 MENTRE CS1 SUPERA ALCUNE E FALLISCE ALTRE
+Looking at $C_{S1}$, if on one hand it had the best overall performances, there are many scenarios in which it fails earlier than $C4$. This can be seen very clearly looking at the right side of charts (approximately after scenario 120), where if on one hand $C_{S0}$ is learning how to handle some of those scenario (while of course still failing in others, as it would have required too much time to wait for it to master all of them), $C_{S1}$ shows a total different behaviour and in general it performs worse than both $C4$ and $C_{S0}$
 
 
-Looking at $C_{S1}$, if on one hand it had the best overall performances, there are scenarios in which it fails earlier than $C4$. This can be seen graphically looking at the right side of charts (approximately after scenario 130). It is true that differences are seen with $C4$ and $C_{S0}$ too, but small differences in running time may mean that the network is trying new solutions to avoid the events that resulted in a crash, while for $C_{S1}$ it seems that the Controller is not able anymore to handle some of the situations it previously handled.
+
+PARLA DEI GOAL FORSE
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{simulations/genstupid/standard/distance-travelled-figure.pdf}
@@ -462,4 +462,10 @@ Looking at $C_{S1}$, if on one hand it had the best overall performances, there 
 	\includegraphics[width=\textwidth]{img/reliability-pro-stupid-km-comparison.png}
 	\captionof{figure}{Reliability Function (kilometers travelled) comparison between $C_{S0}$ and $C_{S1}$}
 \end{minipage}
+
+
+
+
+MONITOR TEST
+
 
