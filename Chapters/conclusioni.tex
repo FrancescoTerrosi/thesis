@@ -1,5 +1,60 @@
 \chapter{Conclusions}
 
+In this work we explored the topic of how to perform a monitoring activity on self-driving cars, controlled by a Control System (Controller) and a System Supervisor (Safety-Monitor).
+
+This study is meant to be a first step on the analysis of this kind of activity for such systems, which require particular care due to their complexity, and the critical issues of the environment in which it performs. Autonomous Vehicles themselves are not a new kind of systems, since they are commonly employed in military actions. However, the fact that self-driving cars work at close contact with people and that the urban environment requires extra care in handling the moltitude of events (hazardous or not) that may happen.
+Moreover, we questioned if there are relationships between the effectiveness of the Safety-Monitor component and the Controller component, when the latter gets trained for long periods, using different strategies.
+
+In the first sections, we reviewed the main concepts of these activities, such as
+
+\begin{itemize}
+	\item The definition of \textsl{dependability} and \textsl{safety}, which are central to Safety-Critical Systems, are seen in the light of self-driving cars
+	\item The problems that prevent us to deploy self-driving cars in urban environments at this level of knowledge
+	\item How a wrong/poor/optimistic \textsl{dependability assessment} of these systems may have tragic consequences when these systems are deployed
+	\item The problems of studying the observed emergent behaviour resulting from the interaction of two main Constituent Systems
+	\item If, and in what way, the Safety-Monitor effectiveness is influenced by the performances of the Controller, in terms of:
+	\begin{itemize}
+		\item[-] Length of the training period
+		\item[-] Strategies adopted during the training
+	\end{itemize}
+\end{itemize}
+
+The development of this first methodology has taken into account the tools available for this kind of activities. Since most technologies in this field are private and proprietary, we had to look for open-source equivalents, demonstrating that it's not easy to perform these analyses in non-professional environments.
+
+CARLA is with no doubt the best self-driving car simulator available, but it's not perfect. The LiDAR sensor bug\cite{lidarbug} would have prevented us to do this study and if it wasn't for the project developed by Zhuang\cite{carlapro}, it would have been \textsl{unfeasable} because our only alternative would have been to use \textsl{ground-truth} data, which would have been pointless for this work.
+
+If on one hand, \textsl{Coach framework} is developed by \textsl{Intel AI Labs}, it suffers from the common issues often found in open-source project, the most evident being one of the two agents provided for CARLA, which stopped moving after few stages of training in \textsl{phase 1} (therefore unrelated to the use of Safety-Monitor).
+
+This issue makes us wonder about the presence of other issues in the design of the training algorithm which may had an influence on the behaviours observed for $C_{S2\dots 4}$.\newline
+
+The monitoring activity was developed keeping in mind the main properties of:
+
+\begin{itemize}
+	\item Repeatibility
+	\begin{itemize}
+		\item[-] By recording the Controller's execution in files, saving the action taken by the Controller in each frame and the seeds used in RNGs\footnote{Random Number Generators}, the Destination Goals and the environmental parameter of each scenario
+	\end{itemize}
+	\item Non-Intrusiveness
+	\begin{itemize}
+		\item[-] Code instrumentation, as said, may produce non-real time data or wrong measurements, due to the client-server architecture used. CARLA solves this problem by allowing users to run simulations at a \textsl{fixed time step}. However the hardware must be powerful enough to achieve the time step required
+	\end{itemize}
+	\item Representativeness
+	\begin{itemize}
+		\item[-] Representativeness of test-cases is one of the central problems when monitoring self-driving cars, because hazardous events may be so complex and so many that is impossible to consider them all. The definition of scenarios and difficulty level helps in this sense, providing many different sitations starting from the same scenario
+	\end{itemize}
+	\item Feasibility
+	\begin{itemize}
+		\item[-] The research on the best tools to be used for this activity was not easy, due to the multitude of solutions proposed that in reality have lots of practical limitations. However, the tools used in this work allowed us to perform this activity. At the same time we can not ignore the issues found in these projects
+	\end{itemize}
+\end{itemize}
+
+If the \textsl{feasibility} property is undermined by the presence of issues in the tools used, the methodology developed still proved to be an effective way of assessing the reliability of Autonomous Vehicles allowing us to approximate all the common measures of interest for these systems, without sticking to common metrics used in the evaluation of neural networks, e.g. the \textsl{Loss Function}, which indeed are powerful and mandatory measures to compute to check that the neural network is actually learning, but doesn't give any evidence at all on the System goodness.\newline
+
+The main conjecture
+
+E` VERO CHE LE FORMULE SONO MATEMATICHE MA NON CI SONO STANDARD PER LA VALUTAZIONE DI QUESTI NELLE AUTONOMOUS VEHICLE
+
+E IN GENERALE SI PROCEDE A TENTATIVI
 
 RIPETERE LE PREMESSE (MONITORING DI VEICOLI AUTONOMI E SAFETYMONITOR - CONTROLLER PROBLEM)
 

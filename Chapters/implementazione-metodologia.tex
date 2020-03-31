@@ -190,7 +190,7 @@ The source code was modified adding some instructions to write all the needed da
 
 Modifying the source code may in general result in a worsening of the overall performances, and the accuracy of results. Fortunately, the CARLA simulator provides an option to run the simulations at a \textsl{fixed-time step}. This was set at its minimum: 10 FPS\footnote{Frames Per Second}, to assure that all the data received from the server are \textsl{timely} and \textsl{correct}. This also serves as a mean for \textsl{repeatibility} of tests: a \textsl{variable time-step} may introduce randomness in data since we have no control over it.
 
-The first training phase and the Controller testing required circa 1 month to be performed.\newline
+The first training phase and the Controller testing required circa 1 month and a half to be performed.\newline
 
 The second step was to test the effectiveness of the Safety-Monitor for each checkpoint.
 
@@ -223,7 +223,7 @@ After the first phase is concluded, data gathered are processed to compute the m
 
 At this point, training is resumed from the last checkpoints using the strategies described before, and the measurement process is repeated identically.
 
-Some of the strategies defined requires the training to be done \textsl{with} the Safety-Monitor, resulting in very low execution times. This phase took 2 months, after which the training was stopped.
+Some of the strategies defined requires the training to be done \textsl{with} the Safety-Monitor, resulting in very low execution times. This phase took approximately 3 months because of the heavy computation load needed to generated LiDAR data, after which the training was stopped.
 
 The numerical results collected can be compared to check if the network is learning properly and how the Safety-Monitor's effectiveness changes when the network improves.
 
@@ -396,17 +396,27 @@ If \textsl{phase 2} already gave some hints about the fact that the effectivenes
 	\item[S4)] The training step is stopped and the network is given a \textsl{negative} reward if an alert is raised
 \end{itemize}
 
-\subsubsection{- On the Effectiveness of Strategies S2, S3, S4:}
+\subsubsection{- On the Failure of Strategies S2, S3, S4:}
 
-Unfortunately, the strategies that used the Safety-Monitor did not give the results we expected and the neural network got stuck in a \textsl{local minimum}. Specifically, S3 and S4 turned to make the Controller to not move, while S2 makes the Controller stop after very few meters travelled, if there is an object in front of the car, even if very far. This is almost surely caused by the very high false positives of the Monitor. A long training conducted in this way taught the car to not move in order to avoid the alerts raised by the Safety-Monitor and, even if these strategies takes into account the eventuality in which the Car does not move, punishing it with a negative reward, this was not enough to prevent the car from standing still.
-We believe that the \textsl{reward functions} for the \textsl{DDPG algorithm} used for the training activity is well specified, in the sense that all the positive and negative behaviours were taken into account when designing it. However, the complexity of the situations that a network must be able to handle in order to write a car, makes it very difficult to tune all the reward parameters in order to prevent outcomes like the one we had.
+Unfortunately, the strategies that used the Safety-Monitor did not give the results we expected and the neural networks likely got stuck in a \textsl{local minimum}. Specifically, S3 and S4 turned to make the Controller to not move, while S2 makes the Controller stop after very few meters travelled if there is an object in front of the car, even if very far. All these Checkpoints doesn't get an unintentionally high reward for their behaviour, as \textsl{not moving} is given a negative reward.
 
-The biggest issue in the training activity is the extremely time consuming, and it's not thinkable to train $n$ agents with $n$ strategies and wait for them to be trained to analyze which strategy gave the best result.
-An interesting approach would be to develop stochastic models to guide us in the tuning of the reward function parameters, in order to perform a \textsl{calibration activity} prior to the monitoring activity described in this work. In general, it's not clear \textsl{a priori} what value the reward function should assign to each state, and the continuous space state and the \textsl{complexity} of it, when it comes to self-driving cars, make this task even harder.
+This is almost surely caused by the very high false positives of the Monitor. A long training conducted in this way taught the car to not move in order to avoid the alerts raised by the Safety-Monitor and, even if these strategies takes into account the eventuality in which the Car does not move, punishing it with a negative reward, this was not enough to prevent the car from standing still.
+We believe that the \textsl{reward functions} for the \textsl{DDPG algorithm} used for the training activity is well specified, in the sense that all the positive and negative behaviours were taken into account when designing it and istantaneous rewards are designed to be well-balanced, as there are no unintentional high reward. However, the complexity and multitude of situations that a network must be able to handle in order to drive a car, makes it very difficult to tune all the reward parameters in order to prevent outcomes like the one we had. Most of all, we can not be sure whether this behaviour is a result of \textsl{how} the reward function was designed or if a \textsl{longer} training was needed to observe interesting behaviours.
+
+The biggest issue in the training activity is the extreme time consumption, and it's not thinkable to train $n$ agents with $n$ strategies and wait for them to be trained to analyze which strategy gave the best result.
+
+As shown in several works, the tuning of the network's parameters largely depends on \textsl{rules-of-thumb} and \textsl{heuristic techniques}. However, these approaches has proven to be time-consuming (trial-and-error) and \textsl{error prone} (heuristics can not model efficiently the complexity of these systems).
+Moreover, at the current state of knowledge, trial-and-error seems like the only way to assess the goodness of the reward function. This problem, which is specific to these kind of algorithms, is still unresolved since \textsl{reinforcement learning} is still being studied, and there are no official regulations for self-driving cars. \cite{rewardtrialanderror2}
 
 The design of the \textsl{reward function} for these relatively new algorithms is a hot topic in the academic community, and researchers are working on methods that aims at understanding \textsl{how} to specifiy a \textsl{good model} for the learning agent. \cite{reward1} \cite{reward2} \cite{reward3}
 
-Unfortunately, the complexity and the novelty of these systems and techniques, still requires more research to solve these problems.
+At the same time, as said before, AVs training require lots of data that are often unavailable or insufficient than those of conventional training techniques. There are several proposals on frameworks to be used to guide the design of decision-making policies for reinforcement learning, however most of them seems to \textsl{speedup} the learning process rather than helping on how to introduce new learning parameters for these networks. \cite{rewardtrialanderror1}
+
+An interesting approach would be to develop stochastic models to guide us in the tuning of the reward function parameters, in order to perform a \textsl{calibration activity} prior to the retraining phase of the Controller. In this sense, the method developed in this work would be have a strong impact on the development of these models, as the performance measures for the Safety-Monitor were approximated effectively (e.g. the high false positives rate of the Safety-Monitor was a concern for us when training the Controller with the Monitor).\newline
+
+In general, it's not clear \textsl{a priori} what value the reward function should assign to each state. We also must consider that we are working in a \textsl{continuous space state}, which is hard to model and makes hard to consider all the possible events and transitions that may happen, making this task even harder.
+
+Unfortunately, the complexity and the novelty of these systems and techniques, still requires more research to solve these problems, and the development of a \textsl{stochastical model} to guide us in the parameter tuning will be of uttermost interest in future works.
 
 \subsubsection{- Performance Comparison and Analyis of S0 and S1:}
 
