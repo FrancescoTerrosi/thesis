@@ -24,8 +24,9 @@ The development of this first methodology has taken into account the tools avail
 CARLA is with no doubt the best self-driving car simulator available, but it's not perfect. The LiDAR sensor bug\cite{lidarbug} would have prevented us to do this study and if it wasn't for the project developed by Zhuang\cite{carlapro}, it would have been \textsl{unfeasable} because our only alternative would have been to use \textsl{ground-truth} data, which would have been pointless for this work.
 
 If on one hand, \textsl{Coach framework} is developed by \textsl{Intel AI Labs}, it suffers from the common issues often found in open-source project, the most evident being one of the two agents provided for CARLA, which stopped moving after few stages of training in \textsl{phase 1} (therefore unrelated to the use of Safety-Monitor).
+This bug makes us wonder about the presence of other issues in the design of the training algorithm which may had an influence on the behaviours observed for $C_{S2\dots 4}$.
 
-This issue makes us wonder about the presence of other issues in the design of the training algorithm which may had an influence on the behaviours observed for $C_{S2\dots 4}$.\newline
+Another issue that mines the usability of this framework is that the RAM is not correctly freed, eventually filling it and causing a crash of the running processes. This required us to monitor the training execution and restart it at every crash.\newline
 
 The monitoring activity was developed keeping in mind the main properties of:
 
@@ -48,9 +49,11 @@ The monitoring activity was developed keeping in mind the main properties of:
 	\end{itemize}
 \end{itemize}
 
-If the \textsl{feasibility} property is undermined by the presence of issues in the tools used, the methodology developed still proved to be an effective way of assessing the reliability of Autonomous Vehicles allowing us to approximate all the common measures of interest for these systems, without sticking to common metrics used in the evaluation of neural networks, e.g. the \textsl{Loss Function}, which indeed are powerful and mandatory measures to compute to check that the neural network is actually learning, but doesn't give any evidence at all on the System goodness.\newline
+If the \textsl{feasibility} property is undermined by the presence of issues in the tools used, the methodology developed still proved to be an effective way of assessing the reliability of Autonomous Vehicles allowing us to approximate all the common measures of interest for these systems, without sticking to common metrics used in the evaluation of neural networks, e.g. the \textsl{Loss Function}, which indeed are powerful and mandatory measures to compute to check that the neural network is actually learning, but doesn't give any evidence at all on the goodness of the System in its entirety.\newline
 
-The main conjecture
+The main conjecture that made us start this work, was if "static" (in the sense that they don't learn from new data) error-checkers' performances were depending on the performances of neural networks and if ad hoc training strategies have an influence as well.
+
+The failure of those strategies that used the Safety-Monitor to guide the training ($S2,\: S3,\: S4$) did not give us evidences on this fact, and this problem was already discussed in the previous chapter. Moreover, the \textsl{time needed} to train the Controllers prevented us to perform longer training activities \textsl{and} to try different values for the reward parameters.
 
 E` VERO CHE LE FORMULE SONO MATEMATICHE MA NON CI SONO STANDARD PER LA VALUTAZIONE DI QUESTI NELLE AUTONOMOUS VEHICLE
 
