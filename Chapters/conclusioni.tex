@@ -49,24 +49,34 @@ The monitoring activity was developed keeping in mind the main properties of:
 	\end{itemize}
 \end{itemize}
 
-If the \textsl{feasibility} property is undermined by the presence of issues in the tools used, the methodology developed still proved to be an effective way of assessing the reliability of Autonomous Vehicles allowing us to approximate all the common measures of interest for these systems, without sticking to common metrics used in the evaluation of neural networks, e.g. the \textsl{Loss Function}, which indeed are powerful and mandatory measures to compute to check that the neural network is actually learning, but doesn't give any evidence at all on the goodness of the System in its entirety.\newline
+If the \textsl{feasibility} property is undermined by the presence of issues in the tools used, the methodology developed still proved to be an effective way of assessing the reliability of Autonomous Vehicles allowing us to approximate all the common measures of interest for these systems, without sticking to common metrics used in the evaluation of neural networks, e.g. the \textsl{Loss Function}, which indeed are powerful and mandatory measures to compute to check that the neural network is actually learning, but doesn't give any evidence at all on the goodness of the System in its entirety.
 
-The main conjecture that made us start this work, was if "static" (in the sense that they don't learn from new data) error-checkers' performances were depending on the performances of neural networks and if ad hoc training strategies have an influence as well.
+This methodology proved to be an effective mean to study the behaviour of the whole System, focusing on well-known measures used to assess a system's dependability and the Safety-Monitor's performances. The definition of \textsl{Scenarios} and \textsl{difficulties} is very useful in the understanding of what environmental parameters cause a degradation on System's performances and in the generation and analysis of \textsl{"uncommon"} situations that not always can be taken into account when designing \textsl{ad-hoc safety-cases}
+\newline
 
-The failure of those strategies that used the Safety-Monitor to guide the training ($S2,\: S3,\: S4$) did not give us evidences on this fact, and this problem was already discussed in the previous chapter. Moreover, the \textsl{time needed} to train the Controllers prevented us to perform longer training activities \textsl{and} to try different values for the reward parameters.
+The main conjecture that made us start this work, was if "static" (in the sense that they don't learn from new data) error-checkers' performances were depending on the performances of neural networks and if ad hoc training strategies have an influence as well. From the data collected it looks like the Monitor's effectiveness is likely to change with expert agents, motivating us to continue to study in deep this conjecture.
 
-E` VERO CHE LE FORMULE SONO MATEMATICHE MA NON CI SONO STANDARD PER LA VALUTAZIONE DI QUESTI NELLE AUTONOMOUS VEHICLE
+The failure of those strategies that used the Safety-Monitor to guide the training ($S2,\: S3,\: S4$) did not give us evidences on this fact, and this problem was already discussed in the previous chapter. This failure may be caused by two factors:
 
-E IN GENERALE SI PROCEDE A TENTATIVI
+\begin{itemize}
+	\item[1)] Misspecified reward function
+	\item[2)] The training period was not long enough
+\end{itemize}
 
-RIPETERE LE PREMESSE (MONITORING DI VEICOLI AUTONOMI E SAFETYMONITOR - CONTROLLER PROBLEM)
+The fact that the agents trained were not getting unintentionally high reward for standing still, makes us think that the neural network needed more time to learn what the Safety-Monitor is trying to teach. A higher \textsl{simulation time step} could have helped us, making \textsl{simulation time} running faster than \textsl{real time}. However, this required ultra-high performance hardware, therefore we we could not train the models for more time, nor retrain the networks adjusting the reward parameters.
 
-RAPIDAMENTE METODO SPERIMENTALE, COME SONO RISOLTI I PROBLEMI, COSA CI PERMETTE DI FARE
+At the same time, the Safety-Monitor proved to be \textsl{less} effective when operating in combination with the Checkpoint which had the \textsl{best} performances and, most of all, was obtained from Checkpoint $C4$ by changing the training strategy, while when operating with the Checkpoints trained with strategy $S0$ $(C1,\: C2,\: C3,\: C4,\: C_{S0})$ it had the same effectiveness with all of them ($0.75$ false positive rate) except for $C2$. If on one hand, $C2$ was definetely a special case, for the reasons listed in the previous chapter, at the same time we can not exclude the same hypothesis for $C_{S1}$. In future works, we could continue the training of $C_{S1}$ to confirm this fact.\newline\newline
 
-CONSIDERAZIONI SU:
+This work demonstrated the power of assessing self-driving cars in a simulated environment, taking into account and solving many of the problems found when approximating the measures of interest for these systems, and common problems found in a monitoring activity.
 
-FALLIMENTO DEL MONITOR TRAINING
+In future works, our interest will be:
 
-SVILUPPI FUTURI POTREMO FARE DI PIU`
-
-INTERESSANTE AVERE MODELLI PIU` ESPERTI E STRUMENTI (ALGORITMI) MIGLIORI NON OPEN-SOURCE
+\begin{itemize}
+	\item Develop stochastical models based on data collected with this monitoring methodology, to guide us in the tunning of the reward function parameters
+	\item Continue the training of $C_{S0\dots 4}$ to:
+	\begin{itemize}
+		\item[a)] Collect more evidences about the effectiveness of the Safety-Monitor
+		\item[b)] Have a better understanding of the failure causes of strategies $S2\dots 4$
+	\end{itemize}
+	\item Apply the same monitoring methodology using more powerful tools (e.g. proprietary software, pretrained neural networks, better Safety-Monitor)
+\end{itemize}
