@@ -7,14 +7,14 @@ The software architecture of an AV was simplified in two main components:
 
 \begin{itemize}
 	\item A \textsl{Controller}: a Neural Network trained with \textsl{reinforcement learning} algorithms to drive the car
-	\item A \textsl{Safety Monitor}, a submodule of the System Supervisor, that checks whether the car is going too fast towards an object, processing data received from a LiDAR sensor, and if that's so, apply an emergency-brake
+	\item A \textsl{Safety Monitor}: a submodule of the System Supervisor, that checks whether the car is going too fast towards an object, processing data received from a LiDAR sensor, and if that's so, apply an emergency-brake
 \end{itemize}
 
-This work focuses on exploring the topic from a different point of view and to assess its feasibility in an experimental, simulated environment. Due to the system being composed by two constituent systems: the Controller and the Monitor, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.
+This work focuses on exploring the topic from a different point of view and to assess its \textsl{feasibility} in an experimental, simulated environment. Due to the system being composed by two constituent systems: the Controller and the Monitor, we think that a point of view based on the emergent behaviour resulting from the interaction of these systems can improve the quality of the assessment.
 
 In this chapter is presented and discussed a method to study the safety level of an autonomous car over time, observing the emergence resulting from the interactions of a neural network controller and a safety monitor in a simulated environment.
 
-The proposed framework is designed with particular attention on studying the emergence resulting from the interaction of these two consitutent systems.
+The proposed framework is designed with particular attention on studying the emergence resulting from the interaction of these two Consitutent Systems.
 
 The main aspects we are interested in this first stage of exploration are:
 
@@ -32,7 +32,7 @@ A neural network will likely give good results after "enough" epochs. The harder
 
 where $checkpoint_{1}$ contains the network's weights at epoch 100, $checkpoint_{2}$ at epoch 200 and so on.\newline
 
-Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as it procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high, like a pedestrian suddenly crossing the road, if and only if the action taken by the Controller would result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to prevent it:
+Let's now consider a self-driving car that is being tested on the road (either real, or simulated). Its task is to ride the car the longest possible, without crashing. During the ride, the environment surrounding the car will change as it procedes in its run. It may happen that in some of the system's state, the probability of a subsequent crash becomes very high, like a pedestrian suddenly crossing the road: if and only if the action taken by the Controller will result in the pedestrian getting hit we will address it as a failure (of the controller). The same reasoning applies if the pedestrian is actually detected, and the car hits something else while trying to prevent it:
 
 \begin{itemize}
 	\item If the Controller takes \textsl{any} action that would result in a crash, it's considered failed
@@ -41,7 +41,7 @@ Let's now consider a self-driving car that is being tested on the road (either r
 
 In this sense, at this stage of the work, we don't distinguish between changes in the environment that raises the probability of a crash (e.g. a pedestrian crossing the street) and hazardous actions take by the Controller (e.g. a sudden steer towards a wall).
 
-If the controller fails in the way just described, it's the Monitor's duty to run a safety-routine in order to prevent the imminent failure.\newline
+If the controller fails in the way just described, it's the Monitor's duty to run a safety-routine in order to prevent the imminent system failure.\newline
 
 In the case of a failure of the Controller, the Monitor not only needs to detect whether it failed or not, but it also must run a safety-routine to prevent a failure of the whole system. In this first phase of analysis, we consider the action taken by the Monitor to be always safe. This means that:
 
@@ -55,29 +55,29 @@ In the case of a failure of the Controller, the Monitor not only needs to detect
 \end{itemize}
 
 We consider the system failed if and only if both the Controller and the Safety-Monitor failed, as described above, leading to a crash.
-With this scheme in mind, the states space for this system can be modeled in this way:
+With this scheme in mind, the states space for this system can be modeled as in figure 10.\newline
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/state-space-true.png}
 	\caption{Representation of the system's states space}
 \end{figure}
 
-As it's shown in this figure, we can classify the states of this system in 3 sets:
+Based on our definition, we can divide the system states in 3 sets:
 
 \begin{itemize}
-	\item Safe States: states in which the Controller doesn' need an intervention of the Monitor
+	\item Safe States: states in which the Controller doesn't need an intervention of the Monitor
 	\item Alert States: states in which the Monitor is required to intervene. A correct detection (and prevention) of the potential accident would result in a transition to the safe states space again
-	\item Failure States: states in which an accident happened. It is important to notice that \textbf{not} all the situations can be detected by the Monitor. There are accidents that can not be prevented at all, in which no Monitor could save the system. These states are represented by the red area on the right
+	\item Failure States: states in which an accident happened. It is important to notice that \textbf{not} all the situations can be detected by the Monitor. There are accidents that can not be prevented at all, in which no Monitor could save the system, therefore there is a direct transition from a \textsl{safe state} to a \textsl{failure state}
 \end{itemize}
 
 
 At the system level, we are interested in observing the probability of having a failure (crash) and how to minimize it. At the same time we want to observe how the effectiveness of the Safety Monitor changes when the Controller is trained over time.
 
-In order to achieve this, $c$ checkpoints are saved for later testing and comparison. This is useful not only for checking that the network is improving during the training, but also to have a better understanding on how useful is the Monitor when the Controller becomes more and more expert. This is mandatory for the experimental activity as different checkpoints of the same network are tested under the same condition, to observe how the behaviour of the Controller changes in the first stages of the training.
+In order to achieve this, $m$ checkpoints are saved for later testing and comparison. This is useful not only for checking that the network is improving during the training, but also to have a better understanding on how useful is the Monitor when the Controller becomes more and more expert. This is mandatory for the experimental activity, as different checkpoints of the same network are tested under the same identical conditions, to observe how the behaviour of the Controller changes over the training activity.
 
-The need for multiple checkpoints is mandatory not only to test that the network is improving, but also to observe how the monitor's effectiveness change over time. Moreover, if many checkpoints of the same network are tested under the same scenarios, it is possible to extract interesting measures, as we'll see in the next section.
+The need for multiple checkpoints is mandatory not only to test that the network is improving, but also to observe how the monitor's effectiveness changes over time. Moreover, if many checkpoints of the same network are tested in the same scenarios, it is possible to extract interesting measures and compare the behaviour of 2 checkpoints in the same situation, as we'll see in the next section.
 
-Before the analysis can start, $n_{h}$ scenarios must be defined. A \textsl{Scenario} is a set of initial conditions (e.g. the spawn point of the car, seeds used in random number generators$\dots$) in which the car is intended to be tested. The pedix $h$ represents the difficulty level for the specific case. The purpose of this is that we are interested in testing the car under the same initial condition but for one factor, in order to have a better understanding on what makes the system fail more often. The $h$ variations should be developed with growing difficulty and at the same time they must be realistic. Given a Scenario $S$, examples of variations may be: to increase the number of cars in the scenario, or to simulate adversal weather conditions. A combination of these 2 variations should result in a \textsl{harder} variation of the scenario\footnote{It is important to point that what we think to be "harder", may in reality be easier to handle for the car.}. It's important to keep in mind that these scenarios, once defined, should not be changed as they will be used for testing all the checkpoints. A change in the settings of a scenario (except for variations) should be considered as a new one.
+Before the analysis can start, $n_{h}$ scenarios must be defined. A \textsl{Scenario} is a set of initial conditions (e.g. the spawn point of the car, seeds used in random number generators$\dots$) in which the car is intended to be tested. The pedix $h$ represents the difficulty level for the specific case. The purpose of this is that we are interested in testing the car under the same initial conditions, except for one factor, in order to have a better understanding on what makes the system fail more often. The $h$ variations should be developed with growing difficulty and at the same time they must be realistic. Given a Scenario $S$, examples of variations may be: to increase the number of cars in the scenario, or to simulate adversal weather conditions. A combination of these 2 variations should result in a \textsl{harder} variation of the scenario\footnote{It is important to point that what we think to be "harder", may in reality be easier to handle for the car.}. It's important to keep in mind that these scenarios, once defined, should not be changed as they will be used for testing all the checkpoints. A change in the settings of a scenario (except for variations) should be considered as a new one.
 
 We hope that the results collected here will help in the process of understanding what makes a situation \textsl{"harder"} than others for such systems.
 
@@ -88,13 +88,13 @@ The approach used for this exploratory work is divided in 3 phases:
 \begin{itemize}
 	\item Phase 1: Given $c$ checkpoints of a neural network and $n_{h}$ scenarios, the Controller is tested in all the scenarios and its runs are recorded
 	\item Phase 2: The Monitor is tested by \textsl{repeating} the runs recorded in phase 1, attaching the Safety Monitor to the system
-	\item Phase 3: The network is retrained from the last checkpoint recorded, using different strategies to improve its performances. The new networks obtained and the (same) Safety Monitor are then retested in all the $n_{h}$ scenarios
+	\item Phase 3: The network is retrained from the last checkpoint recorded, using different strategies to improve its performances. The new Controllers obtained and the (same) Safety Monitor are then retested in all the $n_{h}$ scenarios
 \end{itemize}
 
 
 In the first phase we are interested in assessing the goodness of the neural network and of the Monitor. This is done in 2 different steps. 
 
-In the first step, the $c$ checkpoints of the Controller are tested in all the scenarios. In this step we are mostly interested in observing how the \textsl{Reliability} of the Controller changes with respect to these checkpoints.
+In the first step, the $m$ checkpoints of the Controller are tested in all the scenarios. In this step we are mostly interested in observing how the \textsl{Reliability} of the Controller changes with respect to these checkpoints.
 
 One of the main problems when testing a neural network is that of \textsl{repeatability}. It is very unlikely that the \textbf{same} neural network, under the \textbf{same} initial conditions, will behave in the same manner in multiple runs. Due to this property of networks, it may happen that the failure mode observed in one of the runs of the scenario $s_{i}$ will never happen again, or the time needed to make it happen again may be very long.
 How the scenarios and their variations are created is fundamental to observe specific failures, however it's impossible to think to \textsl{all} the possible failure situations that may happen, for this reason we think that the scenario-variation approach may help in solving this issue, creating harder operational situations in which the factors that lead to a crash may be studied.
