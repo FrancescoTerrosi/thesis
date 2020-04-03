@@ -399,7 +399,7 @@ If \textsl{phase 2} already gave some hints about the fact that the effectivenes
 In this phase, we took $C4$, and trained it again using these five strategies:
 
 \begin{itemize}
-	\item[S0)] The default strategy provided by \textsl{Coach framework}, where the reward function computed based on the overall neural network performances (collisions, time spent off-road or off-lane, travel speed\dots)
+	\item[S0)] The default strategy provided by \textsl{Coach framework} and that was used to train $C1\dots 4$, where the reward function computed based on the overall neural network performances (collisions, time spent off-road or off-lane, travel speed\dots)
 	\item[S1)] The reward function is now more punitive when the car hits something, while braking is slightly more rewarded, provided that the Car won't stop moving
 	\item[S2)] The Safety Monitor is attached to the system and, if an alert is raised, the action of the network is replaced by the Monitor's action (the safety-brake)
 	\item[S3)] The network's action is replaced by the monitor's if it raises an alert. The network is given a positive reward for behaving like the Monitor
