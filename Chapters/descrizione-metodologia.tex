@@ -175,51 +175,35 @@ However, the opposite is also a concrete possibility. For example, in the first 
 
 The main problem that should be addressed here is that the Monitor effectiveness may decrease, while the network is learning, resulting in a useless component that may even be detrimental to the system's \textsl{performability}: the Controller may become good enough to be able to cover all the hazardous events covered by the Monitor at an earlier checkpoint. This may not change the whole safety of the system, if we consider the actions taken by the Monitor as inconditionally safe, but it would result in lesser smooth rides, due to the safety-brakes applied by the Safety Monitor.
 
-The Monitor is tested as follows: the black boxes create during the Controller testing phase are used to \textsl{repeat} the runs. The initial conditions must be \textsl{identical} as well and should be saved as part of the black box in the previous stage. The runs of the Controller previously recorded are now repeated, attaching the Monitor to the System and recording the alarm raised during the run and if it was able to prevent the crash that originally occurred.
+The Monitor is tested as follows: the black boxes created during the Controller testing phase are used to \textsl{repeat} the runs. The initial conditions must be \textsl{identical} as well and should be saved as part of the black box in the previous stage. The runs of the Controller previously recorded are now repeated, attaching the Monitor to the System and recording the alarm raised during the run and if it was able to prevent the crash that originally occurred.
 
 In this stage of the analysis, the major concern was that of \textsl{non-intrusiveness}. For the reasons pointed above, we can not think about rerunning the simulations just by attaching the Safety Monitor and watch how it goes. The Safety Monitor, by definition, \textsl{overwrites} the Controller's action if an alert is raised, changing the next part of the run. This is theoretically not a problem, if one can distinguish between false and true positives. However, we can not know in advance what a false positive will be without creating a software capable of sensing an mapping the environment. But this is a Safety Monitor itself and, as every tool of this kind, it will have false positives even if extremely low, therefore this approach can not solve the problem.
 
-The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes possible to approximate its coverage. 
-
-==============================================================================================================
-
-Recall that what we call a \textsl{"failure"} of the Controller is a transition from a \textsl{safe state}: a state in which the Controller can handle what's happening in the environment without crashing, to an \textsl{alert state}: a condition in which without a Safety Monitor, the System would inevitably go to a failure state.
-For this component, we want to measure its ability to distinguish between safe states and alert states. To do so, we defined positives and negatives predictions in this way:\newpage
-
-\begin{itemize}
-	\item[TP:] True Positive
-	\begin{itemize}
-		\item[-] The system went in an alert state due to a Controller's failure, correctly detected and prevented by the monitor
-	\end{itemize}
-	\item[TN:] True Negative
-	\begin{itemize}
-		\item[-] The system is in a safe state and the Monitor doesn't raise any alarm
-	\end{itemize}
-	\item[FP:] False Positive
-	\begin{itemize}
-		\item[-] The system is in a safe state, but the Monitor raises an alarm
-	\end{itemize}
-	\item[FN:] False Negative
-	\begin{itemize}
-		\item[-] The system is in an alert state and the Monitor doesn't detect the hazard
-	\end{itemize}
-\end{itemize}
 
 
-\begin{figure}[h!]
-	\includegraphics[width=\textwidth]{img/positive-negative-set.png}
-	\caption{Graphical Representation of what true and false predictions means in the system's state space. Dots represent the current state of the System. A blue dot means that no alarm is raised, a red dot means that the Monitor raises an alarm}
-\end{figure}
 
-==============================================================================================================
 
-These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not impossible, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives because in most of the cases, this kind of situations may be seen only when a human operator analyse the specific run.
+
+
+
+
+The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes it possible to approximate its coverage. 
+
+As pointed in the previous chapter, to measure how good a model is in classification problems, we observe its predicted values with respect to actual values, visualized using the confusion matrix. However, for real time critical system it's not easy, if not impossible at all, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives because in most of the cases, this kind of situations may be seen only when a human operator analyse the specific run.
 
 In particular, an input for the Safety Monitor is composed by multiple, timed inputs, that can be seen as the evolution of the environment while the system is performing its operations. For this reason, it is hard to understand whether the next state will be an alert or a safe state because we don't know \textsl{when} the series of inputs that will eventually result in a crash will begin.
 
-This puts some limits on the metrics and the ratios that can be computed for the Monitor as they require the amount of true negatives. However, fortunately, a true negative does not change the behaviour of the system because there is no safety-brake, therefore after some analysis it was decided to ignore the true negative rate. At the same time, we want to observe at least the amount of false positives and convert it to a rate, for the purpose of comparison.\newline
+This puts some limits on the metrics and the rates that can be computed for the Monitor as they require the amount of true negatives. However, fortunately, a true negative does not change the behaviour of the system because there is no safety-brake, therefore after some analysis it was decided to ignore the true negative rate. At the same time, we want to observe at least the amount of false positives and convert it to a rate, for the purpose of comparison.\newline
 
 Since we do not know the \textsl{real} amount of \textsl{True Negatives}, for the reason just described, some of the measures usually considered when assessing the prediction performances of a model could not be approximated. To give a rate measure for false positives, it was decided to compute the amount of false positives over the distance travelled in a run.
+
+
+
+
+
+
+
+
 
 \begin{itemize}
 	\item True Positive Rate:
