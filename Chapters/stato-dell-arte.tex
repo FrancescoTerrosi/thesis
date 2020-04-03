@@ -148,7 +148,7 @@ These raw values are nothing but a starting point to compute more complex and me
 These four rates can be combined as well, to approximate the \textsl{Accuracy} and \textsl{Precision} of our predictions:
 
 \begin{itemize}
-	\item \textsl{Accuracy:} a measures used for describing \textsl{systematic errors} in predictions. A low \textsl{Accuracy} is the cause of differences between a prediction and its \textsl{"true"} value. ISO has defined this measure as an indicator of the \textsl{trueness} of predictions (i.e. the ability to predict \textsl{true values}
+	\item \textsl{Accuracy:} a measures used for describing \textsl{systematic errors} in predictions. A low \textsl{Accuracy} is the cause of differences between a prediction and its \textsl{"true"} value. ISO has defined this measure as an indicator of the \textsl{trueness} of predictions (i.e. the ability to predict \textsl{true values}) \cite{isoacc}
 	\begin{itemize}
 		\item[] $ACC = \frac{TP+TN}{TP+TN+FP+FN}$
 	\end{itemize}
@@ -158,7 +158,7 @@ These four rates can be combined as well, to approximate the \textsl{Accuracy} a
 	\end{itemize}
 \end{itemize}
 
-It is important to keep in mind that once the amounts of correct and wrong predictions are known, all these measures can be computed (and many more, depending on the need of the case study).\newline
+It is important to keep in mind that once the amounts of correct and wrong predictions are known, all these measures can be computed (and many more, depending on the need of the case study) and linked to each other, making easy to switch point of view of the analysis.\newline
 
 This problem is nothing but a generalization (related to safety) of the asymmetric fault-tolerant architecture for computer systems: the idea of having a \textsl{Primary Component} that performs the main computations, and a \textsl{Primary Checker} in charge of detecting (and correcting) possible errors of the Primary.\newline
 The problem of assessing the dependability of these simpler (but still complex) systems is a well known topic in literature and was explored in different studies. In a relatively recent work published by \textsl{Popov} and \textsl{Strigini} in 2010, it is shown that the probability of a system failing on a specific input (or set of inputs), strictly depends on both the coverage of the Primary \textsl{and} the Primary Checker, as shown in the figure 7.\cite{striginiPopov}
