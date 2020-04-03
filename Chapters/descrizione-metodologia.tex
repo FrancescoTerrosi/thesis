@@ -181,6 +181,8 @@ In this stage of the analysis, the major concern was that of \textsl{non-intrusi
 
 The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes possible to approximate its coverage. 
 
+==============================================================================================================
+
 Recall that what we call a \textsl{"failure"} of the Controller is a transition from a \textsl{safe state}: a state in which the Controller can handle what's happening in the environment without crashing, to an \textsl{alert state}: a condition in which without a Safety Monitor, the System would inevitably go to a failure state.
 For this component, we want to measure its ability to distinguish between safe states and alert states. To do so, we defined positives and negatives predictions in this way:\newpage
 
@@ -209,6 +211,7 @@ For this component, we want to measure its ability to distinguish between safe s
 	\caption{Graphical Representation of what true and false predictions means in the system's state space. Dots represent the current state of the System. A blue dot means that no alarm is raised, a red dot means that the Monitor raises an alarm}
 \end{figure}
 
+==============================================================================================================
 
 These measures are commonly used to see how good a model is in classification problems. However, for real time critical system it's not easy, if not impossible, to measure all of them. In particular, it's not always possible to understand when the Controller avoided a crash and the monitor \textsl{did not} raise an alarm. This issue makes very hard to measure the amount of true negatives because in most of the cases, this kind of situations may be seen only when a human operator analyse the specific run.
 
