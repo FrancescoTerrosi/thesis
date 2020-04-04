@@ -327,9 +327,11 @@ The amounts of True Positives, True Negatives and False Positives are computed u
 		\item[-] The choice of $t$ is a critical parameter for the accuracy of measurements, as a choice of an \textsl{"early"} $t$ may cause a brake for an event that the Controller actually handled, and a \textsl{"late"} $t$ may result in a failure of the Safety-Monitor just because the safety brake was enabled too late. Ideally, the safety brake should be enabled as soon as there is a transition from a \textsl{safe state} to an \textsl{alert state}. Unfortunately it's not always possible (if not possible at all in complex runs) to understand when this transition happened. In this work, $t$ was approximated observing the average speed of the car wrt speed limit and the time needed to process LiDAR data and get the answer from the Safety-Monitor, and was set to 2 seconds
 	\end{itemize}
 	\item All the alerts generated before $t$ are considered \textsl{false positives}
-	\item If the System managed to survive for the maximum time defined for a single run, but the Safety-Monitor raises an alert, this alert is considered a \textsl{false positive}
+	\item All the frames in which the Monitor makes a prediction \textsl{and does not} raise an alert, are considered \textsl{true negatives} 
+	\item If the System managed to survive for the maximum time defined for a single run, but the Safety-Monitor raises an alert after time $t$, this alert is considered a \textsl{false positive}
 	\item A successfull avoidance of the crash (if happened) because of the brake caused by the Safety-Monitor, is considered to be a \textsl{true positive}
 	\item If a crash happens, regardless of whether the Safety-Monitor raised an alarm or not, it's classified as a \textsl{false negative}
+	\item Once the amounts of true/false positives/negatives are known, they can be combined in more refined measures
 \end{itemize}
 
 \vspace{0.5cm}
