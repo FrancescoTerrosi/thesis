@@ -216,8 +216,10 @@ After the first phase is concluded, data gathered are processed to compute the m
 	\end{itemize}
 	\item \textsl{Safety-Monitor}:
 	\begin{itemize}
-		\item[-] True Positive Rate
-		\item[-] False Negative Rate
+		\item[-] Sensitivity and Miss Rate
+		\item[-] Specificity and Fall-out
+		\item[-] Accuracy
+		\item[-] Precision
 		\item[-] False Positives per Meter
 	\end{itemize}
 \end{itemize}
@@ -232,9 +234,6 @@ Data collected were processed using \textsl{Python} scripts, to aggregate data i
 Data aggregation is fundamental for this kind of activity. At the same time, due to the complex nature of these systems and the fact that many hazardous events are \textsl{rare events}, it is \textsl{necessary} to study specific runs individually and to separately compare their performances before aggregating data as well (e.g. compare performances for the same Controller in each difficulty level).
 
 In the next section we present collected results mostly in aggregated form, due to the huge amount of data collected. However, there are considerations on \textsl{"raw"} data that can not be shown in this work, but are attached separately for examination.
-
-
-
 
 \section{Results}
 
@@ -290,7 +289,7 @@ Moreover, the observed progresses in the \textsl{mean distance to failure} seems
 	\caption{Graphics that shows the probability $y$ of the system being operational, after $x$ kilometers}
 \end{figure}
 
-As another mean to analyze the Controller's behaviour over Checkpoints, since CARLA provides means to record the kind of object with which a collision occured, ratios of kind of object collided with respect to total collisions are computed for each Checkpoint, for each level of difficulty.
+As another mean to analyze the Controller's behaviour over Checkpoints, since CARLA provides means to record the kind of object with which a collision occured, rates of kind of object collided with respect to total collisions are computed for each Checkpoint, for each level of difficulty.
 This procedure serves multiple purposes:
 
 \begin{itemize}
@@ -308,9 +307,9 @@ These diagrams are useful to have an overlook of how the System performs when ch
 As we could expect, the first Checkpoint mostly collides with off-road obstacles, indicating poor driving skills of the Controller.
 
 It also seems that there is a tendency in which the ratio of collisions with generic obstacles follows the overall Checkpoint's performances.
-Observing this diagram and those of the Reliability Function, it can be seen that C1 (lowest MTTF), tends to crash against obstacles, C2, which had the best performances in terms of MTTF and MDTF, has the lowest ratio of collisions against obstacles. C3 increased the ratios of these collisions, coeherently with its worsening of the MTTF/MDTF, which is subsequently lowered by C4.\newline
+Observing this diagram and those of the Reliability Function, it can be seen that C1 (lowest MTTF), tends to crash against obstacles, C2, which had the best performances in terms of MTTF and MDTF, has the lowest ratio of collisions against obstacles. C3 increased the rates of these collisions, coeherently with its worsening of the MTTF/MDTF, which is subsequently lowered by C4.\newline
 
-The four levels of difficulty defined, even if quite simple, proved to be a good way to assess the System's performances in environments that are different from the training environment. MTTFs and MDTFs are sensibly lower in difficulties 3 and 4 (increasing the number of vehicles, increasing the number of pedestrians and vehicles) giving evidences that situations of dense traffic tend to be harder to handle. At the same time increase/decrease of the hit ratios with a specific kind of object, follows the features of the difficulty chosen. This suggests that the crashes observed are strictly dependent on the environmental conditions. Increasing the number of pedestrians resulted in more collisions with these \textsl{"objects"} and increasing the number of vehicles shows the same evidence. Increasing the amount of pedestrians and vehicles shows that collisions with other cars is still the main cause of a crash, giving evidences that dense traffic is more likely to create harder situations for the Controller.
+The four levels of difficulty defined, even if quite simple, proved to be a good way to assess the System's performances in environments that are different from the training environment. MTTFs and MDTFs are sensibly lower in difficulties 3 and 4 (increasing the number of vehicles, increasing the number of pedestrians and vehicles) giving evidences that situations of dense traffic tend to be harder to handle. At the same time increase/decrease of the hit rates with a specific kind of object, follows the features of the difficulty chosen. This suggests that the crashes observed are strictly dependent on the environmental conditions. Increasing the number of pedestrians resulted in more collisions with these \textsl{"objects"} and increasing the number of vehicles shows the same evidence. Increasing the amount of pedestrians and vehicles shows that collisions with other cars is still the main cause of a crash, giving evidences that dense traffic is more likely to create harder situations for the Controller.
 
 These aspects are useful for the definition of more complex difficulties. These measures also allows to detect correlations between the increase/decrease of kind of collisions.\newline
 
@@ -347,10 +346,9 @@ The method developed in this work seems a promising mean not only to observe the
 
 Analyzing tables 1 and 2, it seems like the Monitor's effectiveness is influenced by the Controller's reliability. If on one hand the True Positive Rate is stable around $0.75$ (except for $C2$, which anyway exhibited a weird behaviour in its runs), on the other hand we can see how the \textsl{Precision} of the Monitor drops after $C2$ (recall that \textsl{Precision} in this setting measures the rate of crash avoided with respect to all the alerts raised), raising some concerns on the long-term effectiveness of the Safety-Monitor. The drop in \textsl{Precision} is an indicator of the increase in \textsl{false positives} (i.e. false alarms), which makes us wonder on the fact that the Monitor is not able to classify the System's states correctly, due to the novel behaviour of the Controller. This hypothesis is enforced by looking at $C1$, the Controller in its first states, which basically just kept going forward until a crash.
 
-As we expected, this Monitor tends to produce many false positives (stabilizing around 1 false positive per meter). This doesn't affect the effectiveness of the monitoring methodology described, but raises some concerns on the effectiveness of a training strategy using \textsl{this} Monitor, and makes it possible to understand how the System behaves when both components (the Controller and the Safety-Monitor) works together, i.e. with a lot of "wrong" safety-brakes caused by the Safety-Monitor's false alarms.\newpage
+As we expected, this Monitor tends to produce many false positives (stabilizing around 1 false positive per meter). This doesn't affect the effectiveness of the monitoring methodology described, but raises some concerns on the effectiveness of a training strategy using \textsl{this} Monitor, and makes it possible to understand how the System would behave when both components (the Controller and the Safety-Monitor) works together, i.e. with a lot of "wrong" safety-brakes caused by the Safety-Monitor's false alarms.\newpage
 
 \begin{table}[h!]
-	\caption{Prediction Rates}
 	\begin{center}
 		\begin{tabular}{ |c|c|c|c|c| }
 			\hline
@@ -371,9 +369,8 @@ As we expected, this Monitor tends to produce many false positives (stabilizing 
 			FPPM & 0.52 & 1.13 & 1.02 & 1.12 \\
 			\hline
 		\end{tabular}
-		\\
-		\vspace{0.3cm}
-		Prediction metrics of the Safety-Monitor for Checkpoints 1-4
+		
+		\caption{Prediction Rates of the Safety-Monitor for Checkpoints 1-4}
 	\end{center}
 \end{table}
 
@@ -382,7 +379,6 @@ Another interesting aspect that can be observed collecting data in this way, is 
 The measures listed in table 2 are just demonstrative of how this method works and how, with few measures, a lot of informations and evidences about the System's behaviour can be extracted. Depending on the actual hardware available and the simulation environment, more measures can be extracted and combined to enrich these informations.\newline
 
 \begin{table}[h!]
-	\caption{False Positives Causes}
 	\begin{center}
 		\begin{tabular}{ |c|c|c|c|c| }
 			\hline
@@ -397,9 +393,8 @@ The measures listed in table 2 are just demonstrative of how this method works a
 			SLOW SPEED & 1\% & 2\% & 1\% & 1\% \\
 			\hline
 		\end{tabular}
-		\\
-		\vspace{0.3cm}
-		Percentage of \textsl{false positives} causes. The use of a simulator such as CARLA, and the recording of the car's runs, allow to have a deep understanding on the system's behaviour
+
+	\caption{Percentage of \textsl{false negatives} causes for $C1\dots C4$.}
 	\end{center}
 \end{table}
 
@@ -460,15 +455,15 @@ Unfortunately, the complexity and the novelty of these systems and techniques, s
 The failure of the strategies that relied on the Monitor, doesn't allow us to analyze how the effectiveness of the Monitor is influenced by those strategies. However, the monitoring activity can still be performed on $C5_{S0}$ and $C5_{S1}$ to observe:
 
 \begin{itemize}
-	\item[a)] How the accuracy and effectiveness of the same Safety-Monitor is influenced by the Controller's effectiveness
+	\item[a)] How the effectiveness of the same Safety-Monitor is influenced by the Controller's effectiveness
 	\item[b)] If harshening the punishments (negative rewards) during the training has an impact on both the Controller's and Monitor's performances
 \end{itemize}
 
 The monitoring activity is basically a repetition of \textsl{phase 1} and \textsl{phase 2}. The same measures are computed and aggregated in the same form for the purpose of comparison.
 
-$C5_{S1}$ performed significantly better than $C5_{S0}$ both in terms of MTTF and MDTF. This reassure us on the fact that the System is actually travelling and higher MTTF is not a result of the car not moving, as happened for $C5_{S2\dots 4}$.
+$C5_{S1}$ performed significantly better than $C5_{S0}$ both in terms of MTTF and MDTF and both of them outclassed $C1\dots 4$. This reassure us on the fact that the System is actually travelling and higher MTTF is not a result of the car not moving, as happened for $C5_{S2\dots 4}$.
 
-This is an interesting result, from the moment that the training period was the same for both Controllers (someone could argue that $C5_{S1}$ was trained for more time, but this is not the case), a more punitive strategy applied after a certain training phase gave good results and in terms of running times and travelled distances, as shown in figures 19-20 which plots the Reliability Functions of $C5_{S0}$ and $C5_{S1}$ in terms of operational time and travelled distance.
+This is an interesting result, from the moment that the training period was the same for both Controllers (someone could argue that $C5_{S1}$ was trained for more time, but this is not the case), a more punitive strategy applied after a certain training phase gave good results in terms of running times and travelled distances, as shown in figures 19-20 which plots the Reliability Functions of $C5_{S0}$ and $C5_{S1}$ related to operational time and travelled distance.
 
 \vspace{0.5cm}
 
@@ -485,7 +480,7 @@ This is an interesting result, from the moment that the training period was the 
 \vspace{0.8cm}
 
 
-Comparing travelled distances charts (figures 21-27), we can see that both $C5_{S0}$ and $C5_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C5_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C5_{S0}$ which reached max length only once.
+Comparing travelled distances charts (figures 21-26), we can see that both $C5_{S0}$ and $C5_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C5_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C5_{S0}$ which reached max length only once.
 This is validated by the Reliability Functions computed both in term of time in operation and distance travelled, as $R_{C5_{S1}} > R_{C5_{S0}} > R_{C4}$.
 
 Looking at $C5_{S1}$, if on one hand it had the best overall performances in terms of MTTF/MDTF, there are many scenarios in which it fails earlier than $C4$, failing even before the lower bound of $22$ seconds previously observed. This can be seen very clearly looking at the right side of charts (approximately after scenario 120), where if on one hand $C5_{S0}$ is learning how to handle some of those scenario (while of course still failing in others, as it would have required too much time to wait for it to master all of them), $C5_{S1}$ shows a total different behaviour and in general it performs worse than both $C4$ and $C5_{S0}$ in those scenarios.
@@ -528,7 +523,7 @@ What confirms our hypothesis on $C2$'s performances is that it reaches few goals
 \end{minipage}
 \newpage
 
-Moreover, $C5_{S1}$ chart is more balanced in terms of goals reached per difficulty. A fair objection would be that $C4$ reached its goals more times, but the average distance travelled is significantly lower than both $C5_{S0}$ and $C5_{S1}$, moreover, as an indicator of the fact that $C4$ \textbf{is not} better than $C5_{S0}\: \&\: C5_{S1}$, analyzing raw data it was observed that:
+Moreover, $C5_{S1}$ chart is more balanced in terms of goals reached per difficulty. A fair objection would be that $C4$ reached its goals more times, but the average distance travelled is significantly lower than both $C5_{S0}$ and $C5_{S1}$, moreover, as an indicator of the fact that $C4$ \textbf{is not} better than $C5_{S0}\: \&\: C5_{S1}$, by an analysis of raw data it was observed that:
 
 \begin{itemize}
 	\item $C5_{S1}$ is capable of reaching \textsl{more} goals in the \textsl{same} run, differently from the other Checkpoints
@@ -538,25 +533,24 @@ Moreover, $C5_{S1}$ chart is more balanced in terms of goals reached per difficu
 In addition to this, $C5_{S0}$, which is the \textsl{"natural continuation"} of $C4$ as it is obtained from $C4$ using the \textsl{same} training strategy, performs very good at \textsl{standard difficulty} while performing much worse in the others, fact validated by comparing times to failure in each difficulty as $MTTF_{C5_{S0}h_{0}} >> MTTF_{C5_{S0}h_{1\dots 3\dots 3}}$.
 This seems to suggest that the training strategy adopted has a strong influence on how the System will perform in conditions different from the training ones. Collected data confirm this, as looking at raw data, we observe that $MTTF_{C5_{S1}h_{i}} > MTTF_{C5_{S0}h_{i}}$ as a proof that $C5_{S1}$ performs better in harder conditions. Moreover, the differences observe on the average travelled distances are lower than the ones observed for \textsl{all} the other Controllers, which again reassure us on this fact.\newline
 
-As done for $C1\dots 4$, hit ratios of collisions with specific kinds of object wrt to total collisions are computed and shown in figure 28. Those for $C5_{S0}$ and $C5_{S1}$ looks similar, as hit rates take close values. At first we thought that, as for $C2$, this was caused by the Car driving off-road. To confirm or deny this fact, a subset of runs was analyzed and it was observed that the main cause of collisions with generic obstacles is caused by the Car actually trying to avoid other cars and pedestrians. More consciousness about this fact will be probably given by analyzing the runs with the Safety-Monitor attached to the System.
+As done for $C1\dots 4$, hit rates of collisions with specific kinds of object wrt to total collisions are computed and shown in figure 28. Those for $C5_{S0}$ and $C5_{S1}$ looks similar, as hit rates take close values. The drop of collision rate against \textsl{obstacles} reassure us on the fact that both Checkpoints are now learning to stay on-road. To confirm this fact, a subset of runs was analyzed and it was observed that the main cause of collisions with generic obstacles is caused by the Car actually trying to avoid other cars and pedestrians. The same phenomenon was observed for Checkpoints $C3,\: C4$, where huge increasement of obstacles hit was linked to an increase of SUDDEN STEER errors for the Monitor.
+More evidences about this fact will be probably given by analyzing the runs with the Safety-Monitor attached to the System.
 
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/hit-ratios-stupid-pro.png}
-	\captionof{figure}{Hit ratios for $C5_{S0}$ and $C5_{S1}$}
+	\captionof{figure}{Hit rates for $C5_{S0}$ and $C5_{S1}$}
 \end{minipage}
 
 \subsubsection{- On the Effectiveness of the Safety-Monitor:}
 
 The analysis of the Safety-Monitor performances isn't different from what we did in \textsl{Phase 2}.
 
-This second assessmet of the Safety-Monitor seemed promising in conferming the fact that the effectiveness of the Safety-Monitor strongly depends both on the \textsl{training strategy} adopted and on the Controller's performances.
+This second assessment of the Safety-Monitor seemed promising in conferming the fact that the effectiveness of the Safety-Monitor strongly depends both on the \textsl{training strategy} adopted and on the Controller's performances.
 
-Looking at tables, we can see that the Monitor attached to $C_{1\dots 4}$ and $C5_{S0}$ have a \textsl{True Positive Rate} of approximately $0.75$, with the exception of $C2$, that acted as an outlier in our study. The fact that the Monitor with $C5_{S0}$ has the same prediction performances of the previous Checkpoints is a good result, and a promising starting point for further examinations. However, to claim this fact, more data and analysis are needed and will be a central point in our next studies.\newline
-
+Looking at tables, we can see that the Monitor attached to $C_{1\dots 4}$ and $C5_{S0}$ have a \textsl{True Positive Rate} of approximately $0.75$, with the exception of $C2$, that acted as an outlier in our study. The fact that the Monitor with $C5_{S0}$ has the same TPR of the previous Checkpoints is a good result, and a promising starting point for further examinations. However, to claim this fact, more data and analysis are needed and will be a central point in our next studies.\newline
 
 \begin{table}[h]
-	\caption{Prediction Rates}
 	\begin{center}
 		\begin{tabular}{ |c|c|c| }
 			\hline
@@ -577,19 +571,16 @@ Looking at tables, we can see that the Monitor attached to $C_{1\dots 4}$ and $C
 			FPPM & 0.99 & 0.89 \\
 			\hline
 		\end{tabular}
-		\\
-		\vspace{0.5cm}
-		Prediction metrics of the Safety-Monitor for Checkpoints S0, S1
+		\caption{Prediction Rates of the Safety-Monitor for Checkpoints $C5_{S0},\: C5_{S1}$}
 	\end{center}
 \end{table}
 
 Analyzing these rates, the decrease in \textsl{Precision} immediately catches the eye. Comparing these measures for each Checkpoint generated, we can see how the \textsl{Precision} of the Monitor decreases monotonically as the Controller learns to drive.
 
-Another interesting fact is the change in the \textsl{True Positive Rate} and in the amount of \textsl{False Positives per Meter} observed for $C5_{S1}$. The fact that this last Checkpoint was obtained from $C4$ by \textsl{changing} the training strategy, seems to motivate our initial hypothesis both on the effectiveness on the Safety-Monitor in the long-term, and the influence the training strategy has on it. It is true that the True Positive Rate was much higher than the other for $C2$ as well, but the other measures were somehow consistent, and this doesn't happen with $C5_{S1}$, but at the same time, we can not claim this as a fact, as more experiments are needed. However, this result may be a starting point for future works.
+Another interesting fact is the change in the \textsl{True Positive Rate} and in the amount of \textsl{False Positives per Meter} observed for $C5_{S1}$. The fact that this last Checkpoint was obtained from $C4$ by \textsl{changing} the training strategy, seems to motivate our initial hypothesis both on the long-term effectiveness of the Safety-Monitor, and the influence the training strategy has on it. It is true that the True Positive Rate was much higher than the others for $C2$ as well, but the other measures were somehow consistent, and this doesn't happen with $C5_{S1}$, but at the same time, we can not claim this as a fact, as more experiments are needed. Again, this result may be a starting point for future works.
 
 
 \begin{table}[h]
-	\caption{Prediction Rates}
 	\begin{center}
 		\begin{tabular}{ |c|c|c|c|c||c|c| }
 			\hline
@@ -604,20 +595,15 @@ Another interesting fact is the change in the \textsl{True Positive Rate} and in
 			FPPM & 0.52 & 1.13 & 1.02 & 1.12 & 0.99 & 0.89 \\
 			\hline
 		\end{tabular}
-		\\
-		\vspace{0.5cm}
-		Prediction metrics of the Safety-Monitor for Checkpoints S0, S1
+		
+		\caption{Main measures comparison for every Checkpoint}
 	\end{center}
 \end{table}
 
 
-Analyzing hit rates, we have another interesting result. The percentage of \textsl{"unknown"} causes, labeled as generic errors of the Safety-Monitor is higher for $C5_{S1}$ than $C5_{S0}$, which is the main cause of crashes for the first, while the latter tends to crash at high speed. This may ring a bell on the fact that $C5_{S1}$, which now we can confirm performed better than \textsl{all} the other Checkpoints, gets into situations which are more complex to handle. This is a very important point to analyze. A fair objection would be that our Safety-Monitor is not good enough to detect the new kinds of hazard caused by the novel Controller's behaviour. It is true that a more sophisticated Monitor would be able to detect and prevent more complex events and it may even show a SM-ERROR rate of $0\%$ when tested with a controller $C_{i}$, but what we are pointing out in this work is that \textsl{we can not assure} that if $C_{i}$ is trained to drive in \textsl{new environments}, obtaining $C_{i+j}$, the SM-ERROR rate will still be $0\%$.\newline
-
-The high percentage of FAST SPEED errors observed in $C5_{S0}$ also provides a deeper explanation on the higher collision rate against pedestrians and vehicles: in many scenarios the System just continues its run without trying to avoid objects on its road. At the same time, the similarity in the ratios assure us that both Checkpoints are learning to don't go off-road and raises more questions on \textsl{how} the definition of the reward function causes behaviours that were not specifically planned or considered, when designing the training strategy.
-
+Analyzing crash causes, we have another interesting result. The percentage of \textsl{"unknown"} causes, labeled as generic errors of the Safety-Monitor is higher for $C5_{S1}$ than $C5_{S0}$, which is the main cause of crashes for the first, while the latter tends to crash at high speed. This may ring a bell on the fact that $C5_{S1}$, which now we can confirm performed better than \textsl{all} the other Checkpoints, gets into situations which are more complex to handle. This is a very important point to analyze. A fair objection would be that our Safety-Monitor is not good enough to detect the new kinds of hazard caused by the novel Controller's behaviour. It is true that a more sophisticated Monitor would be able to detect and avoid more complex hazardous events, and it may even show a SM-ERROR rate of $0\%$ when tested with a controller $C_{i}$, but what we are pointing out in this work is that \textsl{we can not assure} that if $C_{i}$ is trained to drive in \textsl{new environments}, obtaining $C_{i+j}$, the SM-ERROR rate will still be $0\%$.\newline
 
 \begin{table}
-	\caption{False Positives Causes}
 	\begin{center}
 		\begin{tabular}{ |c|c|c| }
 			\hline
@@ -632,8 +618,8 @@ The high percentage of FAST SPEED errors observed in $C5_{S0}$ also provides a d
 			SLOW SPEED & 0\% & 0\% \\
 			\hline
 		\end{tabular}
-		\\
-		\vspace{0.3cm}
-		Percentage of false positives causes. The use of a simulator such as CARLA, and the recording of the car's runs, allow to have a deep understanding on the system's behaviour
+	\caption{Percentage of \textsl{false negatives} causes for $C5_{S0},\: C5_{S1}$.}
 	\end{center}
 \end{table}
+
+The high percentage of FAST SPEED errors observed in $C5_{S0}$ also provides a deeper explanation on the higher collision rate against pedestrians and vehicles: in many scenarios the System just continues its run without detecting the object on its road. At the same time, the similarity in the observed rates assure us that both Checkpoints are learning to don't go off-road and raises more questions on \textsl{how} the definition of the reward function causes behaviours that were not specifically planned or considered, when designing the training strategy.

@@ -131,7 +131,7 @@ When the controller has been tested for each difficulty, in all the scenarios at
 		\item Reliability Function of the $i^{th}$ checkpoint at the $j^{th}$ level of difficulty, i.e. the probability that the Controller $C_{i}$ is not failed at time $t$ when operating at difficult $j$
 	\end{itemize}
 	
-	\item[-] All these measures can be aggregated to compute overall performance metrics of a Controller $i$, without being specific to the difficulty level
+	\item[-] All these measures are aggregated to compute overall performance metrics of a Controller $i$, without being specific to the difficulty level, but still computed separately for deeper examination of the Controller's behaviour in different environmental conditions
 	
 \end{itemize}
 
@@ -146,7 +146,7 @@ As long as the neural network is trained properly, we expect the following diseq
 	\caption{The Reliability function measures the probability that at time $t$ the system is still operating. We expect that more expert drivers (i.e. more trained networks) are capable of longer runs than little trained networks}
 \end{figure}
 
-\newpage
+\vspace{0.8cm}
 
 If the Simulator used for testing allows it, other data should be recorded too, in order to enhance the comprehension of the Controller's behaviour, such as:
 
@@ -179,14 +179,6 @@ The main problem that should be addressed here is that the Monitor effectiveness
 The Monitor is tested as follows: the black boxes created during the Controller testing phase are used to \textsl{repeat} the runs. The initial conditions must be \textsl{identical} as well and should be saved as part of the black box in the previous stage. The runs of the Controller previously recorded are now repeated, attaching the Monitor to the System and recording the alarm raised during the run and if it was able to prevent the crash that originally occurred.
 
 In this stage of the analysis, the major concern was that of \textsl{non-intrusiveness}. For the reasons pointed above, we can not think about rerunning the simulations just by attaching the Safety Monitor and watch how it goes. The Safety Monitor, by definition, \textsl{overwrites} the Controller's action if an alert is raised, changing the next part of the run. This is theoretically not a problem, if one can distinguish between false and true positives. However, we can not know in advance what a false positive will be without creating a software capable of sensing an mapping the environment. But this is a Safety Monitor itself and, as every tool of this kind, it will have false positives even if extremely low, therefore this approach can not solve the problem.
-
-
-
-
-
-
-
-
 
 The idea is to record the alerts generated during the run, without enabling the safety-procedure (e.g. the brake). Since we are going to repeat exactly the runs recorded in phase 1, it's possible to know the instant of time $t$ in which the transition to the \textsl{alert state} before the crash occurred. With this information, all the alerts raised before $t$ are indeed false positives, or false alarms, since we know $t$. Enabling the Monitor to activate the safety-procedure after this instant of time, makes it possible to approximate its coverage. 
 

@@ -2,7 +2,7 @@
 
 In this work we explored the topic of how to perform a monitoring activity on self-driving cars, controlled by a Control System (Controller) and a System Supervisor (Safety-Monitor).
 
-This study is meant to be a first step on the analysis of this kind of activity for such systems, which require particular care due to their complexity, and the critical issues of the environment in which it performs. Autonomous Vehicles themselves are not a new kind of systems, since they are commonly employed in military actions. However, the fact that self-driving cars work at close contact with people and that the urban environment requires extra care in handling the moltitude of events (hazardous or not) that may happen.
+This study is meant to be a first step on the analysis of \textsl{how a monitoring activity should be performed for such systems}, as they require particular care due to their complexity, and the critical issues of the environment in which they operate. Autonomous Vehicles themselves are not a new kind of systems, since they are commonly employed in military actions. However, the fact that self-driving cars will work at close contact with people and that the urban environment requires extra care in handling the moltitude of events (hazardous or not) that may happen.
 Moreover, we questioned if there are relationships between the effectiveness of the Safety-Monitor component and the Controller component, when the latter gets trained for long periods, using different strategies.
 
 In the first sections, we reviewed the main concepts of these activities, such as
@@ -63,20 +63,20 @@ The failure of those strategies that used the Safety-Monitor to guide the traini
 	\item[2)] The training period was not long enough
 \end{itemize}
 
-The fact that the agents trained were not getting unintentionally high reward for standing still, makes us think that the neural network needed more time to learn what the Safety-Monitor is trying to teach. A higher \textsl{simulation time step} could have helped us, making \textsl{simulation time} running faster than \textsl{real time}. However, this required ultra-high performance hardware, therefore we we could not train the models for more time, nor retrain the networks adjusting the reward parameters.
+The fact that the agents trained were not getting unintentionally high reward for standing still, makes us think that the neural network needed more time to learn what the Safety-Monitor is trying to teach. A higher \textsl{simulation time step} could have helped us, making \textsl{simulation time} running faster than \textsl{real time}. However, this required ultra-high performance hardware, therefore we could not train the models for more time, nor retrain the networks adjusting the reward parameters.
 
-At the same time, the Safety-Monitor proved to be \textsl{less} effective when operating in combination with the Checkpoint which had the \textsl{best} performances and, most of all, was obtained from Checkpoint $C4$ by changing the training strategy, while when operating with the Checkpoints trained with strategy $S0$ $(C1,\: C2,\: C3,\: C4,\: C5_{S0})$ it had the same effectiveness with all of them ($0.75$ false positive rate) except for $C2$. If on one hand, $C2$ was definetely a special case, for the reasons listed in the previous chapter, at the same time we can not exclude the same hypothesis for $C5_{S1}$. In future works, we could continue the training of $C5_{S1}$ to confirm this fact.\newline\newline
+At the same time, the Safety-Monitor proved to be \textsl{less} effective when operating in combination with the Checkpoint which had the \textsl{best} performances and, most of all, it was the one obtained from Checkpoint $C4$ by changing the training strategy, while when operating with the Checkpoints trained with strategy $S0$ $(C1,\: C2,\: C3,\: C4,\: C5_{S0})$ it had the same TPR ($0.75$), with the exception of $C2$. If on one hand, $C2$ was definetely a special case, for the reasons listed in the previous chapter, at the same time we can not exclude the same hypothesis for $C5_{S1}$. In future works, we want to continue the training of $C5_{S1}$ to confirm this fact.\newline
 
 This work demonstrated the power of the use of a simulated environment for the assessment self-driving cars, taking into account and solving many of the problems found when approximating the measures of interest for these systems, and common problems found in a monitoring activity.
 
 In future works, our interest will be:
 
 \begin{itemize}
-	\item Develop stochastical models based on data collected with this monitoring methodology, to guide us in the tunning of the reward function parameters
-	\item Continue the training of $C5_{S0\dots 4}$ to:
+	\item Developing stochastical models based on data collected with this monitoring methodology, to guide us in the tunning of the reward function parameters
+	\item Continuing the training of $C5_{S0\dots 4}$ to:
 	\begin{itemize}
 		\item[a)] Collect more evidences about the effectiveness of the Safety-Monitor
 		\item[b)] Have a better understanding of the failure causes of strategies $S2\dots 4$
 	\end{itemize}
-	\item Apply the same monitoring methodology using more powerful tools (e.g. proprietary software, pretrained neural networks, better Safety-Monitor)
+	\item Applying the same monitoring methodology using more powerful tools (e.g. proprietary software, pretrained neural networks, better Safety-Monitor)
 \end{itemize}
