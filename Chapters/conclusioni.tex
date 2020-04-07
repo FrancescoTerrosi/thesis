@@ -41,12 +41,14 @@ The monitoring activity was developed keeping in mind the main properties of:
 	\end{itemize}
 	\item Representativeness
 	\begin{itemize}
-		\item[-] Representativeness of test-cases is one of the central problems when monitoring self-driving cars, because hazardous events may be so complex and so many that is impossible to consider them all. The definition of scenarios and difficulty level helps in this sense, providing many different sitations starting from the same scenario
+		\item[-] Representativeness of \textsl{test-cases} is one of the central problems when monitoring self-driving cars, because hazardous events may be so complex and so many that is impossible to consider them all. The definition of scenarios and difficulty level helps in this sense, providing many different sitations starting from the same scenario
+		\item[-] Representativeness of the \textsl{measures} computed for the Safety-Monitor raised issues on the nature of the dataset we are working with. The choice of the measures to be used on the Confusion Matrix was explained and motivated, as well as the exclusion of the others
 	\end{itemize}
 	\item Feasibility
 	\begin{itemize}
 		\item[-] The research on the best tools to be used for this activity was not easy, due to the multitude of solutions proposed that in reality have lots of practical limitations. However, the tools used in this work allowed us to perform this activity. At the same time we can not ignore the issues found in these projects
 	\end{itemize}
+
 \end{itemize}
 
 If the \textsl{feasibility} property is undermined by the presence of issues in the tools used, the methodology developed still proved to be an effective way of assessing the reliability of Autonomous Vehicles allowing us to approximate all the common measures of interest for these systems, without sticking to common metrics used in the evaluation of neural networks, e.g. the \textsl{Loss Function}, which indeed are powerful and mandatory measures to compute to check that the neural network is actually learning, but doesn't give any evidence at all on the goodness of the System in its entirety.

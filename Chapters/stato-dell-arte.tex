@@ -164,11 +164,11 @@ These four rates can be combined as well, to compute many more measures that giv
 	\begin{itemize}
 	\item[] $PREC = \frac{TP}{TP+FP}$
 	\end{itemize}
-	\item \textsl{$F_{\beta}$-score:} a measure of a test's accuracy expressed combining \textsl{precision} and \textsl{sensitivity}
+	\item \textsl{$F_{\beta}$-score:} a measure of a test's accuracy expressed combining \textsl{precision} and \textsl{sensitivity}. This ranges from $0$ (worst value) to $1$ (best value), and it directly depends on the class defined as \textsl{positive}.
 	\begin{itemize}
 		\item[] $F_{\beta}-score = (1+\beta ^{2})\cdot \frac{PREC\cdot TPR}{\beta ^{2}\cdot PREC+TPR}$
 	\end{itemize}
-	\item \textsl{Matthew's Correlation Coefficient:} a measure of the \textsl{overall quality} of predictions:
+	\item \textsl{Matthew's Correlation Coefficient:} a measure of the \textsl{overall quality} of predictions, taking into account \textsl{every} cell of the Confusion Matrix. This metric ranges from $-1$ (worst value) to $1$ (best value), therefore giving a wider view of the model accuracy.
 	\begin{itemize}
 		\item[] $MCC = \frac{TP\cdot TN - FP\cdot FN}{\sqrt{(TP+FP)\cdot (TP+FN)\cdot (TN+FP)\cdot (TN+FN)}}$
 	\end{itemize}
