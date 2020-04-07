@@ -375,7 +375,7 @@ As we expected, this Monitor tends to produce many false positives (stabilizing 
 	\end{center}
 \end{table}
 
-Observing the \textsl{Precision-Recall Plot} in figure 19 provides a quick visualization mean to observe the performance drop of the Safety-Monitor, performing well with a \textsl{"dumb"} Controller, while becoming almost disruptive with more trained Controllers.
+Observing the \textsl{Precision-Recall Curves} in figure 19 provides a quick visualization mean to observe the performance drop of the Safety-Monitor, performing well with a \textsl{"dumb"} Controller, while becoming almost disruptive with more trained Controllers.
 
 Looking at figure 19, what surprises us about the Monitor is that, even if its performances are not good, its best performance is observed at the \textsl{hardest} difficulty, i.e. the setting where the amount of pedestrians and vehicles in the scenarios is increased. After $C1$, the second best performances are observed with the second hardest difficulty for the Controller, i.e. the setting where the amount of vehicles is increased. The correlation between what's \textsl{"hard"} for the Controller and what for the Monitor can not be treated exhaustively in this study, however, plotting these graphics showed an unexpected behaviour, motivating us to study more deeply this aspect in future works.
 
@@ -383,7 +383,7 @@ These data are consistent with the data collected and analyzed, as the Safety-Mo
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/precision-recall.png}
-	\caption{Precision-Recall Plots for Checkpoints $C1\dots 4$, using values observed in each difficulty level}
+	\caption{Precision-Recall Curves for Checkpoints $C1\dots 4$, using values observed in each difficulty level}
 \end{figure}
 
 
@@ -614,17 +614,17 @@ As a proof that true and false positive and negative rates were not enough to un
 The most interesting fact is that the Monitor performed worse with $C5_{S1}$ which is actually the Controller that had the best performances in terms of MTTF/MDTF. The fact that this last Checkpoint was obtained from $C4$ by \textsl{changing} the training strategy, seems to motivate our initial hypothesis both on the long-term effectiveness of the Safety-Monitor, and the influence the training strategy has on it. 
 Another interesting fact is the drop in TPR.
 
-We observe again the \textsl{Precision-Recall Plots} for the Safety-Monitor attached to $C5_{S0}$ and $C5_{S1}$, and we can see that the Monitor is definetely useless and almost disruptive to the System. From these plots, the Monitor worsening when operating with $C5_{S1}$ can be immediately seen, as it ranges from $0.65$ to $0.685$, while with $C5_{S0}$ it ranges from $0.7$ to $0.8$, consistently with $C1\dots 4$. Moreover, these plots confirm that, even if its performances are still bad, that the Monitor has overall better performance with difficulties $h2,\: h3$, the two hardest difficulties defined, as it was observed with the previous Checkpoints.
+We observe again the \textsl{Precision-Recall Curves} for the Safety-Monitor attached to $C5_{S0}$ and $C5_{S1}$, and we can see that the Monitor is definetely useless and almost disruptive to the System. From these plots, the Monitor worsening when operating with $C5_{S1}$ can be immediately seen, as it ranges from $0.65$ to $0.685$, while with $C5_{S0}$ it ranges from $0.7$ to $0.8$, consistently with $C1\dots 4$. Moreover, these plots confirm that, even if its performances are still bad, that the Monitor has overall better performance with difficulties $h2,\: h3$, the two hardest difficulties defined, as it was observed with the previous Checkpoints.
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/precision-recall-prostupid.png}
-	\captionof{figure}{Precision-Recall Plot for Checkpoints $C1\dots 4$, using values observed in each difficulty level}
+	\captionof{figure}{Precision-Recall Curves for Checkpoints $C1\dots 4$, using values observed in each difficulty level}
 \end{minipage}
 \newpage
 \newpage
 
 
-Although we could not plot the ROC curve, for the reasons explained in Chapter 3, the \textsl{Precision-Recall Plot} proved to be an effective visualization mean for this kind of systems, where there is a huge imbalancement between the positive and negative classes. The performance drop of $C5_{S1}$ would have not been that immediate with the "classic" ROC curve, as the False Positive Rates all have values lower than $10^{-2}$, resulting in curves flattened to the left side of the plot. Moreover, due to this issue, it would have been harder to understand how the Monitor performs in each difficulty.
+Although we could not plot the ROC curve, for the reasons explained in Chapter 3, the \textsl{Precision-Recall Curve} proved to be an effective visualization mean for this kind of systems, where there is a huge imbalancement between the positive and negative classes. The performance drop of $C5_{S1}$ would have not been that immediate with the "classic" ROC curve, as the False Positive Rates all have values lower than $10^{-2}$, resulting in curves flattened to the left side of the plot. Moreover, due to this issue, it would have been harder to understand how the Monitor performs in each difficulty.
 Ddespite the missing ROC plot, with our methodology we were still able to correctly define and measure all the rates needed to evaluate a classification model. What surprises us, looking once again at table 5, are the TPR and FPR values observed for $C5_{S0}$ and $C5_{S1}$: even if the Monitor had close FPR values with both of them, the drop in TPR observed in $C5_{S1}$ seems like a speedup towards the "worse-than-random area" (enforced by the $MCC$ decreasing monotonically), motivating the fact that the Controller is now creating more situations that the Monitor is not able to detect (also motivated by the fact that it $C5{S1}$ shows the lowest FPPM ever, excluding $C1$).
 It is true that a deviation from the mean value is observed with $C2$ as well, but the other measures were somehow consistent and got close values. $C5_{S0}$ has the same TPR of all $C1\dots 4$ and it was trained with the same strategy of $C1\dots 4$. This doesn't happen with $C5_{S1}$, but at the same time, we can not claim this as a fact, as more experiments are needed. Again, this result may be a starting point for future works.\newline
 
