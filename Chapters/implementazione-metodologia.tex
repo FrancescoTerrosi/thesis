@@ -620,9 +620,9 @@ As a proof that true and false positive and negative rates were not enough to un
 The most interesting fact is that the Monitor performed worse with $C5_{S1}$ which is actually the Controller that had the best performances in terms of MTTF/MDTF. The fact that this last Checkpoint was obtained from $C4$ by \textsl{changing} the training strategy, seems to motivate our initial hypothesis both on the long-term effectiveness of the Safety-Monitor, and the influence the training strategy has on it. 
 Another interesting fact is the drop in TPR.
 
-We observe again the \textsl{Precision-Recall Curves} for the Safety-Monitor attached to $C5_{S0}$ and $C5_{S1}$, and we can see that the Monitor is definetely useless and almost disruptive to the System. From these plots, the Monitor worsening when operating with $C5_{S1}$ can be immediately seen, as it ranges from $0.65$ to $0.685$, while with $C5_{S0}$ it ranges from $0.7$ to $0.8$, consistently with $C1\dots 4$. Moreover, these plots confirm that, even if its performances are still bad, that the Monitor has overall better performance with difficulties $h2,\: h3$, the two hardest difficulties defined, as it was observed with the previous Checkpoints.
+We observe again the \textsl{Precision-Recall Curves} (figures 31-32) for the Safety-Monitor attached to $C5_{S0}$ and $C5_{S1}$, and we can see that the Monitor is definetely useless and almost disruptive to the System. From these plots, the Monitor worsening when operating with $C5_{S1}$ can be immediately seen, as it ranges from $0.65$ to $0.685$, while with $C5_{S0}$ it ranges from $0.7$ to $0.8$, consistently with $C1\dots 4$. Moreover, these plots confirm that, even if its performances are still bad, that the Monitor has overall better performance with difficulties $h2,\: h3$, the two hardest difficulties defined, as it was observed with the previous Checkpoints.\newline
 
-\clearpage
+The \textsl{Precision-Recall Curve} in figure 33 is obtained using mean values of \textsl{Precision} and \textsl{Recall} obtained with each Checkpoint $\{C1,\: C2,\: C3,\: C4,\: C5_{S0},\: C5_{S1}\}$, to provide a quick mean to visualize how the Monitor's performance is drastically reduced by the level of training of the neural network.
 
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/precision-recall-prostupid.png}
