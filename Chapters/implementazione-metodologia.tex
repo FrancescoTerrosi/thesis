@@ -379,14 +379,20 @@ Observing the \textsl{Precision-Recall Curves} in figure 19 provides a quick vis
 
 Looking at figure 19, what surprises us about the Monitor is that, even if its performances are not good, its best performance is observed at the \textsl{hardest} difficulty, i.e. the setting where the amount of pedestrians and vehicles in the scenarios is increased. After $C1$, the second best performances are observed with the second hardest difficulty for the Controller, i.e. the setting where the amount of vehicles is increased. The correlation between what's \textsl{"hard"} for the Controller and what for the Monitor can not be treated exhaustively in this study, however, plotting these graphics showed an unexpected behaviour, motivating us to study more deeply this aspect in future works.
 
-These data are consistent with the data collected and analyzed, as the Safety-Monitor performs well with $C1$, while almost the same performances were observed for $C2\dots 4$, with slightly better performances with $C2$.\newpage
+These data are consistent with the data collected and analyzed, as the Safety-Monitor performs well with $C1$, while almost the same performances were observed for $C2\dots 4$, with slightly better performances with $C2$.
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{img/precision-recall.png}
 	\caption{Precision-Recall Curves for Checkpoints $C1\dots 4$, using values observed in each difficulty level}
 \end{figure}
+\clearpage
 
+\begin{figure}[h!]
+	\includegraphics[width=\textwidth]{img/precision-recall-c1-c4.png}
+	\caption{Precision-Recall Curves comparison for $C1\dots 4$}
+\end{figure}
 
+\clearpage
 
 In phase 1, we had to manually rerun and observe some of the best runs for Checkpoint 2, to understand the values of the Safety-Monitor's predictions. If we look at the percentage of false positives causes showed in table 3, we can see that an excessive speed is the main cause of Monitor's failures for C2.\footnote{FAST SPEED: the car's speed was over 40km/h when the crash happened.\newline SLOW SPEED: the car's speed was lower then 5 km/h when the crash happened}
 Another interesting aspect that can be observed collecting data in this way, is that it seems like the more the network learns to handle new situations, the more the Safety-Monitor tends to produce more false positives and, above all, the situations that will eventually result in a crash, are of a new kind that the Monitor is not able to detect (SM ERROR).\newline
@@ -471,7 +477,7 @@ The monitoring activity is basically a repetition of \textsl{phase 1} and \texts
 
 $C5_{S1}$ performed significantly better than $C5_{S0}$ both in terms of MTTF and MDTF and both of them outclassed $C1\dots 4$. This reassure us on the fact that the System is actually travelling and higher MTTF is not a result of the car not moving, as happened for $C5_{S2\dots 4}$.
 
-This is an interesting result, from the moment that the training period was the same for both Controllers (someone could argue that $C5_{S1}$ was trained for more time, but this is not the case), a more punitive strategy applied after a certain training phase gave good results in terms of running times and travelled distances, as shown in figures 20-21 which plots the Reliability Functions of $C5_{S0}$ and $C5_{S1}$ related to operational time and travelled distance.
+This is an interesting result, from the moment that the training period was the same for both Controllers (someone could argue that $C5_{S1}$ was trained for more time, but this is not the case), a more punitive strategy applied after a certain training phase gave good results in terms of running times and travelled distances, as shown in figures 21-22 which plots the Reliability Functions of $C5_{S0}$ and $C5_{S1}$ related to operational time and travelled distance.
 
 \vspace{0.5cm}
 
@@ -488,7 +494,7 @@ This is an interesting result, from the moment that the training period was the 
 \vspace{0.8cm}
 
 
-Comparing travelled distances charts (figures 22-27), we can see that both $C5_{S0}$ and $C5_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C5_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C5_{S0}$ which reached max length only once.
+Comparing travelled distances charts (figures 23-28), we can see that both $C5_{S0}$ and $C5_{S1}$ have good performances compared to $C1\dots 4$, as both of them have an average distance travelled of circa 1 km, while $C4$ did approximately 500 m. $C5_{S1}$ reached the max run legth 3 times, and in general did longer runs than $C5_{S0}$ which reached max length only once.
 This is validated by the Reliability Functions computed both in term of time in operation and distance travelled, as $R_{C5_{S1}} > R_{C5_{S0}} > R_{C4}$.
 
 Looking at $C5_{S1}$, if on one hand it had the best overall performances in terms of MTTF/MDTF, there are many scenarios in which it fails earlier than $C4$, failing even before the lower bound of $22$ seconds previously observed. This can be seen very clearly looking at the right side of charts (approximately after scenario 120), where if on one hand $C5_{S0}$ is learning how to handle some of those scenario (while of course still failing in others, as it would have required too much time to wait for it to master all of them), $C5_{S1}$ shows a total different behaviour and in general it performs worse than both $C4$ and $C5_{S0}$ in those scenarios.
@@ -519,7 +525,7 @@ Looking at $C5_{S1}$, if on one hand it had the best overall performances in ter
 \end{minipage}
 
 
-To have a better understanding on how these Controllers behaves, we look at how many times they reached a goal in each difficulty level (figure 28), and combine this information with \textsl{MTTFs} and \textsl{MDTFs}.
+To have a better understanding on how these Controllers behaves, we look at how many times they reached a goal in each difficulty level (figure 29), and combine this information with \textsl{MTTFs} and \textsl{MDTFs}.
 
 What confirms our hypothesis on $C2$'s performances is that it reaches few goals compared to the others. This validate the hypothesis that the longer \textsl{MTTFs} and \textsl{MDTFs} were a result of \textsl{"lucky"} runs.
 
@@ -541,7 +547,7 @@ Moreover, $C5_{S1}$ chart is more balanced in terms of goals reached per difficu
 In addition to this, $C5_{S0}$, which is the \textsl{"natural continuation"} of $C4$ as it is obtained from $C4$ using the \textsl{same} training strategy, performs very good at \textsl{standard difficulty} while performing much worse in the others, fact validated by comparing times to failure in each difficulty as $MTTF_{C5_{S0}h_{0}} >> MTTF_{C5_{S0}h_{1\dots 3\dots 3}}$.
 This seems to suggest that the training strategy adopted has a strong influence on how the System will perform in conditions different from the training ones. Collected data confirm this, as looking at raw data, we observe that $MTTF_{C5_{S1}h_{i}} > MTTF_{C5_{S0}h_{i}}$ as a proof that $C5_{S1}$ performs better in harder conditions. Moreover, the differences observe on the average travelled distances are lower than the ones observed for \textsl{all} the other Controllers, which again reassure us on this fact.\newline
 
-As done for $C1\dots 4$, hit rates of collisions with specific kinds of object wrt to total collisions are computed and shown in figure 29. Those for $C5_{S0}$ and $C5_{S1}$ looks similar, as hit rates take close values. The drop of collision rate against \textsl{obstacles} reassure us on the fact that both Checkpoints are now learning to stay on-road. To confirm this fact, a subset of runs was analyzed and it was observed that the main cause of collisions with generic obstacles is caused by the Car actually trying to avoid other cars and pedestrians. The same phenomenon was observed for Checkpoints $C3,\: C4$, where huge increasement of obstacles hit was linked to an increase of SUDDEN STEER errors for the Monitor.
+As done for $C1\dots 4$, hit rates of collisions with specific kinds of object wrt to total collisions are computed and shown in figure 30. Those for $C5_{S0}$ and $C5_{S1}$ looks similar, as hit rates take close values. The drop of collision rate against \textsl{obstacles} reassure us on the fact that both Checkpoints are now learning to stay on-road. To confirm this fact, a subset of runs was analyzed and it was observed that the main cause of collisions with generic obstacles is caused by the Car actually trying to avoid other cars and pedestrians. The same phenomenon was observed for Checkpoints $C3,\: C4$, where huge increasement of obstacles hit was linked to an increase of SUDDEN STEER errors for the Monitor.
 More evidences about this fact will be probably given by analyzing the runs with the Safety-Monitor attached to the System.
 
 
@@ -616,12 +622,28 @@ Another interesting fact is the drop in TPR.
 
 We observe again the \textsl{Precision-Recall Curves} for the Safety-Monitor attached to $C5_{S0}$ and $C5_{S1}$, and we can see that the Monitor is definetely useless and almost disruptive to the System. From these plots, the Monitor worsening when operating with $C5_{S1}$ can be immediately seen, as it ranges from $0.65$ to $0.685$, while with $C5_{S0}$ it ranges from $0.7$ to $0.8$, consistently with $C1\dots 4$. Moreover, these plots confirm that, even if its performances are still bad, that the Monitor has overall better performance with difficulties $h2,\: h3$, the two hardest difficulties defined, as it was observed with the previous Checkpoints.
 
+\clearpage
+
 \begin{minipage}[c]{\textwidth}
 	\includegraphics[width=\textwidth]{img/precision-recall-prostupid.png}
 	\captionof{figure}{Precision-Recall Curves for Checkpoints $C1\dots 4$, using values observed in each difficulty level}
 \end{minipage}
-\newpage
-\newpage
+
+\clearpage
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{img/precision-recall-prostupid-together.png}
+	\caption{Precision-Recall Curves comparison for $C5_{S0}$, $C5_{S1}$}
+\end{figure}
+
+\clearpage
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{img/precision-recall-all-curve.png}
+	\caption{Precision-Recall curve with mean values for each checkpoint. It can be clearly seen how the Monitor performs relatively good with $C1$, while with $C5_{S0}$ and $C5_{S1}$ it has the worst performances}
+\end{figure}
+
+\clearpage
 
 
 Although we could not plot the ROC curve, for the reasons explained in Chapter 3, the \textsl{Precision-Recall Curve} proved to be an effective visualization mean for this kind of systems, where there is a huge imbalancement between the positive and negative classes. The performance drop of $C5_{S1}$ would have not been that immediate with the "classic" ROC curve, as the False Positive Rates all have values lower than $10^{-2}$, resulting in curves flattened to the left side of the plot. Moreover, due to this issue, it would have been harder to understand how the Monitor performs in each difficulty.
